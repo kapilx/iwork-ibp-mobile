@@ -1,0 +1,42 @@
+{
+    "collectionName": "components_dashboard_medical_covers",
+    "info": {
+        "displayName": "Medical Cover",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "headerTitle": {
+            "type": "string",
+            "required": true
+        },
+        "headerSubtitle": {
+            "type": "string",
+            "required": true
+        },
+        "headerPrefix": {
+            "type": "string",
+            "required": true
+        },
+        "benefitItems": {
+            "type": "json",
+            "required": true
+        },
+        "buttonLabel": {
+            "type": "string",
+            "required": true
+        },
+        "buttonEditLabel": {
+            "type": "string",
+            "required": true
+        },
+        "buttonViewLabel": {
+            "type": "string",
+            "required": true
+        },
+        "buttonText": {
+            "type": "string",
+            "required": true
+        }
+    }
+}

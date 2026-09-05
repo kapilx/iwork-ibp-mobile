@@ -1,0 +1,49 @@
+{
+  "name": "@insurance-wellness-hub/iwork",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "nx": {
+    "targets": {
+      "serve": {
+        "executor": "@nx/vite:dev-server",
+        "options": {
+          "buildTarget": "@insurance-wellness-hub/iwork:build",
+          "viteConfig": "apps/ui/iwork/vite.config.ts"
+        },
+        "configurations": {
+          "development": {
+            "viteConfig": "apps/ui/iwork/vite.config.ts",
+            "mode": "development"
+          },
+          "production": {
+            "viteConfig": "apps/ui/iwork/vite.config.ts",
+            "mode": "production"
+          }
+        }
+      },
+      "build": {
+        "executor": "@nx/vite:build",
+        "outputs": ["{workspaceRoot}/dist/apps/ui/iwork"],
+        "options": {
+          "outputPath": "dist/apps/ui/iwork",
+          "viteConfig": "apps/ui/iwork/vite.config.ts"
+        },
+        "configurations": {
+          "development": {
+            "viteConfig": "apps/ui/iwork/vite.config.ts"
+          },
+          "production": {
+            "viteConfig": "apps/ui/iwork/vite.config.ts"
+          }
+        }
+      },
+      "lint": {
+        "executor": "@nx/eslint:lint",
+        "options": {
+          "lintFilePatterns": ["apps/ui/iwork/**/*.{ts,tsx}"]
+        }
+      }
+    }
+  }
+}

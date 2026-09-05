@@ -1,0 +1,18 @@
+export const TARGET_VS_ACTUAL_COPY = {
+  title: "My Business Performance",
+  subtitle: "Performance metrics with target vs achieved comparison",
+  totalOverviewLabel: "Total Overview",
+  achievementLabel: "Achievement",
+  varianceLabel: "Variance",
+  targetLabel: "Target",
+  actualLabel: "Actual",
+  quarterlyPerformanceTitle: "Quarterly Performance",
+  sbuBreakdownTitle: "SBU breakdown",
+  overallSbuBreakdownTitle: "Overall SBU breakdown",
+  errorQuarterlyMessage: "Failed to load quarterly performance data.",
+  errorSbuMessage: "Failed to load SBU data.",
+  noDataMessage: "No data available for the graph.",
+  noSbuDataMessage: "No SBU breakdown available.",
+  unknownLabel: "Unknown",
+  rewardsNote: "* Generic rewards are included in the RO achieved figures.",
+} as const;

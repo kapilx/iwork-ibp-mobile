@@ -1,0 +1,16 @@
+{
+    "collectionName": "components_dashboard_enrollment_year_ranges",
+    "info": {
+        "displayName": "Enrollment Year Range",
+        "description": "Date range representing the enrollment policy year"
+    },
+    "options": {},
+    "attributes": {
+        "startDate": {
+            "type": "date"
+        },
+        "endDate": {
+            "type": "date"
+        }
+    }
+}

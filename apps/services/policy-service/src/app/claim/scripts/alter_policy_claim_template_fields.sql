@@ -1,0 +1,13 @@
+ALTER TABLE policy_claim
+  ADD COLUMN IF NOT EXISTS company_name VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS policy_number VARCHAR(255),
+  ADD COLUMN IF NOT EXISTS policy_tpa_id INT,
+  ADD COLUMN IF NOT EXISTS policy_type VARCHAR(100),
+  ADD COLUMN IF NOT EXISTS policy_start_date DATE,
+  ADD COLUMN IF NOT EXISTS policy_end_date DATE,
+  ADD COLUMN IF NOT EXISTS employee_name VARCHAR(100),
+  ADD COLUMN IF NOT EXISTS patient_name VARCHAR(100),
+  ADD COLUMN IF NOT EXISTS patient_relation VARCHAR(50),
+  ADD COLUMN IF NOT EXISTS patient_tpa_id VARCHAR(100),
+  ADD COLUMN IF NOT EXISTS total_sum_insured NUMERIC,
+  ADD COLUMN IF NOT EXISTS total_available_balance NUMERIC;

@@ -1,0 +1,82 @@
+pipeline {
+    agent any
+    
+    environment {
+        DBHost = 'iirm-preprod-database-proxy-1.proxy-cfuycwgg8785.ap-south-1.rds.amazonaws.com'
+        DBUser = 'postgres'
+        DBName = 'automation'
+        S3_BUCKET = 'qa-automation-database'
+        SQL_FILE = 'automation.sql'
+    }
+    
+    stages {
+        stage('Download SQL Dump from S3') {
+            steps {
+                script {
+                    echo "Downloading ${SQL_FILE} from S3 bucket ${S3_BUCKET}"
+                    sh """
+                        aws s3 cp s3://${S3_BUCKET}/${SQL_FILE} ./${SQL_FILE}
+                        echo "SQL dump downloaded successfully"
+                    """
+                }
+            }
+        }
+        
+        stage('Clear Existing Database') {
+            steps {
+                script {
+                    echo "Clearing all data from database ${DBName}"
+                    withCredentials([string(credentialsId: 'db-password', variable: 'DB_PASSWORD')]) {
+                        sh """
+                            export PGPASSWORD=\${DB_PASSWORD}
+                            psql -h ${DBHost} -U ${DBUser} -d ${DBName} -c "
+                                DO \\\$\\\$
+                                DECLARE
+                                  r RECORD;
+                                BEGIN
+                                  -- Loop through each table in the current schema
+                                  FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) 
+                                LOOP
+                                   -- Drop each table, cascading to dependent objects
+                                   EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
+                                 END LOOP;
+                                END \\\$\\\$;
+                            "
+                            echo "Database cleared successfully"
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Load SQL Dump') {
+            steps {
+                script {
+                    echo "Loading SQL dump into database ${DBName}"
+                    withCredentials([string(credentialsId: 'db-password', variable: 'DB_PASSWORD')]) {
+                        sh """
+                            export PGPASSWORD=\${DB_PASSWORD}
+                            psql -h ${DBHost} -U ${DBUser} -d ${DBName} -f ${SQL_FILE}
+                            echo "SQL dump loaded successfully"
+                        """
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            script {
+                echo "Cleaning up downloaded files"
+                sh "rm -f ${SQL_FILE}"
+            }
+        }
+        success {
+            echo "Database automation completed successfully"
+        }
+        failure {
+            echo "Database automation failed"
+        }
+    }
+}

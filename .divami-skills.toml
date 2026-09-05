@@ -1,0 +1,25 @@
+# .divami-skills.toml — run `divami-skills sync` to apply
+
+[claude]
+"divami-agents" = []
+
+[claude-local]
+"divami-agents" = ["daksh"]
+
+[codex]
+"divami-agents" = []
+
+[codex-local]
+"divami-agents" = ["daksh"]
+
+[gemini]
+"divami-agents" = []
+
+[gemini-local]
+"divami-agents" = ["daksh"]
+
+[copilot]
+"divami-agents" = []
+
+[copilot-local]
+"divami-agents" = ["daksh"]

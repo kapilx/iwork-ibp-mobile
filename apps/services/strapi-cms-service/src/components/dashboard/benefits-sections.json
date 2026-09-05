@@ -1,0 +1,15 @@
+{
+    "collectionName": "components_dashboard_benefits_sections",
+    "info": {
+        "displayName": "Benefits Sections",
+        "description": "Benefits sections content"
+    },
+    "options": {},
+    "attributes": {
+        "compulsoryBenefits": {
+            "type": "component",
+            "repeatable": false,
+            "component": "dashboard.compulsory-benefits"
+        }
+    }
+}

@@ -1,0 +1,26 @@
+pipeline {
+  agent any
+  environment {
+    // fd_secret_ignore
+    API_KEY = "fdv1-ed1712b9-da1a-4869-a203-13d80376b4e7"
+    NAME = "iirm"
+  }
+  stages {
+    stage('FlyingDuck') {
+      steps {
+        script {
+          sh 'sudo docker run -td -e FD_API_KEY=${API_KEY} -v ${PWD}:/src --name ${NAME} --entrypoint /bin/bash flyingduckio/duckdefender:latest -c "duckdefender code --all"'
+          sh 'sudo docker logs -f ${NAME}'
+          sh 'sudo docker rm ${NAME}'
+          echo 'Security scan completed successfully'
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      cleanWs()
+    }
+  }
+}

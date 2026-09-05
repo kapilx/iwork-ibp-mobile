@@ -1,0 +1,71 @@
+
+JSON Input :-
+{
+  "UserName": "iirmhclwebservice",
+  "Password": "iirmhcl$123",
+  "Flag_operationType": "ES",
+  "Del_hcldepid": "0",
+  "wef": "2021-06-01",
+  "Del_deletionremarks": "testing",
+  "prom_ctc": 0,
+  "prom_grade": "",
+  "prom_companyid": 0,
+  "prom_basesi": 0,
+  "SelfCount": 0,
+  "objEMPLOYEE_DATA": [
+    {
+      "E_EMP_HCL": {
+        "ENCRYPT_EIN": "",
+        "EIN": "51776256",
+        "CTC": 0,
+        "NO_OF_DEPENDENTS": 0,
+        "IS_ESI": 0,
+        "INSUREDNAME": "",
+        "HCL_ENTITY": "",
+        "TRIGGER_FLAG": 0,
+        "IS_SEZ": 0,
+        "IS_EMCP": 0,
+        "EMAIL": "",
+        "MOBILE": "",
+        "GRADE": "",
+        "DOB": "",
+        "DOJ": "",
+        "INDIANADDRESS": "",
+        "MARITAL_STATUS": "",
+        "DOM":"",
+        "GENDER": "",
+        "OLDEMPID": 0,
+        "LOCATION": "",
+        "CHECK_SUM": "dff5b7c6119bcb61f27c337ea84f79576af5dc37",
+        "BLOOD_GROUP": 0
+      },
+      "E_DEP_HCL": [
+        {
+          "HCL_DEPID": 0,
+          "DEP_NAME": "",
+          "HCL_DEPADDON": "",
+          "HCL_DEPREL": 0,
+          "DEP_DOB": "",
+          "DEP_GENDER": "",
+          "MARITAL_STATUS": "",
+          "TRIGGER_FLAG": 0,
+          "CHECK_SUM": "",
+          "BLOOD_GROUP": 0
+        }
+      ]
+    }
+  ]
+}
+
+
+JSON Output :- 
+
+{
+    "GetEmpStatus": null,
+    "GetStatus": {
+        "callStatus": true,
+        "procedureStatus": true,
+        "returnMessage": "Employee deleted successfully.",
+        "returnValue": 1
+    }
+}

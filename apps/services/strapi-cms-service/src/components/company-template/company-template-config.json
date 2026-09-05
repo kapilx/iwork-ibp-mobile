@@ -1,0 +1,35 @@
+{
+    "collectionName": "components_company_template_company_template_configs",
+    "info": {
+        "displayName": "Company Template Config",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "faqs": {
+            "type": "component",
+            "repeatable": true,
+            "component": "company-template.faq-item"
+        },
+        "footer": {
+            "type": "component",
+            "repeatable": false,
+            "component": "company-template.footer"
+        },
+        "contactMatrix": {
+            "type": "component",
+            "repeatable": false,
+            "component": "company-template.contact-matrix"
+        },
+        "disclaimerNotes": {
+            "type": "component",
+            "repeatable": true,
+            "component": "company-template.disclaimer-note"
+        },
+        "enrollmentYearRange": {
+            "type": "component",
+            "repeatable": false,
+            "component": "dashboard.enrollment-year-range"
+        }
+    }
+}

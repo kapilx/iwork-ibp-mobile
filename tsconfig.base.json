@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "importHelpers": true,
+    "isolatedModules": true,
+    "lib": ["es2022"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "target": "es2022",
+    "paths": {
+      "@ui/container/hooks/*": ["apps/ui/container/src/app/hooks/*"],
+      "@ui/container/redux/*": ["apps/ui/container/src/app/redux/*"],
+      "@ui/ui-lib": ["apps/ui/ui-lib/src/index.ts"],
+      "@ui/ui-lib/*": ["apps/ui/ui-lib/src/lib/*"]
+    }
+  }
+}

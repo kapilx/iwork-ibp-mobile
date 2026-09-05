@@ -1,0 +1,14 @@
+{
+    "collectionName": "components_dashboard_personal_insurances_headings",
+    "info": {
+        "displayName": "Personal Insurances Heading",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "heading": {
+            "type": "string",
+            "required": true
+        }
+    }
+}

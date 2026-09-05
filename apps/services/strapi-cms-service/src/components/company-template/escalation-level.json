@@ -1,0 +1,15 @@
+{
+    "collectionName": "components_company_template_escalation_levels",
+    "info": {
+        "displayName": "Escalation Level",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "primary": {
+            "type": "component",
+            "repeatable": true,
+            "component": "company-template.contact-person"
+        }
+    }
+}

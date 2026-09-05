@@ -1,0 +1,138 @@
+export const quoteComparisionReportConfig = [
+  {
+    key: "placementDynamicsSetion",
+    title: "Placement dynamics",
+    config: [
+      {
+        key: "insuranceMarket",
+        name: "insuranceMarket",
+        type: "textarea",
+        label: "Insurance Market",
+        gridColumn: 9,
+        componentProps: {
+          rows: 4,
+          fullWidth: true,
+          multiline: true,
+          placeholder: "Enter Text here...",
+        },
+      },
+      {
+        key: "clientSpecific",
+        name: "clientSpecific",
+        type: "textarea",
+        label: "Client Specific",
+        gridColumn: 9,
+        componentProps: {
+          rows: 4,
+          fullWidth: true,
+          multiline: true,
+          placeholder: "Enter Text here...",
+        },
+      },
+      {
+        key: "issuesFaced",
+        name: "issuesFaced",
+        type: "textarea",
+        label: "Issues Faced by us",
+        gridColumn: 9,
+        componentProps: {
+          rows: 4,
+          fullWidth: true,
+          multiline: true,
+          placeholder: "Enter Text here...",
+        },
+      },
+      {
+        key: "industryBenchmarkingComments",
+        name: "industryBenchmarkingComments",
+        type: "textarea",
+        label: "Industry benchmarking comments",
+        gridColumn: 9,
+        componentProps: {
+          rows: 4,
+          fullWidth: true,
+          multiline: true,
+          placeholder: "Enter Text here...",
+        },
+      },
+      {
+        key: "analysisRecommendation",
+        name: "analysisRecommendation",
+        type: "textarea",
+        label: "Our Analysis and Recommendation",
+        gridColumn: 9,
+        componentProps: {
+          rows: 4,
+          fullWidth: true,
+          multiline: true,
+          placeholder: "Enter Text here...",
+        },
+      },
+      {
+        key: "overallComments",
+        name: "overallComments",
+        type: "textarea",
+        label: "Overall Comments",
+        gridColumn: 9,
+        componentProps: {
+          rows: 4,
+          fullWidth: true,
+          multiline: true,
+          placeholder: "Enter Text here...",
+        },
+      },
+      {
+        key: "remarks",
+        name: "remarks",
+        type: "textarea",
+        label: "Remarks",
+        gridColumn: 9,
+        componentProps: {
+          rows: 4,
+          fullWidth: true,
+          multiline: true,
+          placeholder: "Enter Text here...",
+        },
+      },
+    ],
+    defaultValues: {
+      remarks: "",
+      issuesFaced: "",
+      clientSpecific: "",
+      insuranceMarket: "",
+      overallComments: "",
+      analysisRecommendation: "",
+      industryBenchmarkingComments: "",
+    },
+    containerStyles: {
+      gap: "16px",
+      display: "flex",
+      flexDirection: "column",
+    },
+  },
+  {
+    key: "documents",
+    config: [
+      {
+        key: "documents",
+        name: "documents",
+        type: "documentupload",
+        label: "Documents",
+        companyId: "#${companyId}",
+        gridColumn: 9,
+        componentProps: {
+          isDocumentTypeRequired: true,
+          isDocumentRequired: true,
+          fullWidth: true,
+          companyType: "opportunity",
+        },
+      },
+    ],
+    defaultValues: [
+      {
+        documentId: null,
+        documentTypeLid: null,
+      },
+    ],
+  },
+];

@@ -1,0 +1,56 @@
+{
+  "name": "@insurance-wellness-hub/ibp",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "nx": {
+    "targets": {
+      "serve": {
+        "executor": "@nx/vite:dev-server",
+        "options": {
+          "buildTarget": "@insurance-wellness-hub/ibp:build",
+          "viteConfig": "apps/ui/ibp/vite.config.ts"
+        },
+        "configurations": {
+          "development": {
+            "viteConfig": "apps/ui/ibp/vite.config.ts",
+            "mode": "development"
+          },
+          "production": {
+            "viteConfig": "apps/ui/ibp/vite.config.ts",
+            "mode": "production"
+          }
+        }
+      },
+      "build": {
+        "executor": "@nx/vite:build",
+        "outputs": [
+          "{workspaceRoot}/dist/apps/ui/ibp"
+        ],
+        "options": {
+          "outputPath": "dist/apps/ui/ibp",
+          "viteConfig": "apps/ui/ibp/vite.config.ts"
+        },
+        "configurations": {
+          "development": {
+            "viteConfig": "apps/ui/ibp/vite.config.ts"
+          },
+          "production": {
+            "viteConfig": "apps/ui/ibp/vite.config.ts"
+          }
+        }
+      },
+      "lint": {
+        "executor": "@nx/eslint:lint",
+        "options": {
+          "lintFilePatterns": [
+            "apps/ui/ibp/**/*.{ts,tsx}"
+          ]
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "lucide-react": "^0.574.0"
+  }
+}

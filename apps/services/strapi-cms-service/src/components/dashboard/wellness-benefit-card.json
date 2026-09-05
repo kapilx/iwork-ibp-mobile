@@ -1,0 +1,30 @@
+{
+    "collectionName": "components_dashboard_wellness_benefit_cards",
+    "info": {
+        "displayName": "Wellness Benefit Card",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "subtitle": {
+            "type": "string",
+            "required": true
+        },
+        "descriptionItems": {
+            "type": "json",
+            "required": true
+        },
+        "buttonLabel": {
+            "type": "string",
+            "required": true
+        },
+        "date": {
+            "type": "string",
+            "required": true
+        }
+    }
+}

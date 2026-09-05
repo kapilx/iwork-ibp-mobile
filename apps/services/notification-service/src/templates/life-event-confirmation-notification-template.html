@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Life Event Confirmation - IIRM</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #eef2f7; font-family: Arial, Helvetica, sans-serif; color: #2f2f2f; }
+    table { border-spacing: 0; border-collapse: collapse; }
+    img { border: 0; display: block; max-width: 100%; height: auto; }
+    .email-wrap { width: 100%; background-color: #eef2f7; padding: 16px 0; }
+    .email-container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(15,79,194,0.10); }
+    .top-strip { background: linear-gradient(90deg, #0f4c8a 0%, #1a9ad7 100%); height: 5px; }
+    .header-row { padding: 10px 20px 8px; background: #ffffff; }
+    .header-right { text-align: right; }
+    .iirm-logo { width: 80px; margin-left: auto; }
+    .hero { padding: 14px 20px 16px; background: linear-gradient(135deg, #0f4c8a 0%, #1a9ad7 100%); }
+    .hero-name { margin: 0 0 2px; font-size: 13px; color: rgba(255,255,255,0.85); }
+    .hero-title { margin: 0 0 2px; font-size: 20px; font-weight: 700; color: #ffffff; }
+    .hero-sub { margin: 4px 0 0; font-size: 12px; color: rgba(255,255,255,0.8); }
+    .section { padding: 12px 20px 0; }
+    .section-label { font-size: 10px; font-weight: 700; color: #0f4c8a; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 8px; border-left: 3px solid #1a9ad7; padding-left: 8px; }
+    /* Change cards */
+    .change-card { border-radius: 8px; margin-bottom: 6px; overflow: hidden; }
+    .change-card-add { background: #f0fdf4; border: 1px solid #86efac; border-left: 4px solid #22c55e; }
+    .change-card-delete { background: #fff1f2; border: 1px solid #fca5a5; border-left: 4px solid #ef4444; }
+    .change-card-body { padding: 8px 12px; }
+    .badge { display: inline-block; border-radius: 999px; padding: 2px 10px; font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .badge-add { background: #22c55e; }
+    .badge-delete { background: #ef4444; }
+    .change-row { font-size: 12px; color: #374151; margin: 2px 0; }
+    /* Group card — one box per GMC / GPA / GTL */
+    .group-card { border: 1px solid #c5d8f0; border-left: 4px solid #1a9ad7; border-radius: 10px; margin-bottom: 10px; overflow: hidden; background: #ffffff; }
+    .group-header-cell { background: linear-gradient(90deg, #eef5ff 0%, #e2effe 100%); border-bottom: 1px solid #c5d8f0; padding: 8px 14px; }
+    .group-name { margin: 0; font-size: 11px; font-weight: 700; color: #0f4c8a; text-transform: uppercase; letter-spacing: 0.9px; }
+    /* Each policy row inside the group */
+    .policy-row-cell { padding: 10px 14px; background: #ffffff; vertical-align: top; }
+    .policy-row-sep { border-top: 1px solid #e4effe; }
+    .policy-row-name { margin: 0 0 1px; font-size: 12px; font-weight: 700; color: #1e3a8a; }
+    .policy-row-period { margin: 0 0 6px; font-size: 10px; color: #6b7ea8; }
+    /* 4-column stats grid */
+    .stats-grid { width: 100%; border-collapse: collapse; margin-bottom: 6px; background: #ffffff; border-radius: 8px; border: 1px solid #dce8f8; overflow: hidden; }
+    .stats-grid td { width: 25%; padding: 7px 6px; vertical-align: top; text-align: center; border-right: 1px solid #dce8f8; }
+    .stats-grid td:last-child { border-right: none; }
+    .stat-label { font-size: 9px; color: #6b7ea8; margin: 0 0 3px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .stat-value { font-size: 12px; font-weight: 700; color: #0f2d5e; margin: 0; }
+    .stat-note { font-size: 9px; color: #718096; font-weight: normal; display: block; margin-top: 2px; }
+    .divider { border: none; border-top: 1px solid #d0dff5; margin: 6px 0; }
+    .members-label { font-size: 10px; font-weight: 700; color: #4a5568; margin: 0 0 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .member-pill { display: inline-block; background: #dbeafe; color: #1e3a8a; border-radius: 20px; padding: 2px 8px; font-size: 11px; margin: 2px 2px 2px 0; }
+    /* Overall summary */
+    .summary-card { background: linear-gradient(135deg, #0f4c8a 0%, #1a9ad7 100%); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+    .summary-grid { width: 100%; border-collapse: collapse; }
+    .summary-grid td { padding: 10px 12px; vertical-align: top; text-align: center; }
+    .summary-grid td:not(:last-child) { border-right: 1px solid rgba(255,255,255,0.2); }
+    .summary-stat-label { font-size: 10px; color: rgba(255,255,255,0.75); margin: 0 0 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .summary-stat-value { font-size: 15px; font-weight: 700; color: #ffffff; margin: 0; }
+    .summary-stat-note { font-size: 9px; color: rgba(255,255,255,0.65); display: block; margin-top: 2px; }
+    /* Status */
+    .status-card { background: #f0fff8; border: 1px solid #b2f0d4; border-left: 4px solid #22c55e; border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; }
+    .status-row { font-size: 12px; color: #1a3a2a; margin: 4px 0; }
+    .badge-success { display: inline-block; background: #22c55e; color: #fff; border-radius: 999px; padding: 2px 10px; font-size: 11px; font-weight: 700; margin-left: 6px; vertical-align: middle; }
+    .support-card { background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; font-size: 12px; color: #78350f; }
+    .closing-row { padding: 6px 20px 12px; }
+    .closing-text { font-size: 12px; line-height: 1.6; color: #4a5568; margin: 0; }
+    .footer { background: #0f2d5e; color: #a8bbd4; text-align: center; font-size: 11px; padding: 10px 18px; }
+    @media only screen and (max-width: 480px) {
+      .email-container { border-radius: 0 !important; }
+      .hero { padding: 14px 16px 16px !important; }
+      .hero-title { font-size: 19px !important; }
+      .section { padding: 14px 14px 0 !important; }
+      .stats-grid td { display: block !important; width: 100% !important; border-right: none !important; border-bottom: 1px solid #dce8f8; text-align: left !important; }
+      .stats-grid td:last-child { border-bottom: none !important; }
+      .summary-grid td { display: block !important; width: 100% !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.2); padding: 10px 14px !important; text-align: left !important; }
+      .summary-grid td:last-child { border-bottom: none !important; }
+      .stat-value { font-size: 13px !important; }
+      .summary-stat-value { font-size: 15px !important; }
+    }
+  </style>
+</head>
+<body>
+  <table class="email-wrap" width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr><td align="center">
+      <table class="email-container" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
+
+        <tr><td class="top-strip"></td></tr>
+
+        <tr>
+          <td class="header-row">
+            <table width="100%" cellpadding="0" cellspacing="0"><tr>
+              <td class="header-right"><img src="{{iirmLogoUrl}}" alt="IIRM" class="iirm-logo" /></td>
+            </tr></table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="hero">
+            <p class="hero-name">Hi {{employeeName}},</p>
+            <h1 class="hero-title">Life Event Confirmed &#10003;</h1>
+            <p class="hero-sub">Your {{lifeEventActionLabel}} for <strong>{{lifeEventTitle}}</strong> has been confirmed successfully.</p>
+          </td>
+        </tr>
+
+        <!-- Requested Changes -->
+        <tr>
+          <td class="section">
+            <p class="section-label">Requested Changes</p>
+
+            {{#if addedDependents.length}}
+              {{#each addedDependents}}
+                <div class="change-card change-card-add">
+                  <div class="change-card-body">
+                    <span class="badge badge-add">ADDED</span>
+                    <p class="change-row"><strong>Name:</strong> {{name}}</p>
+                    <p class="change-row"><strong>Relation:</strong> {{relation}}</p>
+                    {{#if gender}}<p class="change-row"><strong>Gender:</strong> {{gender}}</p>{{/if}}
+                    {{#if dateOfBirth}}<p class="change-row"><strong>Date of Birth:</strong> {{dateOfBirth}}</p>{{/if}}
+                  </div>
+                </div>
+              {{/each}}
+            {{/if}}
+
+            {{#if deletedDependents.length}}
+              {{#each deletedDependents}}
+                <div class="change-card change-card-delete">
+                  <div class="change-card-body">
+                    <span class="badge badge-delete">REMOVED</span>
+                    <p class="change-row"><strong>Name:</strong> {{name}}</p>
+                    <p class="change-row"><strong>Relation:</strong> {{relation}}</p>
+                    {{#if gender}}<p class="change-row"><strong>Gender:</strong> {{gender}}</p>{{/if}}
+                    {{#if dateOfBirth}}<p class="change-row"><strong>Date of Birth:</strong> {{dateOfBirth}}</p>{{/if}}
+                  </div>
+                </div>
+              {{/each}}
+            {{/if}}
+
+            {{#unless changedDependents.length}}
+              <p style="color:#718096;font-size:13px;margin:0 0 12px;">No dependent changes recorded.</p>
+            {{/unless}}
+          </td>
+        </tr>
+
+        <!-- Updated Policy Details -->
+        <tr>
+          <td class="section">
+            <p class="section-label">Updated Policy Details</p>
+
+            {{#if groupedPolicies.length}}
+              {{#each groupedPolicies}}
+                <table class="group-card" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;border-spacing:0;">
+                  <tr>
+                    <td class="group-header-cell">
+                      <p class="group-name">{{groupName}}</p>
+                    </td>
+                  </tr>
+                  {{#each policies}}
+                  <tr>
+                    <td class="policy-row-cell{{#unless @first}} policy-row-sep{{/unless}}">
+                      <p class="policy-row-name">{{componentLabel}}</p>
+                      <p class="policy-row-period">{{policyStartDate}} &ndash; {{policyEndDate}}</p>
+
+                      <table class="stats-grid" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td>
+                            <p class="stat-label">Sum Insured</p>
+                            <p class="stat-value">&#8377;{{formatNumber sumInsured}}</p>
+                          </td>
+                          <td>
+                            <p class="stat-label">Premium</p>
+                            <p class="stat-value">&#8377;{{formatNumber premium}}</p>
+                          </td>
+                          <td>
+                            <p class="stat-label">Company Pay</p>
+                            <p class="stat-value">&#8377;{{formatNumber companyPaid}}</p>
+                          </td>
+                          <td>
+                            <p class="stat-label">Employee Pay</p>
+                            <p class="stat-value">&#8377;{{formatNumber selfPaid}}</p>
+                            {{#if isGstApplicable}}<p class="stat-note">Base &#8377;{{formatNumber selfPaidBase}} + GST &#8377;{{formatNumber gstAmount}}</p>{{/if}}
+                          </td>
+                        </tr>
+                      </table>
+
+                      <hr class="divider" />
+
+                      <p class="members-label">MEMBERS COVERED ({{totalLives}} lives)</p>
+                      {{#if dependentDetails.length}}
+                        {{#each dependentDetails}}
+                          <span class="member-pill">{{name}} &bull; {{relation}}</span>
+                        {{/each}}
+                      {{else}}
+                        <span class="member-pill">Self</span>
+                      {{/if}}
+                    </td>
+                  </tr>
+                  {{/each}}
+                </table>
+              {{/each}}
+            {{else}}
+              <p style="color:#718096;font-size:13px;">No affected policy details available.</p>
+            {{/if}}
+          </td>
+        </tr>
+
+        <!-- Overall Summary -->
+        <tr>
+          <td class="section" style="padding-bottom:0;">
+            <p class="section-label">Overall Summary</p>
+            <table class="summary-card" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td>
+                  <table class="summary-grid" width="100%" cellpadding="0" cellspacing="0"><tr>
+                    <td>
+                      <p class="summary-stat-label">Total Premium</p>
+                      <p class="summary-stat-value">&#8377;{{formatNumber totalPremium}}</p>
+                    </td>
+                    <td>
+                      <p class="summary-stat-label">Company Contribution</p>
+                      <p class="summary-stat-value">&#8377;{{formatNumber totalCompanyPaid}}</p>
+                    </td>
+                    <td>
+                      <p class="summary-stat-label">Employee Pay</p>
+                      <p class="summary-stat-value">&#8377;{{formatNumber totalSelfPaid}}</p>
+                      {{#if isGstApplicable}}<p style="font-size:9px;color:rgba(255,255,255,0.7);margin:2px 0 0;">incl. 18% GST</p>{{/if}}
+                    </td>
+                  </tr></table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Request Status -->
+        <tr>
+          <td class="section" style="padding-top:14px;">
+            <p class="section-label">Request Status</p>
+            <div class="status-card">
+              <p class="status-row"><strong>Status:</strong> Successfully Submitted <span class="badge-success">CONFIRMED</span></p>
+              <p class="status-row"><strong>Life Event:</strong> {{lifeEventTitle}}</p>
+              <p class="status-row"><strong>Submission Date:</strong> {{submissionDate}}</p>
+              <p class="status-row"><strong>Reference Number:</strong> {{referenceNumber}}</p>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Support -->
+        
+
+        <tr>
+          <td class="closing-row">
+{{#if primaryEscalationEmail}}
+<h3 style="margin:0 0 10px;font-size:16px;line-height:1.4;font-weight:bold;color:#0f6fc2;font-family:Arial,Helvetica,sans-serif;">Support Contacts</h3>
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;background:#f8f8f8;border:1px solid #d9dde3;border-left:5px solid #1a73e8;border-radius:10px;margin:0 0 14px;">
+  <tr><td style="padding:18px 22px;font-size:14px;line-height:1.65;color:#3d4b59;font-family:Arial,Helvetica,sans-serif;">
+    For any queries related to life event changes, coverage, or claims, please contact your HR team or TPA coordinator.
+  </td></tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:separate;background:#f8f8f8;border:1px solid #d9dde3;border-left:5px solid #1a73e8;border-radius:10px;margin:0 0 14px;">
+  <tr><td style="padding:18px 22px;font-family:Arial,Helvetica,sans-serif;">
+    <div style="font-size:12px;font-weight:bold;color:#0f6fc2;padding-bottom:5px;">Primary Contact</div>
+    <div style="font-size:14px;line-height:1.65;color:#3d4b59;">
+      <strong style="color:#1a202c;">{{primaryEscalationName}}</strong><br />
+      Email: {{primaryEscalationEmail}}<br />Phone: {{primaryEscalationPhone}}
+    </div>
+    {{#if secondaryEscalationEmail}}
+    <div style="border-top:1px solid #e3e8ef;margin:14px 0 0;padding-top:14px;">
+      <div style="font-size:12px;font-weight:bold;color:#0f6fc2;padding-bottom:5px;">Secondary Contact</div>
+      <div style="font-size:14px;line-height:1.65;color:#3d4b59;">
+        <strong style="color:#1a202c;">{{secondaryEscalationName}}</strong><br />
+        Email: {{secondaryEscalationEmail}}<br />Phone: {{secondaryEscalationPhone}}
+      </div>
+    </div>
+    {{/if}}
+  </td></tr>
+</table>
+{{/if}}
+              
+
+            <p class="closing-text">
+              We recommend keeping this email for your records.<br />
+              Thank you for keeping your insurance details up to date.<br /><br />
+              Warm regards,<br /><strong>Team IIRM</strong>
+            </p>
+          </td>
+        </tr>
+
+        <tr><td class="footer">&copy; Copyright {{currentYear}} IIRM. All Rights Reserved</td></tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>

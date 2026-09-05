@@ -1,0 +1,87 @@
+{
+    "name": "@insurance-wellness-hub/strapi-cms-service",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "develop": "BROWSER=none node -r dotenv/config ../../../node_modules/.bin/strapi develop dotenv_config_path=../../../environments/.env.dev",
+        "start": "node ../../../node_modules/.bin/strapi start",
+        "start:local": "node -r dotenv/config ../../../node_modules/.bin/strapi start dotenv_config_path=../../../environments/.env.prod",
+        "build": "strapi build",
+        "build:local": "node -r dotenv/config ../../../node_modules/.bin/strapi build dotenv_config_path=../../../environments/.env.prod",
+        "strapi": "strapi",
+        "ts:generate-types": "strapi ts:generate-types"
+    },
+    "nx": {
+        "targets": {
+            "build": {
+                "executor": "nx:run-commands",
+                "options": {
+                    "command": "cd apps/services/strapi-cms-service && npm run build"
+                },
+                "configurations": {
+                    "development": {
+                        "command": "cd apps/services/strapi-cms-service && NODE_ENV=development npm run build"
+                    },
+                    "production": {
+                        "command": "cd apps/services/strapi-cms-service && NODE_ENV=production npm run build"
+                    },
+                    "production:local": {
+                        "command": "cd apps/services/strapi-cms-service && NODE_ENV=production npm run build:local"
+                    }
+                }
+            },
+            "serve": {
+                "executor": "nx:run-commands",
+                "defaultConfiguration": "development",
+                "options": {
+                    "command": "cd apps/services/strapi-cms-service && npm run develop"
+                },
+                "configurations": {
+                    "development": {
+                        "command": "cd apps/services/strapi-cms-service && NODE_ENV=development npm run develop"
+                    },
+                    "production": {
+                        "command": "cd apps/services/strapi-cms-service && NODE_ENV=production npm run start"
+                    },
+                    "production:local": {
+                        "command": "cd apps/services/strapi-cms-service && NODE_ENV=production npm run start:local"
+                    }
+                }
+            },
+            "test": {
+                "options": {
+                    "passWithNoTests": true
+                }
+            }
+        }
+    },
+    "dependencies": {
+        "@strapi/plugin-cloud": "^5.48.1",
+        "@strapi/plugin-users-permissions": "^5.48.1",
+        "@strapi/strapi": "^5.48.1",
+        "axios": "^1.16.0",
+        "better-sqlite3": "^11.8.1",
+        "dotenv": "^16.0.0",
+        "jsonwebtoken": "^9.0.3",
+        "knex": "^3.1.0",
+        "pg": "^8.13.1",
+        "prismjs": "^1.30.0",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "react-router-dom": "^6.30.3",
+        "strapi-plugin-jodit-editor": "^1.1.3",
+        "styled-components": "^6.3.8"
+    },
+    "devDependencies": {
+        "@types/jsonwebtoken": "^9.0.10",
+        "@types/node": "^22.10.2",
+        "typescript": "^5.7.2"
+    },
+    "strapi": {
+        "uuid": "strapi-cms-service-uuid-001"
+    },
+    "engines": {
+        "node": ">=18.0.0 <=22.x.x",
+        "npm": ">=6.0.0"
+    }
+}

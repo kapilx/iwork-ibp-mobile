@@ -1,0 +1,92 @@
+Input:
+
+{
+    "UserName":"iirmhclwebservice",
+"Password":"iirmhcl$123",
+"Flag_operationType":"ET",
+ "SelfCount": 2,
+"Del_hcldepid":0,
+"wef":"2021-08-03",
+"Del_deletionremarks":"",
+"prom_ctc":0,
+"prom_grade":"",
+"prom_companyid":0,
+"prom_basesi":0,
+
+ "objEMPLOYEE_DATA": [{
+		"E_EMP_HCL": {
+         "ENCRYPT_EIN": "H84W8p+rJtNQPl4kZNGxFQ==",
+         "EIN": "51854879",
+         "CTC": 1,
+         "NO_OF_DEPENDENTS": 3,
+         "IS_ESI": 0,
+         "INSUREDNAME": "Gulam Mazhar",
+         "HCL_ENTITY": "5050",
+         "TRIGGER_FLAG": 1,
+         "IS_SEZ": 1,
+         "IS_EMCP": 1,
+         "EMAIL": "GULAM.MAZHAR@HCL.COM",
+         "MOBILE": "7682964667",
+         "GRADE": "E5",
+         "DOB": "1996-02-15",
+         "DOJ": "2019-10-11",
+         "INDIANADDRESS": "opposite Veterinary Hospital,Pugmil Road,Hazaribagh,Hazaribagh,825301",
+         "MARITAL_STATUS": "N",
+         "GENDER": "M",
+         "OLDEMPID": 0,
+         "LOCATION": "",
+         "CHECK_SUM": "9944c079f868931d121aca110a0be229e4e7df21",
+         "BLOOD_GROUP": 0,
+         "IS_EMPAD":0
+      },
+		"E_DEP_HCL": [{
+			"HCL_DEPID": 35,
+			"DEP_NAME": "NEHA",
+			"HCL_DEPADDON": "2017-04-09 12:12:12",
+			"HCL_DEPREL": 7,
+			"DEP_DOB": "1993-02-01",
+			"DEP_GENDER": "F",
+			"MARITAL_STATUS": "N",
+			"CHECK_SUM":"c358f66caf699031006851f1d643664f9dba1590",
+			"TRIGGER_FLAG":6,
+                         "IS_DEP_EMCP":1
+			
+		}, {
+				"HCL_DEPID": 36,
+			"DEP_NAME": "RISHAB",
+			"HCL_DEPADDON": "2017-04-09 12:12:12",
+			"HCL_DEPREL": 1,
+			"DEP_DOB": "1945-11-23",
+			"DEP_GENDER": "M",
+			"MARITAL_STATUS": "M",
+			"CHECK_SUM":"e2e0b7388bd369c5aa8466698bc1ad6db0977b57",
+			"TRIGGER_FLAG":6,
+                        "IS_DEP_EMCP":1
+		}, {
+			"HCL_DEPID": 37,
+			"DEP_NAME": "Roshan",
+			"HCL_DEPADDON": "2017-04-09 12:12:12",
+			"HCL_DEPREL": 9,
+			"DEP_DOB": "2015-01-02",
+			"DEP_GENDER": "M",
+			"MARITAL_STATUS": "N",
+			"CHECK_SUM":"b873127a269d0a2c271e57c345666dea8d99dbac",
+			"TRIGGER_FLAG":6,
+                        "IS_DEP_EMCP":0
+		}]
+	}]
+
+
+	}
+
+============================================
+output:
+{
+    "GetEmpStatus": null,
+    "GetStatus": {
+        "callStatus": true,
+        "procedureStatus": true,
+        "returnMessage": "Employee Transferred TO EMCP Successfully",
+        "returnValue": 1
+    }
+}

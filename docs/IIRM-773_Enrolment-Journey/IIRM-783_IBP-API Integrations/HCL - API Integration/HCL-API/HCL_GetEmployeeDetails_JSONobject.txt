@@ -1,0 +1,71 @@
+Input JsonObject:
+
+{
+   "UserName": "iirmhclwebservice",
+   "Password": "iirmhcl$123",
+   "Flag_operationType":"GE",
+ "SelfCount": 2,
+"objEMPLOYEE_DATA": [{
+      "E_EMP_HCL": {
+         "ENCRYPT_EIN": "8lHeayNVa2kooQl5zVOEPQ==",
+         "EIN": "51854767"
+   
+      }
+},{
+ "E_EMP_HCL": {
+      "ENCRYPT_EIN": "CZGafT2A7yxGMDlmB6jk3w==",
+         "EIN": "51854767"
+      }
+}]
+
+}
+
+===========================================================
+Ouput JsonObject:
+
+{
+    "GetEmpDetails": {
+        "ObjectList": [
+            {
+                "Indiainsure_portal_entry_date": "10/26/2021 12:00:00 AM",
+                "Indiainsure_portal_submit_date": "",
+                "callStatus": true,
+                "deleted_in_iirm_portal_date": "",
+                "ein": "51854767",
+                "endorsementremarks": "",
+                "oic_endorsement_no": "",
+                "oic_policy_no": "124500/48/2021/8833",
+                "oic_risk_id": "",
+                "procedureStatus": false,
+                "returnMessage": "Employee details Fetched successfully.",
+                "returnValue": 1,
+                "risk_id_generated_on": "",
+                "tpaid": ""
+            },
+            {
+                "Indiainsure_portal_entry_date": "10/26/2021 12:00:00 AM",
+                "Indiainsure_portal_submit_date": "",
+                "callStatus": true,
+                "deleted_in_iirm_portal_date": "",
+                "ein": "51854767",
+                "endorsementremarks": "",
+                "oic_endorsement_no": "",
+                "oic_policy_no": "124500/48/2021/8833",
+                "oic_risk_id": "",
+                "procedureStatus": false,
+                "returnMessage": "Employee details Fetched successfully.",
+                "returnValue": 1,
+                "risk_id_generated_on": "",
+                "tpaid": ""
+            }
+        ],
+        "Status": {
+            "callStatus": true,
+            "procedureStatus": false,
+            "returnMessage": "",
+            "returnValue": 0
+        }
+    },
+    "GetEmpStatus": null,
+    "GetStatus": null
+}

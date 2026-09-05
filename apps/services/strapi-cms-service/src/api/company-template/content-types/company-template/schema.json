@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "company_templates",
+  "info": {
+    "singularName": "company-template",
+    "pluralName": "company-templates",
+    "displayName": "Company Template"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "companyId": {
+      "type": "string",
+      "required": true
+    },
+    "config": {
+      "type": "component",
+      "repeatable": false,
+      "component": "company-template.company-template-config"
+    }
+  }
+}
+

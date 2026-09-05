@@ -1,0 +1,62 @@
+{
+    "collectionName": "components_dashboard_claim_summary_labels",
+    "info": {
+        "displayName": "Claim Summary Labels",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "pageTitle": {
+            "type": "string",
+            "required": true
+        },
+        "claimStatus": {
+            "type": "string",
+            "required": true
+        },
+        "totalClaims": {
+            "type": "string",
+            "required": true
+        },
+        "approved": {
+            "type": "string",
+            "required": true
+        },
+        "pending": {
+            "type": "string",
+            "required": true
+        },
+        "actionRequired": {
+            "type": "string",
+            "required": true
+        },
+        "policyNumber": {
+            "type": "string",
+            "required": true
+        },
+        "policyExpiry": {
+            "type": "string",
+            "required": true
+        },
+        "sumInsured": {
+            "type": "string",
+            "required": true
+        },
+        "available": {
+            "type": "string",
+            "required": true
+        },
+        "claimed": {
+            "type": "string",
+            "required": true
+        },
+        "claimRequested": {
+            "type": "string",
+            "required": true
+        },
+        "claimAmount": {
+            "type": "string",
+            "required": true
+        }
+    }
+}

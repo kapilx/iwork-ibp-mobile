@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enrollment Email</title>
+  <style>
+    body { margin:0; padding:0; background-color:#ffffff; font-family:Arial, Helvetica, sans-serif; color:#2f2f2f; }
+    table { border-spacing:0; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+    img { border:0; outline:none; text-decoration:none; display:block; max-width:100%; height:auto; }
+
+    .email-wrap { width:100%; background-color:#ffffff; }
+    .email-container { width:600px; max-width:600px; margin:0 auto; background-color:#ffffff; border:1px solid #e3e8ef; border-radius:8px; }
+    .top-strip { background-color:#0f6fc2; height:8px; border-radius:8px 8px 0 0; }
+
+    .header-row { background-color:#ffffff; padding:24px 24px 8px 24px; }
+    .top-inner { width:100%; }
+    .top-right { width:100%; text-align:right; vertical-align:middle; }
+
+    .iirm-logo { max-width:110px; height:auto; margin-left:auto; }
+
+    .content { padding:0 24px; }
+    .hello { font-size:18px; margin:0 0 14px; color:#222222; }
+
+    .hero-section { padding:0 24px 10px; }
+    .hero-left { width:65%; vertical-align:top; padding-right:10px; }
+    .hero-right { width:35%; text-align:right; vertical-align:middle; }
+
+    .main-title { font-size:21px; font-weight:700; margin:0; line-height:1.3; color:#1f1f1f; }
+    .sub-text { font-size:14px; color:#4d5b6a; margin-top:10px; line-height:1.6; }
+    .illustration { width:180px; margin-left:auto; }
+
+    .section { padding:0 24px 20px; }
+
+    .info-card {
+      width:100%;
+      background-color:#f8f8f8;
+      border:1px solid #d9dde3;
+      border-left:5px solid #1a73e8;
+      border-radius:8px;
+    }
+    .info-card-cell { padding:26px 28px; }
+    .info-title { font-size:18px; font-weight:600; margin:0; color:#1f1f1f; }
+    .info-text { font-size:14px; color:#4d5b6a; margin:0 0 10px; line-height:1.6; }
+    .info-list, .info-ol { padding-left:20px; margin:0; font-size:14px; color:#334150; line-height:1.8; }
+
+    .cta-row { padding:10px 24px 28px; }
+    .cta-btn {
+      background-color:#0f6fc2;
+      color:#ffffff !important;
+      text-decoration:none;
+      padding:14px 34px;
+      border-radius:24px;
+      font-size:15px;
+      display:inline-block;
+    }
+
+    .closing-row { padding:0 24px 18px; }
+    .closing-text { font-size:14px; color:#3d4b59; margin:0 0 16px; line-height:1.6; }
+    .signoff { font-size:14px; color:#3d4b59; margin:0; line-height:1.6; }
+
+    .footer {
+      background-color:#152737;
+      color:#c5d1dc;
+      font-size:12px;
+      text-align:center;
+      padding:12px;
+      border-radius:0 0 8px 8px;
+    }
+
+    @media only screen and (max-width:620px) {
+      .email-container { width:100% !important; }
+      .hero-left, .hero-right {
+        display:block !important;
+        width:100% !important;
+        text-align:left !important;
+      }
+      .hero-right { text-align:center !important; padding-top:15px; }
+      .illustration { margin:0 auto; }
+      .header-row, .section, .content, .hero-section, .cta-row, .closing-row {
+        padding-left:16px !important;
+        padding-right:16px !important;
+      }
+      .info-card-cell {
+        padding:22px 20px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <table class="email-wrap" width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center">
+        <table class="email-container" width="600" cellpadding="0" cellspacing="0">
+          <tr>
+            <td class="top-strip"></td>
+          </tr>
+
+          <tr>
+            <td class="header-row">
+              <table class="top-inner" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td class="top-right">
+                    <img src="{{iirmLogoUrl}}" alt="IIRM Logo" class="iirm-logo" />
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="content">
+              <p class="hello">Hello {{employeeName}},</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="hero-section">
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td class="hero-left">
+                    <h2 class="main-title">
+                      You have been successfully added to your organizations employee insurance policy.
+                    </h2>
+                    <p class="sub-text">
+                      This email gives you a quick overview of your coverage and helps you get started with the Employee Insurance Portal.
+                    </p>
+                  </td>
+                  <td class="hero-right">
+                    <img src="{{illustrationLogoUrl}}" alt="Illustration" class="illustration" />
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="section">
+              <table class="info-card" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td class="info-card-cell">
+                    <h3 class="info-title">Your Policy Details</h3>
+                    <div style="width:200px;height:2px;line-height:2px;font-size:0;margin:10px 0 16px 0;"> </div>
+
+                    {{#each policyDetails}}
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td width="38%" valign="top" style="font-size:14px;font-weight:700;color:#3d4b59;padding:6px 0;">
+                          Policy Name:
+                        </td>
+                        <td width="62%" valign="top" style="font-size:14px;color:#3d4b59;padding:6px 0;">
+                          {{policyName}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td width="38%" valign="top" style="font-size:14px;font-weight:700;color:#3d4b59;padding:6px 0;">
+                          Coverage Period:
+                        </td>
+                        <td width="62%" valign="top" style="font-size:14px;color:#3d4b59;padding:6px 0;">
+                          {{policyStartDate}} to {{policyEndDate}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td width="38%" valign="top" style="font-size:14px;font-weight:700;color:#3d4b59;padding:6px 0;">
+                          Members Covered:
+                        </td>
+                        <td width="62%" valign="top" style="font-size:14px;color:#3d4b59;padding:6px 0;">
+                          {{#if membersCovered}}
+                            {{#each membersCovered}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
+                          {{else}}
+                            -
+                          {{/if}}
+                        </td>
+                      </tr>
+                    </table>
+
+                    {{#unless @last}}
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="padding:14px 0;">
+                          <div style="height:1px;background:#e6ebf2;line-height:1px;font-size:0;"> </div>
+                        </td>
+                      </tr>
+                    </table>
+                    {{/unless}}
+                    {{/each}}
+
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="section">
+              <table class="info-card" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td class="info-card-cell">
+                    <h3 class="info-title">Members Covered (All Policies)</h3>
+                    <div style="width:200px;height:2px;line-height:2px;font-size:0;margin:10px 0 16px 0;"> </div>
+                    {{#if membersCovered}}
+                    <ul class="info-list">
+                      {{#each membersCovered}}
+                      <li>{{this}}</li>
+                      {{/each}}
+                    </ul>
+                    {{else}}
+                    <p class="info-text">No covered members available.</p>
+                    {{/if}}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="section">
+              <table class="info-card" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td class="info-card-cell">
+                    <h3 class="info-title">Employee Insurance Portal</h3>
+                    <div style="width:200px;height:2px;line-height:2px;font-size:0;margin:10px 0 16px 0;"> </div>
+                    <p class="info-text">
+                      The Employee Insurance Portal is your central place to manage your insurance benefits.
+                    </p>
+                    <ul class="info-list">
+                      <li>View your policy and coverage details</li>
+                      <li>Check enrolled member information</li>
+                      <li>Access documents and ID cards</li>
+                      <li>Track claims and support</li>
+                    </ul>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="section">
+              <table class="info-card" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td class="info-card-cell">
+                    <h3 class="info-title">How to Access the Portal</h3>
+                          <div style="width:200px;height:2px;line-height:2px;font-size:0;margin:10px 0 16px 0;"> </div>
+                    <ol class="info-ol">
+                      <li>Click the portal link below.</li>
+                      <li>Click the Login button.</li>
+                      <li>On the login screen, choose Email or Phone, based on the enabled option available to you.</li>
+                      <li>Click on Create Password or Forgot Password.</li>
+                      <li>If you choose Email, enter your registered email address (as provided by your organisation HR), and a password reset link will be sent to your email.</li>
+                      <li>If you choose Phone, enter your registered mobile number. An OTP will be sent to your phone, and after successful verification, you will be redirected to the password reset screen.</li>
+                      <li>Set your password and log in anytime.</li>
+                    </ol>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+        <tr>
+          <td class="section">
+            <table class="info-card" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td class="info-card-cell">
+                  <h3 class="info-title">Support Contacts</h3>
+                  <div style="width:200px;height:2px;line-height:2px;font-size:0;margin:10px 0 16px 0;"></div>
+
+                  <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
+                    <tr>
+                      <td width="90%" style="font-size:14px;color:#3d4b59;">
+                        <strong>{{primaryEscalationName}}</strong><br />
+                        Email: {{primaryEscalationEmail}}<br />
+                        Phone: {{primaryEscalationPhone}}
+                      </td>
+                    </tr>
+                  </table>
+
+                  {{#if secondaryEscalationEmail}}
+                  <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td width="90%" style="font-size:14px;color:#3d4b59;">
+                        <strong>{{secondaryEscalationName}}</strong><br />
+                        Email: {{secondaryEscalationEmail}}<br />
+                        Phone: {{secondaryEscalationPhone}}
+                      </td>
+                    </tr>
+                  </table>
+                  {{/if}}
+
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+          <tr>
+            <td class="cta-row">
+              <a href="{{safeUrl portalLink}}" target="_blank" class="cta-btn">Access the Portal</a>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="closing-row">
+              <p class="closing-text">If you need help, contact your HR or the IIRM support team.</p>
+              <p class="signoff">Warm regards,<br />Team IIRM</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="footer">© Copyright {{currentYear}} IIRM. All Rights Reserved</td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

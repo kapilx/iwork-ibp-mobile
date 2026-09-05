@@ -1,0 +1,157 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/ui/container-e2e"
+    },
+    {
+      "path": "./apps/ui/container"
+    },
+    {
+      "path": "./apps/ui/admin-e2e"
+    },
+    {
+      "path": "./apps/ui/admin"
+    },
+    {
+      "path": "./apps/ui/ibp-e2e"
+    },
+    {
+      "path": "./apps/ui/ibp"
+    },
+    {
+      "path": "./apps/ui/iwork-e2e"
+    },
+    {
+      "path": "./apps/ui/iwork"
+    },
+    {
+      "path": "./apps/services/api-gateway-e2e"
+    },
+    {
+      "path": "./apps/services/api-gateway"
+    },
+    {
+      "path": "./apps/services/ai-service-e2e"
+    },
+    {
+      "path": "./apps/services/ai-service"
+    },
+    {
+      "path": "./apps/services/auth-service-e2e"
+    },
+    {
+      "path": "./apps/services/auth-service"
+    },
+    {
+      "path": "./apps/services/config-service-e2e"
+    },
+    {
+      "path": "./apps/services/config-service"
+    },
+    {
+      "path": "./apps/services/connector-service-e2e"
+    },
+    {
+      "path": "./apps/services/connector-service"
+    },
+    {
+      "path": "./apps/services/document-service-e2e"
+    },
+    {
+      "path": "./apps/services/document-service"
+    },
+    {
+      "path": "./apps/services/master-data-service-e2e"
+    },
+    {
+      "path": "./apps/services/master-data-service"
+    },
+    {
+      "path": "./apps/services/notification-service-e2e"
+    },
+    {
+      "path": "./apps/services/notification-service"
+    },
+    {
+      "path": "./apps/services/opportunity-service-e2e"
+    },
+    {
+      "path": "./apps/services/opportunity-service"
+    },
+    {
+      "path": "./apps/services/policy-service-e2e"
+    },
+    {
+      "path": "./apps/services/policy-service"
+    },
+    {
+      "path": "./apps/services/report-service-e2e"
+    },
+    {
+      "path": "./apps/services/report-service"
+    },
+    {
+      "path": "./apps/services/scheduler-service-e2e"
+    },
+    {
+      "path": "./apps/services/scheduler-service"
+    },
+    {
+      "path": "./apps/services/search-service-e2e"
+    },
+    {
+      "path": "./apps/services/search-service"
+    },
+    {
+      "path": "./apps/services/service-registry-e2e"
+    },
+    {
+      "path": "./apps/services/service-registry"
+    },
+    {
+      "path": "./apps/services/wellness-service-e2e"
+    },
+    {
+      "path": "./apps/services/wellness-service"
+    },
+    {
+      "path": "./apps/services/workflow-service-e2e"
+    },
+    {
+      "path": "./apps/services/workflow-service"
+    },
+    {
+      "path": "./apps/services/service-lib"
+    },
+    {
+      "path": "./apps/ui/ui-lib"
+    },
+    {
+      "path": "./apps/services/common-service-e2e"
+    },
+    {
+      "path": "./apps/services/common-service"
+    },
+    {
+      "path": "./apps/services/org-service-e2e"
+    },
+    {
+      "path": "./apps/services/org-service"
+    },
+    {
+      "path": "./apps/services/knowledge-service"
+    },
+    {
+      "path": "./apps/services/ibp-service-e2e"
+    },
+    {
+      "path": "./apps/services/ibp-service"
+    },
+    {
+      "path": "./apps/services/external-integration-service"
+    }
+  ]
+}

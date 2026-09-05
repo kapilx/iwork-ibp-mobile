@@ -1,0 +1,10 @@
+{
+  "name": "@insurance-wellness-hub/admin-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@insurance-wellness-hub/admin"
+    ]
+  }
+}

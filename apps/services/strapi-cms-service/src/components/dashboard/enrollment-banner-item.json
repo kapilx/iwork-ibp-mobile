@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_dashboard_enrollment_banner_items",
+  "info": {
+    "displayName": "Enrollment Banner Item",
+    "description": "Individual enrollment banner item"
+  },
+  "options": {},
+  "attributes": {
+    "header": {
+      "type": "string",
+      "required": true
+    },
+    "subheader": {
+      "type": "text",
+      "required": true
+    },
+    "buttonText": {
+      "type": "string",
+      "required": true,
+      "default": "Start Your Enrolment"
+    },
+    "background": {
+      "type": "string",
+      "required": true,
+      "default": "linear-gradient(90deg, #9BE8F6 0%, #67DFE8 99.39%)"
+    }
+  }
+}

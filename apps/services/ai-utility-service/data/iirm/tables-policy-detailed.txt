@@ -1,0 +1,1530 @@
+POLICY-RELATED TABLES DETAILED SCHEMA
+
+CENTRAL LOOKUP TABLE FOR ALL ENUMERATIONS:
+
+lookup_data
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (lookup_data_id_seq)
+   - lookup_key: VARCHAR(255), NOT NULL (categorizes the lookup type)
+   - lookup_name: VARCHAR(255), NOT NULL (human-readable category name)
+   - value_key: VARCHAR(255), NOT NULL (system key for the value)
+   - value: TEXT, NOT NULL (human-readable display value)
+   - description: TEXT, NULLABLE (additional details about the lookup value)
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - created_by: VARCHAR(255), NOT NULL
+   - updated_by: VARCHAR(255), NULLABLE
+
+LOOKUP_DATA USAGE EXAMPLES:
+- Policy Types: lookup_key = 'policy_type' → values: 'Health Insurance', 'Motor Insurance', 'Fire Insurance', etc.
+- Status Values: lookup_key = 'status' → values: 'Active', 'Inactive', 'Pending', 'Cancelled', etc.
+- Approval Status: lookup_key = 'approval_status' → values: 'Approved', 'Rejected', 'Under Review', etc.
+- Configuration Status: lookup_key = 'configuration_status' → values: 'Draft', 'Published', 'Archived', etc.
+- Enrollment Status: lookup_key = 'enrollment_status' → values: 'Enrolled', 'Pending', 'Declined', etc.
+- Service Levels: lookup_key = 'service_level' → values: 'Basic', 'Standard', 'Premium', etc.
+- Income Types: lookup_key = 'income_type' → values: 'Premium', 'Commission', 'Fee', etc.
+- Document Types: lookup_key = 'document_type' → values: 'Policy Document', 'Certificate', 'Endorsement', etc.
+
+CRITICAL LOOKUP FIELD PATTERNS:
+- Any field ending with '_lid' references lookup_data.id
+- Common patterns: policy_type_lid, status_lid, approval_status_lid, configuration_status_lid, etc.
+- Always JOIN with lookup_data when users provide text values for enum fields
+- Match user input against lookup_data.value WHERE lookup_key = '<appropriate_category>'
+
+CRITICAL QUERY PATTERNS FOR DATA MATCHING:
+- ALWAYS use PostgreSQL single quotes (') for string literals, NEVER double quotes (")
+- For policy names: Use ILIKE '%pattern%' for case-insensitive pattern matching
+- For opportunity names: Search in remarks, sales_pitch, and source fields using ILIKE
+- When exact matches fail, always try pattern matching with wildcards
+- Common policy name patterns: "Company PolicyType", "PolicyType Insurance", "Product Name Policy"
+- Example: WHERE policy_name ILIKE '%Life%' OR policy_name ILIKE '%Assurance%'
+
+SEARCH STRATEGY FOR TEXT FIELDS:
+- policy_name: Direct field search with ILIKE pattern matching
+- opportunity identification: Search in o.remarks, o.sales_pitch, o.source, and join with lookup_data for opportunity_type
+- company identification: Search in c.name, c.contact_info fields
+- Always include ORDER BY for consistent results
+
+1. policy
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_id_seq)
+   - policy_name: VARCHAR(255), NOT NULL  
+   - policy_type_lid: INTEGER, NOT NULL
+   - opportunity_id: INTEGER, NULLABLE, FOREIGN KEY -> opportunity(id)
+   - company_id: INTEGER, NOT NULL, FOREIGN KEY -> company(id)
+   - policy_from: DATE, NOT NULL
+   - policy_to: DATE, NOT NULL
+   - provisional_policy_no: VARCHAR(255), NULLABLE
+   - sum_insured: BIGINT, NULLABLE
+   - premium_at_inception: BIGINT, NULLABLE
+   - service_tax: INTEGER, NULLABLE
+   - gst: NUMERIC(5,2), NULLABLE
+   - insurer_policy_number: VARCHAR(255), NULLABLE
+   - commission_terrorism: NUMERIC(19,2), NULLABLE
+   - policy_configuration: JSON, NULLABLE
+   - configuration_status_lid: INTEGER, NULLABLE
+   - enrollment_status_lid: INTEGER, NULLABLE
+   - status_lid: INTEGER, NOT NULL
+   - created_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_by: INTEGER, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - policy_type: INTEGER, NULLABLE
+   - mig_sum_insured: NUMERIC(19,2), NULLABLE
+   - mig_premium_at_inception: NUMERIC(19,2), NULLABLE
+   - country_id: INTEGER, NULLABLE
+   - is_mined: BOOLEAN, NULLABLE, DEFAULT false
+   - opportunity_type: VARCHAR(2), NULLABLE, DEFAULT 'SO'
+   - brokerage_amount: NUMERIC(12,2), NULLABLE, DEFAULT 0
+   - insurer_endorsement_number: VARCHAR(255), NULLABLE
+   - date_of_income: TIMESTAMP, NULLABLE
+   - service_tax_amount: NUMERIC(19,2), NULLABLE
+   - net_premium_amount: NUMERIC(19,2), NULLABLE
+   - terrorism_amount: NUMERIC(19,2), NULLABLE
+   - other_amount: NUMERIC(19,2), NULLABLE
+   - gross_premium_amount: NUMERIC(19,2), NULLABLE
+   - brokerage_amount_asper_iwork: NUMERIC(19,2), NULLABLE
+   - brokerage_amount_asper_isg: NUMERIC(19,2), NULLABLE
+   - fee_amount: NUMERIC(19,2), NULLABLE
+   - od_percentage: NUMERIC(5,2), NULLABLE
+   - tp_percentage: NUMERIC(5,2), NULLABLE
+   - net_percentage: NUMERIC(5,2), NULLABLE
+   - share_percentage: NUMERIC(5,2), NULLABLE
+   - commission_terrorism_percentage: NUMERIC(5,2), NULLABLE
+   - income_type_lid: INTEGER, NULLABLE
+   - deal_confirmed_lid: INTEGER, NULLABLE
+   - policy_group_type_lid: INTEGER, NULLABLE
+   - income_month: DATE, NULLABLE
+   - date_of_income_from_iwork: DATE, NULLABLE
+   - owner_id: INTEGER, NULLABLE
+   - mig_ref_no: VARCHAR(255), NULLABLE
+   - premium_collected: NUMERIC, NULLABLE, DEFAULT 0
+   - ingested_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - ingested_mode: VARCHAR(255), NULLABLE, DEFAULT 'APPLICATION'
+
+2. policy_cd_number_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_cd_number_map_id_seq)
+   - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+   - cd_id: INTEGER, NOT NULL, FOREIGN KEY -> opportunity_placement_slip_cd_detail(id)
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+
+3. policy_configuration
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_configuration_id_seq)
+   - company_id: INTEGER, NOT NULL, FOREIGN KEY -> company(id)
+   - policy_type_lid: INTEGER, NOT NULL, FOREIGN KEY -> lookup_data(id)
+   - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+   - policy_configuration_status_lid: INTEGER, NOT NULL, FOREIGN KEY -> lookup_data(id)
+   - policy_step: INTEGER, NOT NULL
+   - policy_configuration: JSONB, NOT NULL
+   - remarks: TEXT, NULLABLE
+   - version: INTEGER, NULLABLE, DEFAULT 1
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+
+4. policy_cover_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+   - cover_id: INTEGER, NOT NULL, FOREIGN KEY -> cover(id)
+   - sum_insured: NUMERIC(19,2), NULLABLE
+   - premium: NUMERIC(19,2), NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+
+5. policy_insurer_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+   - insurer_id: INTEGER, NOT NULL, FOREIGN KEY -> contact(id)
+   - share_percentage: NUMERIC(5,2), NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+
+6. policy_tpa_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+   - tpa_id: INTEGER, NOT NULL, FOREIGN KEY -> contact(id)
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+
+7. caution_deposit
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - company_id: INTEGER, NOT NULL
+   - cd_account_number: VARCHAR(50), NOT NULL
+   - cd_bank_name: VARCHAR(100), NOT NULL
+   - cd_ifsc_code: VARCHAR(20), NULLABLE
+   - cd_branch_name: VARCHAR(100), NULLABLE
+   - account_balance: NUMERIC(15,2), NOT NULL (renamed from balance_amount)
+   - status: VARCHAR(50), NOT NULL
+   - cd_account_name: VARCHAR(100), NULLABLE
+   - created_at: TIMESTAMP, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - contact_id: INTEGER, NULLABLE (from schema shows insurer_id and other fields)
+
+8. caution_deposit_transaction
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - caution_deposit_id: INTEGER, NOT NULL, FOREIGN KEY -> caution_deposit(id)
+   - transaction_type: VARCHAR(50), NOT NULL
+   - transaction_amount: INTEGER, NOT NULL
+   - transaction_date: TIMESTAMP, NOT NULL
+   - transaction_status: VARCHAR(50), NULLABLE (not in schema but in table list)
+   - transaction_reference_id: VARCHAR(100), NULLABLE (transaction_id in schema)
+   - reference_type: VARCHAR(50), NULLABLE (payment_method_lid equivalent)
+   - bank_name: VARCHAR(100), NULLABLE
+   - cheque_number: VARCHAR(30), NULLABLE
+   - cheque_date: DATE, NULLABLE
+   - ifsc_code: VARCHAR(20), NULLABLE
+   - branch_name: VARCHAR(100), NULLABLE (not in schema)
+   - remarks: TEXT, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - policy_id: INTEGER, NULLABLE
+   - cd_balance_amount: NUMERIC(15,2), NOT NULL, DEFAULT 0
+
+9. caution_deposit_policy_mapping
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+   - caution_deposit_id: INTEGER, NOT NULL, FOREIGN KEY -> caution_deposit(id)
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+
+10. endorsement
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_id: INTEGER, NOT NULL
+    - endorsement_type: VARCHAR(50), NULLABLE (not a lookup, direct string field)
+   - endorsement_date: TIMESTAMP, NULLABLE
+   - effective_from: TIMESTAMP, NULLABLE (not in schema)
+   - effective_to: TIMESTAMP, NULLABLE (not in schema)
+   - premium_amount: NUMERIC(18,2), NULLABLE (premium_at_inception in schema)
+   - endorsement_reason_lid: INTEGER, NULLABLE (not in schema)
+   - endorsment_count: INTEGER, NULLABLE, DEFAULT 0
+   - ack_file_id: INTEGER, NULLABLE
+   - endorsement_ack_count: INTEGER, NULLABLE, DEFAULT 0
+   - sum_insured: NUMERIC(18,2), NULLABLE
+   - net_premium_amount: NUMERIC(18,2), NULLABLE
+   - gst_amount: NUMERIC(18,2), NULLABLE (service_tax_amount in schema)
+   - stamp_duty: NUMERIC(18,2), NULLABLE (not in schema)
+   - other_charges: NUMERIC(18,2), NULLABLE (other_amount in schema)
+   - terrorism_amount: NUMERIC(18,2), NULLABLE
+   - date_of_income: TIMESTAMP, NULLABLE
+   - commission_amount: NUMERIC(18,2), NULLABLE (brokerage_amount in schema)
+   - brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - policy_type_lid: INTEGER, NULLABLE (not in schema)
+   - is_gst_applicable: BOOLEAN, NULLABLE (not in schema)
+   - is_stamp_duty_applicable: BOOLEAN, NULLABLE (not in schema)
+   - is_terrorism_applicable: BOOLEAN, NULLABLE (not in schema)
+   - endorsement_status_lid: INTEGER, NULLABLE (not in schema)
+   - endorsement_document_id: INTEGER, NULLABLE (not in schema)
+   - od_percentage: NUMERIC(5,2), NULLABLE
+   - tp_percentage: NUMERIC(5,2), NULLABLE
+   - endorsement_sub_type_lid: INTEGER, NULLABLE (not in schema)
+   - payment_status_lid: INTEGER, NULLABLE (not in schema)
+   - commission_payment_status_lid: INTEGER, NULLABLE (not in schema)
+   - tpa_id: INTEGER, NULLABLE (not in schema)
+   - tpa_processed_count: INTEGER, NULLABLE, DEFAULT 0
+   - tpa_acknowledged_date: TIMESTAMP, NULLABLE
+   - is_tpa_processing_done: BOOLEAN, NULLABLE (not in schema)
+   - tpa_processing_status_lid: INTEGER, NULLABLE (not in schema)
+   - mig_ref_no: VARCHAR(255), NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - ingested_mode: VARCHAR(255), NULLABLE, DEFAULT 'APPLICATION'
+   - company_id: INTEGER, NOT NULL
+   - insurer_endorsement_number: VARCHAR(255), NULLABLE
+   - insurer_endorsement_date: TIMESTAMP, NULLABLE
+   - endorsement_entry_date: TIMESTAMP, NULLABLE
+   - endorsment_file_id: INTEGER, NULLABLE
+   - gross_premium_amount: NUMERIC(18,2), NULLABLE
+   - service_tax_amount: NUMERIC(18,2), NULLABLE
+   - income_type_lid: INTEGER, NULLABLE
+   - brokerage_amount_asper_iwork: NUMERIC(18,2), NULLABLE
+   - brokerage_amount_asper_isg: NUMERIC(18,2), NULLABLE
+   - fee_amount: NUMERIC(18,2), NULLABLE
+   - commission_terrorism_amount: NUMERIC(18,2), NULLABLE
+   - net_percentage: NUMERIC(5,2), NULLABLE
+   - share_percentage: NUMERIC(5,2), NULLABLE
+   - commission_terrorism_percentage: NUMERIC(5,2), NULLABLE
+   - deal_confirmed_lid: INTEGER, NULLABLE
+   - remarks: TEXT, NULLABLE
+   - financial_non_financially: VARCHAR(50), NULLABLE
+   - income_month: TIMESTAMP, NULLABLE
+   - tpa_document_id: INTEGER, NULLABLE
+   - tpa_error_count: INTEGER, NOT NULL, DEFAULT 0
+   - tpa_error_file_id: INTEGER, NULLABLE
+   - premium_collected: NUMERIC, NULLABLE, DEFAULT 0
+   - ingested_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+
+6. mstr_policy_constraints
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - country_id: INTEGER, NOT NULL, FOREIGN KEY -> country(id)
+   - constraints: JSONB, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+
+7. opportunity
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - company_id: INTEGER, NOT NULL
+   - contact_id: INTEGER, NULLABLE
+   - estimated_brokerage: DOUBLE PRECISION, NULLABLE
+   - policy_type_lid: INTEGER, NOT NULL
+   - policy_status_lid: INTEGER, NOT NULL
+   - service_level_lid: INTEGER, NOT NULL
+   - expiry_date: DATE, NOT NULL
+   - current_stage_id: INTEGER, NULLABLE (not in schema)
+   - current_activity_id: INTEGER, NULLABLE (not in schema)
+   - owner_id: INTEGER, NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - renewal_id: INTEGER, NULLABLE (not in schema)
+   - current_status_lid: INTEGER, NULLABLE (status_lid in schema)
+   - status_reason_lid: INTEGER, NULLABLE (not in schema)
+   - closure_reason_lid: INTEGER, NULLABLE (not in schema)
+   - closure_remarks: TEXT, NULLABLE (not in schema)
+   - is_mined: BOOLEAN, NULLABLE (not in schema)
+   - is_policy_mined_lid: INTEGER, NULLABLE
+   - source_type_lid: INTEGER, NULLABLE
+   - source: VARCHAR(255), NULLABLE
+   - ref_id: INTEGER, NULLABLE (not in schema)
+   - renewal_date: DATE, NULLABLE (not in schema)
+   - additional_fields: JSONB, NULLABLE (not in schema)
+   - audit_ref_id: INTEGER, NULLABLE
+   - ref_policy_id: INTEGER, NULLABLE
+   - policy_id: INTEGER, NULLABLE (not in schema)
+   - sum_insured: DOUBLE PRECISION, NULLABLE
+   - premium_paid: DOUBLE PRECISION, NULLABLE
+   - sharing_percentage: DOUBLE PRECISION, NULLABLE
+   - estimated_fee: DOUBLE PRECISION, NULLABLE
+   - prev_insurer_id: INTEGER, NULLABLE
+   - prev_insurer_location_id: INTEGER, NULLABLE
+   - prev_insurer_branch_id: INTEGER, NULLABLE
+   - prev_tpa_id: INTEGER, NULLABLE
+   - prev_tpa_location_id: INTEGER, NULLABLE
+   - prev_tpa_branch_id: INTEGER, NULLABLE
+   - remarks: TEXT, NULLABLE
+   - sales_pitch: TEXT, NULLABLE
+   - opportunity_type_lid: INTEGER, NULLABLE, FOREIGN KEY -> lookup_data(id)
+   - estimated_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - ref_opportunity_id: INTEGER, NULLABLE
+
+8. opportunity_broking_slip_version_cover_map_details
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL
+   - cover_map_id: INTEGER, NOT NULL
+   - policy_type_id: INTEGER, NOT NULL
+   - broking_slip_version_id: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+
+9. opportunity_broking_slip_version_details
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL
+   - sum_insured: NUMERIC, NULLABLE
+   - brokerage_percentage: NUMERIC, NULLABLE
+   - policy_from: DATE, NULLABLE
+   - policy_to: DATE, NULLABLE
+   - renewal_date: DATE, NULLABLE
+   - insurer_id: INTEGER, NULLABLE
+   - remarks: TEXT, NULLABLE
+   - risk_mitigation_features: TEXT, NULLABLE
+   - special_terms_conditions: TEXT, NULLABLE
+   - insurer_remarks: TEXT, NULLABLE
+   - cover_letter_details: TEXT, NULLABLE
+   - is_broking_slip_issued_lid: INTEGER, NULLABLE
+   - is_renewal_endorsement: BOOLEAN, NULLABLE
+   - is_renewal_policy: BOOLEAN, NULLABLE
+   - is_new_policy: BOOLEAN, NULLABLE
+   - activity_id: INTEGER, NULLABLE
+   - broking_slip_name: VARCHAR, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+
+10. opportunity_claim_experience
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - opportunity_id: INTEGER, NOT NULL
+    - policy_from: DATE, NULLABLE
+    - policy_to: DATE, NULLABLE
+    - nature_of_loss: TEXT, NULLABLE
+    - claim_amount: NUMERIC, NULLABLE
+    - premium: NUMERIC, NULLABLE
+    - claims_details: TEXT, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+11. opportunity_cover_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - opportunity_id: INTEGER, NOT NULL
+    - policy_type_id: INTEGER, NOT NULL
+    - cover_id: INTEGER, NULLABLE
+    - mandate_type: VARCHAR, NULLABLE
+    - approval_required: BOOLEAN, NULLABLE
+    - cover_name: VARCHAR, NULLABLE
+    - cover_description: TEXT, NULLABLE
+    - display_sequence: INTEGER, NULLABLE
+    - display_category: VARCHAR, NULLABLE
+    - input_type: VARCHAR, NULLABLE
+    - input_meta: JSONB, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+12. opportunity_final_negotiation
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - opportunity_id: INTEGER, NOT NULL
+    - activity_id: INTEGER, NULLABLE
+    - meeting_id: INTEGER, NULLABLE
+    - policy_placed_type_lid: INTEGER, NULLABLE
+    - lead_insurer_id: INTEGER, NULLABLE
+    - is_lead_insurer_pay_commission_lid: INTEGER, NULLABLE
+    - finalized_quote_id: INTEGER, NULLABLE
+    - remarks: TEXT, NULLABLE
+    - would_change_quote_values_lid: INTEGER, NULLABLE
+    - quote_value_changed_remarks: TEXT, NULLABLE
+    - service_level_agreement_days_lid: INTEGER, NULLABLE
+    - document_id: INTEGER, NULLABLE
+    - document_type_lid: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+13. opportunity_placement_slip_generation
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - opportunity_id: INTEGER, NOT NULL
+    - policy_from_date: DATE, NULLABLE
+    - policy_to_date: DATE, NULLABLE
+    - renewal_date: DATE, NULLABLE
+    - lead_insurer_id: INTEGER, NULLABLE
+    - insurer_branch_id: INTEGER, NULLABLE
+    - is_lead_insurer_pay_commission_lid: INTEGER, NULLABLE
+    - terrorism_commission_percentage: NUMERIC, NULLABLE
+    - terrorism_amount: NUMERIC, NULLABLE
+    - gst_on_terrorism: NUMERIC, NULLABLE
+    - stamp_duty: NUMERIC, NULLABLE
+    - policy_number: VARCHAR, NULLABLE
+    - activity_id: INTEGER, NULLABLE
+    - total_brokerage: NUMERIC, NULLABLE
+    - brokerage_amount: NUMERIC, NULLABLE
+    - brokerage_percentage: NUMERIC, NULLABLE
+    - policy_placed_type_lid: INTEGER, NULLABLE
+    - documents: JSONB, NULLABLE
+    - remarks: TEXT, NULLABLE
+    - is_active: BOOLEAN, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+14. opportunity_policy_confirmation
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - opportunity_id: INTEGER, NOT NULL
+    - opportunity_activity_id: INTEGER, NULLABLE
+    - activity_id: INTEGER, NULLABLE
+    - status_lid: INTEGER, NULLABLE
+    - policy_data_wrong_lid: INTEGER, NULLABLE
+    - deviation_resolved_lid: INTEGER, NULLABLE
+    - deviations: TEXT, NULLABLE
+    - resolution_lid: INTEGER, NULLABLE
+    - comments: TEXT, NULLABLE
+    - policy_data_rectified_lid: INTEGER, NULLABLE
+    - remarks: TEXT, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+15. opportunity_policy_confirmation_document_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_confirmation_id: INTEGER, NOT NULL
+    - document_id: INTEGER, NOT NULL
+    - document_type_lid: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+16. opportunity_policy_docket
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - opportunity_id: INTEGER, NOT NULL
+    - opportunity_activity_id: INTEGER, NULLABLE
+    - activity_id: INTEGER, NULLABLE
+    - status_lid: INTEGER, NULLABLE
+    - remarks: TEXT, NULLABLE
+    - held_cover_note: BOOLEAN, NULLABLE
+    - policy_docket: BOOLEAN, NULLABLE
+    - quarterly_review: BOOLEAN, NULLABLE
+    - renewal_process: BOOLEAN, NULLABLE
+    - renewal_follow_up: BOOLEAN, NULLABLE
+    - claim_assist: BOOLEAN, NULLABLE
+    - claim_follow_up: BOOLEAN, NULLABLE
+    - quarterly_meeting: BOOLEAN, NULLABLE
+    - service_track: BOOLEAN, NULLABLE
+    - claims_service: BOOLEAN, NULLABLE
+    - general_service: BOOLEAN, NULLABLE
+    - policy_document: BOOLEAN, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+
+17. opportunity_policy_docket_document_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_docket_id: INTEGER, NOT NULL
+    - document_id: INTEGER, NOT NULL
+    - document_type_lid: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+18. opportunity_policy_hard_copy
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - opportunity_id: INTEGER, NOT NULL
+    - opportunity_activity_id: INTEGER, NULLABLE
+    - activity_id: INTEGER, NULLABLE
+    - status_lid: INTEGER, NULLABLE
+    - insurer_policy_no: VARCHAR, NULLABLE
+    - policy_document_wrong_lid: INTEGER, NULLABLE
+    - brokerage_percentage: NUMERIC, NULLABLE
+    - premium_details_wrong_lid: INTEGER, NULLABLE
+    - deviation_coverages_lid: INTEGER, NULLABLE
+    - coverages: TEXT, NULLABLE
+    - sum_insured_wrong_lid: INTEGER, NULLABLE
+    - deductibles: TEXT, NULLABLE
+    - deviations_addressed_lid: INTEGER, NULLABLE
+    - resolution_lid: INTEGER, NULLABLE
+    - policy_hard_copy_received_lid: INTEGER, NULLABLE
+    - remarks: TEXT, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+
+19. opportunity_policy_hard_copy_document_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_hard_copy_id: INTEGER, NOT NULL
+    - document_id: INTEGER, NOT NULL
+    - document_type_lid: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+20. opportunity_premium_cover_detail
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - opportunity_id: INTEGER, NOT NULL
+    - cover_map_id: INTEGER, NOT NULL
+    - policy_type_lid: INTEGER, NOT NULL
+    - cover_name: VARCHAR, NULLABLE
+    - input_meta: JSONB, NULLABLE
+    - input_value: TEXT, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+21. opportunity_rfp_cover_detail
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - opportunity_id: INTEGER, NOT NULL
+    - cover_map_id: INTEGER, NOT NULL
+    - policy_type_id: INTEGER, NOT NULL
+    - cover_name: VARCHAR, NULLABLE
+    - input_type: VARCHAR, NULLABLE
+    - input_meta: JSONB, NULLABLE
+    - input_value: TEXT, NULLABLE
+    - is_active: BOOLEAN, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+22. opportunity_kdm_meeting
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY -> opportunity(id)
+   - meeting_date: DATE, NULLABLE
+   - meeting_time: TIME, NULLABLE
+   - subject: VARCHAR(255), NULLABLE
+   - agenda: TEXT, NULLABLE
+   - meeting_status_lid: INTEGER, NULLABLE, FOREIGN KEY -> lookup_data(id)
+   - participants: TEXT, NULLABLE
+   - minutes: TEXT, NULLABLE
+   - action_items: TEXT, NULLABLE
+   - next_meeting_date: DATE, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+
+23. business_target
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - user_id: INTEGER, NOT NULL
+    - month: DATE, NOT NULL
+    - entity_type: VARCHAR(150), NOT NULL
+    - kpi: VARCHAR(150), NOT NULL
+    - type_of_target: VARCHAR(150), NOT NULL
+    - value_of_target: NUMERIC(19,2), NOT NULL
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+42. mstr_stage_activity_template
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - stage_id: INTEGER, NOT NULL, FOREIGN KEY -> mstr_stage(id)
+    - activity_id: INTEGER, NOT NULL, FOREIGN KEY -> mstr_activity(id)
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+FOREIGN KEY RELATIONSHIPS:
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - company_id: INTEGER, NOT NULL, FOREIGN KEY -> company(id)
+    - policy_type_lid: INTEGER, NOT NULL, FOREIGN KEY -> lookup_data(id)
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - policy_configuration_status_lid: INTEGER, NOT NULL, FOREIGN KEY -> lookup_data(id)
+    - policy_step: INTEGER, NOT NULL
+    - policy_configuration: JSONB, NOT NULL
+    - remarks: TEXT, NULLABLE
+    - version: INTEGER, NULLABLE, DEFAULT 1
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+24. policy_configuration_components_detail
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - company_id: INTEGER, NOT NULL, FOREIGN KEY -> company(id)
+    - type: VARCHAR(100), NULLABLE
+    - label: VARCHAR(100), NULLABLE
+    - premium_per_life: BOOLEAN, NULLABLE
+    - multiple_sum_insured_label: VARCHAR(100), NULLABLE
+    - sum_insured_model: VARCHAR(100), NULLABLE
+    - sum_insured_value: VARCHAR, NULLABLE (not in schema)
+    - is_editable: BOOLEAN, NULLABLE (not in schema)
+    - is_active: BOOLEAN, NULLABLE (not in schema)
+    - is_hidden: BOOLEAN, NULLABLE (not in schema)
+    - remarks: TEXT, NULLABLE
+    - show_company_contribution: BOOLEAN, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+25. policy_configuration_template_doc_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - document_id: INTEGER, NOT NULL, FOREIGN KEY -> file_uploads(id)
+    - document_type_lid: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+26. policy_cover_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NULLABLE, FOREIGN KEY -> policy(id)
+    - cover_template_id: INTEGER, NOT NULL
+    - policy_type_id: INTEGER, NULLABLE
+    - cover_id: INTEGER, NULLABLE
+    - mandate_type: VARCHAR, NULLABLE
+    - approval_required: BOOLEAN, NULLABLE
+    - cover_name: VARCHAR(255), NOT NULL
+    - cover_description: TEXT, NULLABLE
+    - display_sequence: INTEGER, NULLABLE
+    - display_category: VARCHAR, NULLABLE
+    - input_type: VARCHAR, NULLABLE
+    - input_meta: JSONB, NULLABLE
+    - input_value: TEXT, NULLABLE
+    - cover_response: JSON, NULLABLE
+    - covers_meta: JSONB, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+27. policy_employee_claim
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - employee_id: INTEGER, NOT NULL, FOREIGN KEY -> policy_enrollment_employee(id)
+    - employee_tpa_id: VARCHAR(100), NOT NULL
+    - claim_insured_id: VARCHAR(100), NULLABLE
+    - dependent_id: INTEGER, NULLABLE, FOREIGN KEY -> policy_enrollment_dependent(id)
+    - clm_hospital: VARCHAR(255), NULLABLE
+    - clm_diagnosis: TEXT, NULLABLE (claim_description in schema)
+    - claim_dt: DATE, NULLABLE (clm_doa in schema)
+    - clm_type: VARCHAR(50), NULLABLE
+    - clm_reported_dt: DATE, NULLABLE (not in schema)
+    - clm_int_amt: NUMERIC, NULLABLE (claim_amount in schema)
+    - claim_status: VARCHAR(50), NULLABLE
+    - clm_pre_auth_id: VARCHAR(100), NULLABLE
+    - claim_checklist: TEXT, NULLABLE
+    - clm_bill_details: TEXT, NULLABLE
+    - clm_allowed_amt: NUMERIC, NULLABLE
+    - clm_pre_auth_date: DATE, NULLABLE
+    - clm_pre_auth_amt: NUMERIC, NULLABLE
+    - clm_allowed_id: VARCHAR(100), NULLABLE
+    - is_active: BOOLEAN, NULLABLE (not in schema)
+    - is_uploaded: BOOLEAN, NULLABLE (not in schema)
+    - clm_dod: DATE, NULLABLE
+    - claim_checklist_count: INTEGER, NULLABLE
+    - user_id: VARCHAR(100), NULLABLE
+    - source_file_upload_id: INTEGER, NOT NULL, FOREIGN KEY -> file_uploads(id)
+    - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+    - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+28. policy_employee_claim_settlement
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - claim_id: INTEGER, NOT NULL, FOREIGN KEY -> policy_employee_claim(id)
+    - source_file_upload_id: INTEGER, NOT NULL, FOREIGN KEY -> file_uploads(id)
+    - clm_sett_no: VARCHAR(100), NULLABLE
+    - clm_sett_amt: NUMERIC, NULLABLE
+    - clm_sett_dt: DATE, NULLABLE (clm_sett_date in schema)
+    - clm_sett_status: VARCHAR, NULLABLE (not in schema)
+    - clm_dis_amt: NUMERIC, NULLABLE
+    - clm_sett_chq_bnk: VARCHAR(100), NULLABLE
+    - clm_sett_chq_no: VARCHAR(100), NULLABLE
+    - clm_sett_chq_dt: DATE, NULLABLE
+    - remarks: TEXT, NULLABLE
+    - clm_sett_details: TEXT, NULLABLE
+    - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+    - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+29. policy_employee_endorsement
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL
+    - employee_id: INTEGER, NOT NULL
+    - company_id: INTEGER, NOT NULL
+    - employee_endorsement_status_key: VARCHAR(50), NOT NULL
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - deleted_at: TIMESTAMP, NULLABLE
+    - endorsement_id: INTEGER, NULLABLE, FOREIGN KEY -> endorsement(id)
+    - endorsement_addition_file_id: INTEGER, NULLABLE
+    - endorsement_deletion_file_id: INTEGER, NULLABLE
+    - endorsement_addition_created_at: TIMESTAMP, NULLABLE
+    - endorsement_deleted_created_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+30. policy_employee_enrollment
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL
+    - employee_id: INTEGER, NOT NULL
+    - company_id: INTEGER, NOT NULL
+    - employee_enrollment_status_key: VARCHAR(50), NOT NULL
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - deleted_at: TIMESTAMP, NULLABLE
+    - sum_insured: NUMERIC, NULLABLE, DEFAULT 0
+    - balance: NUMERIC, NULLABLE, DEFAULT 0
+    - total_premium: NUMERIC, NULLABLE, DEFAULT 0 (premium_total in schema)
+    - total_company_pay: NUMERIC, NULLABLE, DEFAULT 0
+    - total_employee_pay: NUMERIC, NULLABLE, DEFAULT 0
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+31. policy_employee_enrollment_choice
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - employee_enrollment_id: INTEGER, NOT NULL, FOREIGN KEY -> policy_employee_enrollment(id)
+    - sum_insured: NUMERIC, NOT NULL
+    - premium: NUMERIC, NOT NULL
+    - company_pay: NUMERIC, NOT NULL
+    - employee_pay: NUMERIC, NOT NULL
+    - policy_component_action_type: VARCHAR(100), NOT NULL
+    - policy_component_action_type_id: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - policy_component_action_label: VARCHAR(100), NULLABLE
+    - parent_policy_component_action_type_id: INTEGER, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+
+32. policy_endorsement_template_doc_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - insurer_id: INTEGER, NOT NULL, FOREIGN KEY -> insurer(id)
+    - document_id: INTEGER, NOT NULL, FOREIGN KEY -> file_uploads(id)
+    - document_type_lid: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+33. policy_enrollment_dependent
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - employee_id: INTEGER, NOT NULL, FOREIGN KEY -> policy_enrollment_employee(id)
+    - name: VARCHAR(100), NOT NULL
+    - relation: VARCHAR(50), NOT NULL
+    - date_of_birth: DATE, NULLABLE
+    - gender: VARCHAR(20), NULLABLE
+    - is_active: BOOLEAN, NULLABLE (not in schema)
+    - marital_status: VARCHAR(20), NULLABLE (not in schema)
+    - sum_insured: NUMERIC, NULLABLE (not in schema)
+    - premium: NUMERIC, NULLABLE (not in schema)
+    - company_pay: NUMERIC, NULLABLE (not in schema)
+    - employee_pay: NUMERIC, NULLABLE (not in schema)
+    - endorsement_status_key: VARCHAR(50), NULLABLE
+    - enrollment_addition_batch_id: INTEGER, NULLABLE
+    - enrollment_deletion_batch_id: INTEGER, NULLABLE
+    - endorsement_deletion_created_at: TIMESTAMP, NULLABLE (not in schema)
+    - relationship_type: VARCHAR(100), NULLABLE
+    - dependent_tpa_id: VARCHAR(100), NULLABLE
+    - effective_date: DATE, NULLABLE
+    - created_by: INTEGER, NOT NULL, DEFAULT 0
+    - updated_by: INTEGER, NOT NULL, DEFAULT 0
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - deleted_at: TIMESTAMP, NULLABLE
+
+34. policy_enrollment_employee
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - employee_company_id: VARCHAR(100), NOT NULL
+    - employee_name: VARCHAR(100), NOT NULL
+    - full_name: VARCHAR(100), NULLABLE
+    - date_of_birth: DATE, NULLABLE
+    - gender: VARCHAR(20), NULLABLE
+    - marital_status: VARCHAR(20), NULLABLE
+    - email_id: VARCHAR(100), NULLABLE (email in schema)
+    - designation: VARCHAR(100), NULLABLE
+    - relation_group: VARCHAR(100), NULLABLE
+    - is_active: BOOLEAN, NULLABLE (not in schema)
+    - department: VARCHAR(100), NULLABLE (not in schema)
+    - band: VARCHAR(100), NULLABLE (not in schema)
+    - grade: VARCHAR(100), NULLABLE (not in schema)
+    - phone_number: VARCHAR(20), NULLABLE
+    - date_of_joining: DATE, NULLABLE (not in schema)
+    - date_of_retirement: DATE, NULLABLE (not in schema)
+    - reporting_manager: VARCHAR(100), NULLABLE (not in schema)
+    - location: VARCHAR(100), NULLABLE (not in schema)
+    - age: INTEGER, NULLABLE (not in schema)
+    - region: VARCHAR(100), NULLABLE (not in schema)
+    - company_employee_id: VARCHAR(100), NULLABLE
+    - employee_tpa_id: VARCHAR(100), NULLABLE
+    - ctc: NUMERIC, NULLABLE
+    - additional_params: JSONB, NULLABLE
+    - user_id: INTEGER, NULLABLE, FOREIGN KEY -> users(id)
+    - enrollment_addition_batch_id: INTEGER, NULLABLE
+    - enrollment_deletion_batch_id: INTEGER, NULLABLE
+    - created_by: INTEGER, NOT NULL, DEFAULT 0
+    - updated_by: INTEGER, NOT NULL, DEFAULT 0
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - deleted_at: TIMESTAMP, NULLABLE
+
+35. policy_enrollment_employee_policy_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - employee_id: INTEGER, NOT NULL, FOREIGN KEY -> policy_enrollment_employee(id)
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - enrollment_start_date: DATE, NULLABLE
+    - enrollment_end_date: DATE, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - deleted_at: TIMESTAMP, NULLABLE
+    - employee_tpa_id: VARCHAR(100), NULLABLE
+    - additional_params: JSONB, NULLABLE
+    - enrollment_addition_batch_id: INTEGER, NULLABLE
+    - enrollment_deletion_batch_id: INTEGER, NULLABLE
+    - endorsement_addition_batch_id: INTEGER, NULLABLE
+    - endorsement_deletion_batch_id: INTEGER, NULLABLE
+    - endorsement_status_key: VARCHAR(50), NULLABLE
+    - effective_date: DATE, NULLABLE
+
+36. policy_enrollment_template_doc_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - document_id: INTEGER, NOT NULL, FOREIGN KEY -> file_uploads(id)
+    - document_type_lid: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE
+    - updated_at: TIMESTAMP, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+37. policy_enrollment_upload_summary
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - document_processing_file_id: INTEGER, NOT NULL, FOREIGN KEY -> document_processing_file(id)
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - source_file_upload_id: INTEGER, NOT NULL, FOREIGN KEY -> file_uploads(id)
+    - error_file_upload_id: INTEGER, NULLABLE, FOREIGN KEY -> file_uploads(id)
+    - success_count: INTEGER, NOT NULL
+    - error_count: INTEGER, NOT NULL
+    - success_file_upload_id: INTEGER, NULLABLE, FOREIGN KEY -> file_uploads(id)
+    - batch_id: INTEGER, NOT NULL, auto-increment, UNIQUE
+    - process_count: INTEGER, NULLABLE, DEFAULT 0
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+38. policy_insurer_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NULLABLE, FOREIGN KEY -> policy(id)
+    - insurer_participation_type_lid: INTEGER, NOT NULL
+    - insurer_id: INTEGER, NOT NULL
+    - insurer_branch_id: INTEGER, NULLABLE
+    - insurer_contact_id: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+39. policy_premium_installment_schedules
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - installment_1: DATE, NULLABLE
+    - installment_2: DATE, NULLABLE
+    - installment_amount: NUMERIC, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+40. policy_tpa_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NULLABLE, FOREIGN KEY -> policy(id)
+    - tpa_id: INTEGER, NOT NULL
+    - tpa_branch_id: INTEGER, NOT NULL
+    - tpa_contact_id: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+41. business_target
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - user_id: INTEGER, NOT NULL
+    - month: DATE, NOT NULL
+    - entity_type: VARCHAR(150), NOT NULL
+    - kpi: VARCHAR(150), NOT NULL
+    - type_of_target: VARCHAR(150), NOT NULL
+    - value_of_target: NUMERIC(19,2), NOT NULL
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+42. mstr_stage_activity_template
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_type_id: INTEGER, NOT NULL
+    - org_id: INTEGER, NOT NULL
+    - stage_id: INTEGER, NOT NULL, FOREIGN KEY -> mstr_stage(id)
+    - activity_id: INTEGER, NOT NULL, FOREIGN KEY -> mstr_activity(id)
+    - approval: VARCHAR(10), NULLABLE, DEFAULT 'No'
+    - mandatory: VARCHAR(10), NULLABLE, DEFAULT 'Yes'
+    - lead_role_id: INTEGER, NULLABLE, FOREIGN KEY -> roles(id)
+    - created_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+    - updated_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+INDEXES AND RELATIONSHIPS:
+- policy table has indexes on: company_id, created_at, created_by, policy_to, net_premium_amount, opportunity_id, owner_id, policy_type_lid
+- opportunity table has indexes on: created_by, owner_id, policy_type_lid, ref_policy_id, company_id, contact_id
+- policy_employee_claim has composite index on: employee_id, policy_id
+- policy_employee_claim_settlement has index on: claim_id
+- policy_employee_enrollment has index on: policy_id
+- policy_employee_enrollment_choice has index on: employee_enrollment_id
+- policy_enrollment_dependent has composite index on: employee_id, relation
+- policy_enrollment_employee has unique index on: company_employee_id
+- policy_enrollment_employee_policy_map has unique composite index on: employee_id, policy_id
+- policy_enrollment_upload_summary has unique index on: batch_id
+- business_target has indexes on: entity_type, month
+- mstr_policy_constraints has index on: country_id
+
+FOREIGN KEY RELATIONSHIPS:
+- policy.opportunity_id -> opportunity.id
+- policy.company_id -> company.id
+- caution_deposit_transaction.caution_deposit_id -> caution_deposit.id
+- caution_deposit_policy_mapping.policy_id -> policy.id
+- caution_deposit_policy_mapping.caution_deposit_id -> caution_deposit.id
+- policy_configuration.company_id -> company.id
+- policy_configuration.policy_type_lid -> lookup_data.id
+- policy_configuration.policy_id -> policy.id
+- policy_configuration.policy_configuration_status_lid -> lookup_data.id
+- policy_configuration_components_detail.policy_id -> policy.id
+- policy_configuration_components_detail.company_id -> company.id
+- policy_cover_map.policy_id -> policy.id
+- policy_employee_claim.policy_id -> policy.id
+- policy_employee_claim.employee_id -> policy_enrollment_employee.id
+- policy_employee_claim.dependent_id -> policy_enrollment_dependent.id
+- policy_employee_claim.source_file_upload_id -> file_uploads.id
+- policy_employee_claim_settlement.claim_id -> policy_employee_claim.id
+- policy_employee_claim_settlement.source_file_upload_id -> file_uploads.id
+- policy_employee_endorsement.endorsement_id -> endorsement.id
+- policy_employee_enrollment_choice.employee_enrollment_id -> policy_employee_enrollment.id
+- policy_endorsement_template_doc_map.policy_id -> policy.id
+- policy_endorsement_template_doc_map.insurer_id -> insurer.id
+- policy_endorsement_template_doc_map.document_id -> file_uploads.id
+- policy_enrollment_dependent.policy_id -> policy.id
+- policy_enrollment_dependent.employee_id -> policy_enrollment_employee.id
+- policy_enrollment_employee.user_id -> users.id
+- policy_enrollment_employee_policy_map.employee_id -> policy_enrollment_employee.id
+- policy_enrollment_employee_policy_map.policy_id -> policy.id
+- policy_enrollment_template_doc_map.policy_id -> policy.id
+- policy_enrollment_template_doc_map.document_id -> file_uploads.id
+- policy_enrollment_upload_summary.document_processing_file_id -> document_processing_file.id
+- policy_enrollment_upload_summary.policy_id -> policy.id
+- policy_enrollment_upload_summary.source_file_upload_id -> file_uploads.id
+- policy_enrollment_upload_summary.error_file_upload_id -> file_uploads.id
+- policy_enrollment_upload_summary.success_file_upload_id -> file_uploads.id
+- policy_insurer_map.policy_id -> policy.id
+- policy_premium_installment_schedules.policy_id -> policy.id
+- policy_tpa_map.policy_id -> policy.id
+- mstr_policy_constraints.country_id -> country.id
+- opportunity.opportunity_type_lid -> lookup_data.id
+- opportunity.is_policy_mined_lid -> lookup_data.id
+- opportunity.source_type_lid -> lookup_data.id
+- mstr_stage_activity_template.stage_id -> mstr_stage.id
+- mstr_stage_activity_template.activity_id -> mstr_activity.id
+- mstr_stage_activity_template.lead_role_id -> roles.id
+
+COMPANY AND RELATED TABLES:
+
+1. company
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment 
+   - company_name: VARCHAR(200), NOT NULL
+   - display_name: VARCHAR(4000), NULLABLE
+   - company_type_lid: INTEGER, NULLABLE
+   - company_tag_lid: INTEGER, NULLABLE
+   - currency_id: INTEGER, NULLABLE
+   - industry_segment_lid: INTEGER, NULLABLE
+   - no_of_employees: INTEGER, NULLABLE
+   - website: VARCHAR(255), NULLABLE
+   - date_of_incorporation: DATE, NULLABLE
+   - pan_card_number: VARCHAR(50), UNIQUE, NULLABLE
+   - registration_no: VARCHAR(50), NULLABLE
+   - existing_broker_id: INTEGER, NULLABLE
+   - paid_up_capital: NUMERIC(15,2), NULLABLE
+   - tan_number: VARCHAR(50), UNIQUE, NULLABLE
+   - status_lid: INTEGER, NULLABLE
+   - priority_lid: INTEGER, NULLABLE
+   - remarks: VARCHAR(4000), NULLABLE
+   - source: VARCHAR(100), NULLABLE
+   - group_company_lid: INTEGER, NULLABLE
+   - lead_crm: INTEGER, NULLABLE, FK -> users.id
+   - country_id: INTEGER, NULLABLE, FK -> country.id  
+   - account_manager: INTEGER, NULLABLE, FK -> users.id
+   - source_type_lid: INTEGER, NULLABLE
+   - sentiment_lid: INTEGER, NULLABLE
+   - annual_premium: NUMERIC, NULLABLE
+   - additional_fields: JSONB, NULLABLE
+   - service_tax: VARCHAR(50), NULLABLE
+   - audit_ref_id: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - approver_id: INTEGER, NULLABLE
+
+2. company_address
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - company_id: INTEGER, NOT NULL, FK -> company.id
+   - address_id: INTEGER, NOT NULL, FK -> address.id
+   - is_primary: BOOLEAN, DEFAULT false
+   - created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+
+3. company_contact_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment 
+   - company_id: INTEGER, NOT NULL, FK -> company.id
+   - contact_id: INTEGER, NOT NULL, FK -> contact.id
+   
+4. company_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - company_id: INTEGER, NOT NULL, FK -> company.id
+   - company_history: TEXT, NULLABLE
+   - major_products: TEXT, NULLABLE  
+   - key_customers: VARCHAR(1500), NULLABLE
+   - documents_uploaded: TEXT, NULLABLE
+   - business_processes: VARCHAR(1500), NULLABLE
+   - account_strategy: VARCHAR(1500), NULLABLE
+   - targeting_reason: VARCHAR(1500), NULLABLE
+   - competitor: VARCHAR(1500), NULLABLE 
+   - weakness: VARCHAR(1500), NULLABLE
+   - action_plan: VARCHAR(1500), NULLABLE
+   - potential_opportunity: TEXT, NULLABLE
+   - industry_intelligence: TEXT, NULLABLE
+   - service_plan: VARCHAR(1500), NULLABLE
+   - acquisition_history: VARCHAR(1500), NULLABLE
+   - biz_profile: VARCHAR(1500), NULLABLE
+   - service_performance: VARCHAR(1500), NULLABLE
+   - sentiment: VARCHAR, NULLABLE
+   - sales_pitch: TEXT, NULLABLE
+   - ai_sales_pitch: TEXT, NULLABLE
+   - created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+
+5. company_doc_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - company_id: INTEGER, NOT NULL, FK -> company.id  
+   - doc_id: INTEGER, NOT NULL
+
+6. company_strategy
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - company_id: INTEGER, NOT NULL, FK -> company.id
+   - strategy_for_the_account: TEXT, NULLABLE
+   - reason_for_targeting: TEXT, NULLABLE
+   - competition_for_the_account: TEXT, NULLABLE
+   - weakness: TEXT, NULLABLE
+   - action_plan: TEXT, NULLABLE
+   - created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP  
+   - updated_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: VARCHAR(255), NULLABLE
+   - updated_by: VARCHAR(255), NULLABLE
+
+KEY INDEXES:
+- company: idx_company_created_by, idx_company_industry_segment_lid, idx_company_lead_crm, idx_created_at, idx_deleted_at, idx_display_name
+- company_address: no indexes
+- company_contact_map: idx_company_contact_map_company_id, idx_company_contact_map_contact_id  
+- company_detail: idx_company_id
+- company_doc_map: no indexes
+- company_strategy: no indexes
+
+UNIQUE CONSTRAINTS:
+- company.pan_card_number
+- company.tan_number
+
+FOREIGN KEY RELATIONSHIPS:
+- company.lead_crm -> users.id
+- company.country_id -> country.id
+- company.account_manager -> users.id
+- company_address.company_id -> company.id
+- company_address.address_id -> address.id
+- company_contact_map.company_id -> company.id
+- company_contact_map.contact_id -> contact.id
+- company_detail.company_id -> company.id
+- company_doc_map.company_id -> company.id
+- company_strategy.company_id -> company.id
+
+COMMON LID (Lookup ID) FIELDS in company table:
+- company_type_lid
+- company_tag_lid  
+- industry_segment_lid
+- status_lid
+- priority_lid 
+- group_company_lid
+- source_type_lid
+- sentiment_lid
+
+CRITICAL QUERY PATTERNS FOR COMPANY SEARCH:
+- Search by company_name, display_name using ILIKE
+- Join with company_address for location-based search
+- Join with company_detail for metadata search
+- Join with company_strategy for business relationship search
+- Always include deleted_at IS NULL in WHERE clause
+
+users
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - username: VARCHAR(255), NOT NULL, UNIQUE
+   - password_hash: VARCHAR(255), NOT NULL
+   - email_id: VARCHAR(255), NOT NULL, UNIQUE
+   - first_name: VARCHAR(100), NOT NULL,
+   - last_name: VARCHAR(100), NOT NULL,
+   - mobile_number: VARCHAR(20), NULLABLE
+   - status_lid: INTEGER, NULLABLE, FOREIGN KEY -> lookup_data(id)
+   - role_id: INTEGER, NULLABLE, FOREIGN KEY -> roles(id)
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - last_login_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+
+KEY INDEXES:
+- idx_users_username (username)
+- idx_users_email (email)
+- idx_users_status_lid (status_lid)
+- idx_users_role_id (role_id)
+
+UNIQUE CONSTRAINTS:
+- username
+- email
+
+FOREIGN KEY RELATIONSHIPS:
+- users.status_lid -> lookup_data.id
+- users.role_id -> roles.id
+
+---
+
+broker
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - broker_name: VARCHAR(200), NOT NULL
+   - display_name: VARCHAR(100), NOT NULL
+   - company_type_lid: INTEGER, NOT NULL, FOREIGN KEY -> lookup_data(id)
+   - website: VARCHAR(255), NULLABLE
+   - remarks: VARCHAR(4000), NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - status_lid: INTEGER, NULLABLE, FOREIGN KEY -> lookup_data(id)
+   - audit_ref_id: INTEGER, NULLABLE
+   - country_id: INTEGER, NULLABLE, FOREIGN KEY -> country(id)
+
+KEY INDEXES:
+- idx_broker_company_type_id (company_type_lid)
+- idx_broker_created_by (created_by)
+- idx_broker_display_name (display_name)
+- idx_broker_name (broker_name)
+- idx_broker_updated_by (updated_by)
+
+FOREIGN KEY RELATIONSHIPS:
+- broker.company_type_lid -> lookup_data.id
+- broker.status_lid -> lookup_data.id
+- broker.country_id -> country.id
+
+---
+
+broker_address
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - broker_id: INTEGER, NOT NULL, FOREIGN KEY -> broker(id)
+   - address_id: INTEGER, NOT NULL, FOREIGN KEY -> address(id)
+   - is_primary: BOOLEAN, DEFAULT false
+   - created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+
+KEY INDEXES:
+- idx_broker_address_broker_id (broker_id)
+- idx_broker_address_address_id (address_id)
+
+FOREIGN KEY RELATIONSHIPS:
+- broker_address.broker_id -> broker.id
+- broker_address.address_id -> address.id
+
+---
+
+broker_contact
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - broker_id: INTEGER, NOT NULL, FOREIGN KEY -> broker(id)
+   - contact_id: INTEGER, NOT NULL, FOREIGN KEY -> contact(id)
+   - is_primary: BOOLEAN, DEFAULT false
+   - created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+
+KEY INDEXES:
+- idx_broker_contact_broker_id (broker_id)
+- idx_broker_contact_contact_id (contact_id)
+
+FOREIGN KEY RELATIONSHIPS:
+- broker_contact.broker_id -> broker.id
+- broker_contact.contact_id -> contact.id
+
+---
+
+Additional relationships (from other tables referencing users/broker):
+
+- company.lead_crm -> users.id
+- company.account_manager -> users.id
+- policy_enrollment_employee.user_id -> users.id
+- broker_address.broker_id -> broker.id
+- broker_contact.broker_id -> broker.id
+
+---
+
+CRITICAL QUERY PATTERNS:
+- Always include deleted_at IS NULL in WHERE clause for soft deletes.
+- For text search, use ILIKE on name/display_name fields.
+
+
+employee
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (employee_id_seq)
+   - first_name: VARCHAR(100), NOT NULL
+   - last_name: VARCHAR(100), NOT NULL
+   - email_id: VARCHAR(150), NOT NULL, UNIQUE
+   - mobile: VARCHAR(20), NOT NULL
+   - user_id: INTEGER, NOT NULL, FOREIGN KEY -> users(id)
+   - branch_id: INTEGER, NULLABLE, FOREIGN KEY -> org_branch(id)
+   - department_id: INTEGER, NOT NULL, FOREIGN KEY -> org_department(id)
+   - designation_id: INTEGER, NOT NULL
+   - reporting_user_id: INTEGER, NULLABLE
+   - iirm_emp_id: VARCHAR(100), NOT NULL
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - salutation_lid: INTEGER, NULLABLE
+   - reporting_manager_employee_id: INTEGER, NULLABLE
+   - status_lid: INTEGER, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+   - organisation_id: INTEGER, NULLABLE
+   - vertical_id: INTEGER, NULLABLE, FOREIGN KEY -> org_vertical(id)
+   - sbu_id: INTEGER, NULLABLE
+   - date_of_birth: DATE, NULLABLE
+   - date_of_joining: DATE, NULLABLE
+   - profile_url: TEXT, NULLABLE
+
+KEY INDEXES:
+- employee_email_id_key (email_id, UNIQUE)
+- idx_employee_user_id (user_id)
+
+FOREIGN KEY RELATIONSHIPS:
+- employee.user_id -> users.id
+- employee.branch_id -> org_branch.id
+- employee.department_id -> org_department.id
+- employee.vertical_id -> org_vertical.id
+
+UNIQUE CONSTRAINTS:
+- email_id
+
+CRITICAL QUERY PATTERNS:
+- For text search, use ILIKE on first_name, last_name, email_id fields.
+- Always include deleted_at IS NULL in WHERE clause for soft deletes.
+
+org_department
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (department_id_seq)
+   - name: VARCHAR(255), NOT NULL
+   - description: TEXT, NULLABLE
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - created_by: VARCHAR(255), NOT NULL
+   - updated_by: VARCHAR(255), NOT NULL
+   - vertical_id: INTEGER, NULLABLE, FOREIGN KEY -> org_vertical(id)
+   - deleted_at: TIMESTAMP, NULLABLE
+   - status_lid: INTEGER, NULLABLE
+
+KEY INDEXES:
+- idx_org_department_name (name)
+
+FOREIGN KEY RELATIONSHIPS:
+- org_department.vertical_id -> org_vertical.id
+
+UNIQUE CONSTRAINTS:
+(none)
+
+CRITICAL QUERY PATTERNS:
+- For text search, use ILIKE on name and description fields.
+- Always include deleted_at IS NULL in WHERE clause for soft deletes.
+
+insurer
+
+    id – INTEGER, Primary Key, Default: nextval('"public".insurer_company_id_seq'::regclass), NOT NULL
+    name – VARCHAR(200), NOT NULL
+    display_name – VARCHAR(100), NOT NULL
+    company_type_lid – INTEGER, Nullable, Default: 0
+    website – VARCHAR(255), Nullable
+    is_life_lid – INTEGER, NOT NULL
+    company_tag_lid – INTEGER, Nullable, Default: 0
+    remarks – VARCHAR(4000), Nullable
+    created_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+    updated_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+    created_by – INTEGER, NOT NULL, Default: 0
+    updated_by – INTEGER, NOT NULL, Default: 0
+    deleted_at – TIMESTAMP, Nullable
+    insure_code – VARCHAR(100), Nullable
+    status_lid – INTEGER, NOT NULL, Default: 1
+    country_id – INTEGER, Nullable, Default: 2
+
+address
+
+    id – INTEGER, Primary Key, Default: nextval('"public".address_id_seq'::regclass), NOT NULL
+    address_type_lid – INTEGER, Nullable
+    addr_1 – VARCHAR(255), NOT NULL
+    addr_2 – VARCHAR(255), Nullable
+    area – VARCHAR(4000), Nullable
+    country_id – INTEGER, NOT NULL, Foreign Key → country(id)
+    state_id – INTEGER, NOT NULL, Foreign Key → state(id)
+    city_id – INTEGER, NOT NULL, Foreign Key → city(id)
+    pincode – VARCHAR(20), Nullable
+    phone_number – VARCHAR(20), Nullable
+    alternate_phone_number – VARCHAR(20), Nullable
+    email – VARCHAR(100), Nullable
+    support_number – VARCHAR(20), Nullable
+    fax – VARCHAR(50), Nullable
+    created_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+    updated_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+    created_by – INTEGER, NOT NULL
+    updated_by – INTEGER, NOT NULL
+    deleted_at – TIMESTAMP, Nullable
+    landmark – VARCHAR(2000), Nullable
+
+Indexes
+idx_address_city_id → (city_id)
+idx_address_country_id → (country_id)
+idx_address_pincode → (pincode)
+idx_address_state_id → (state_id)
+
+Table: opportunity_previous_placement_details
+
+    id – INTEGER, Primary Key, Default: nextval('"public".opportunity_previous_placement_details_id_seq'::regclass), NOT NULL
+    opportunity_id – INTEGER, NOT NULL, Foreign Key → opportunity(id)
+    challenges_and_mitigation – TEXT, Nullable
+    existing_competition – TEXT, Nullable
+    remarks – TEXT, Nullable
+
+Table: opportunity_competitor
+
+id – INTEGER, Primary Key, Default: nextval('"public".opportunity_competitor_id_seq'::regclass), NOT NULL
+opportunity_id – INTEGER, NOT NULL, Foreign Key → opportunity(id)
+competitor – VARCHAR(255), NOT NULL
+competitor_id – INTEGER, Nullable
+competitor_branch_id – INTEGER, Nullable
+
+Indexes:
+idx_opp_competitor_competitor_id → (competitor_id)
+idx_opp_competitor_opp_id → (opportunity_id)
+
+Table: opportunity_activity_participants
+
+id – INTEGER, Primary Key, Default: nextval('"public".oppty_activity_participants_id_seq'::regclass), NOT NULL
+opportunity_id – INTEGER, NOT NULL, Foreign Key → opportunity(id)
+activity_id – INTEGER, NOT NULL
+participant_id – INTEGER, NOT NULL, Foreign Key → users(id)
+created_at – TIMESTAMP, Nullable, Default: CURRENT_TIMESTAMP
+updated_at – TIMESTAMP, Nullable, Default: CURRENT_TIMESTAMP
+created_by – INTEGER, Nullable
+updated_by – INTEGER, Nullable
+opportunity_activity_id – INTEGER, Nullable
+
+Indexes:
+
+idx_opportunity_activity_participants_created_by → (created_by)
+idx_opportunity_activity_participants_opportunity_activity_id → (opportunity_activity_id)
+idx_opportunity_activity_participants_opportunity_id → (opportunity_id)
+idx_opportunity_activity_participants_participant_id → (participant_id)
+
+
+Table: insurer
+
+id – INTEGER, Primary Key, Default: nextval('"public".insurer_company_id_seq'::regclass), NOT NULL
+name – VARCHAR(200), NOT NULL
+display_name – VARCHAR(100), NOT NULL
+company_type_lid – INTEGER, Nullable, Default: 0
+website – VARCHAR(255), Nullable
+is_life_lid – INTEGER, NOT NULL
+company_tag_lid – INTEGER, Nullable, Default: 0
+remarks – VARCHAR(4000), Nullable
+created_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+updated_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+created_by – INTEGER, NOT NULL, Default: 0
+updated_by – INTEGER, NOT NULL, Default: 0
+deleted_at – TIMESTAMP, Nullable
+insure_code – VARCHAR(100), Nullable
+status_lid – INTEGER, NOT NULL, Default: 1
+country_id – INTEGER, Nullable, Default: 2
+
+Table: insurer
+
+id – INTEGER, Primary Key, Default: nextval('"public".insurer_company_id_seq'::regclass), NOT NULL
+name – VARCHAR(200), NOT NULL
+display_name – VARCHAR(100), NOT NULL
+company_type_lid – INTEGER, Nullable, Default: 0
+website – VARCHAR(255), Nullable
+is_life_lid – INTEGER, NOT NULL
+company_tag_lid – INTEGER, Nullable, Default: 0
+remarks – VARCHAR(4000), Nullable
+created_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+updated_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+created_by – INTEGER, NOT NULL, Default: 0
+updated_by – INTEGER, NOT NULL, Default: 0
+deleted_at – TIMESTAMP, Nullable
+insure_code – VARCHAR(100), Nullable
+status_lid – INTEGER, NOT NULL, Default: 1
+country_id – INTEGER, Nullable, Default: 2
+
+Table: tpa
+
+id – INTEGER, Primary Key, Default: nextval('"public".tpa_id_seq'::regclass), NOT NULL
+name – VARCHAR(200), NOT NULL
+display_name – VARCHAR(100), NOT NULL
+company_type_lid – INTEGER, NOT NULL
+website – VARCHAR(100), Nullable
+remarks – VARCHAR(4000), Nullable
+created_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+updated_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+created_by – INTEGER, NOT NULL
+updated_by – INTEGER, NOT NULL
+deleted_at – TIMESTAMP, Nullable
+status_lid – INTEGER, Nullable
+country_id – INTEGER, Nullable, Default: 2
+
+Table: tpa_address
+
+id – INTEGER, Primary Key, Default: nextval('"public".tpa_address_id_seq'::regclass), NOT NULL
+tpa_id – INTEGER, NOT NULL, Foreign Key → tpa(id)
+address_id – INTEGER, NOT NULL, Foreign Key → address(id)
+deleted_at – TIMESTAMP, Nullable
+
+Table: document
+
+id – INTEGER, Primary Key, Default: nextval('"public".document_id_seq'::regclass), NOT NULL
+doc_type_lid – INTEGER, NOT NULL (likely a lookup reference to document type)
+name – VARCHAR(255), NOT NULL (document name or label)
+url – TEXT, NOT NULL (storage path or external link to document)
+created_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+updated_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+created_by – VARCHAR(255), NOT NULL (creator identifier)
+updated_by – VARCHAR(255), NOT NULL (last updater identifier)
+
+Indexes:
+
+idx_document_doc_type_lid → (doc_type_lid)
+idx_document_name → (name)
+
+Table: policy_endorsement_template_doc_map
+    
+id – INTEGER, Primary Key, Default: nextval('"public".policy_endorsement_template_doc_map_id_seq'::regclass), NOT NULL
+policy_id – INTEGER, NOT NULL, Foreign Key → policy(id)
+insurer_id – INTEGER, NOT NULL, Foreign Key → insurer(id)
+document_id – INTEGER, NOT NULL, Foreign Key → file_uploads(id)

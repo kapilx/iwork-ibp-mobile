@@ -1,0 +1,12 @@
+S. No,Nudge Title,Nudge,Development Prompt (for system / AI to generate the action)
+1,Incomplete Company Profiles,5 companies have incomplete profiles. Add missing details to improve data quality.,“Identify companies with incomplete profiles. Highlight missing fields and prompt the user to update company information to improve data completeness.”
+2,Outdated Contact Details,3 companies have outdated contact details. Refresh contact info for better communication.,"“Fetch companies flagged with outdated or invalid contact details. Recommend updating phone numbers, emails, and primary contact information.”"
+3,Red-Flag Companies,4 companies marked RED require attention. Schedule follow-up activities.,“Locate companies marked as RED status. Suggest scheduling follow-up actions or escalation tasks to resolve pending issues.”
+4,Qualified Leads Ready for Conversion,12 qualified leads are ready for conversion. Move them to prospect stage.,“Find all qualified leads linked to companies and not yet moved to the prospect stage. Recommend progressing them to prospect status.”
+5,Unassigned Relationship Managers,7 companies don't have assigned relationship managers. Allocate resources.,“Identify companies without assigned relationship managers. Suggest allocating BD/CRM resources to ensure ongoing engagement.”
+6,Quarterly Client Review Due,8 clients are due for quarterly client review. Book meetings now.,“Fetch clients whose quarterly review is due. Recommend scheduling review meetings and preparing agendas.”
+7,Industry Intelligence Update,Update industry intelligence for 6 companies to enhance sales strategy.,“Locate companies whose industry intelligence is outdated. Recommend updating key market insights to strengthen sales planning.”
+8,Policies Expiring This Month,15 policies expiring this month. Initiate renewal opportunities.,"“Identify companies with policies expiring this month. Suggest initiating renewal outreach, quote preparation, and follow-up actions.”"
+9,No Recent Interaction,Log activities for 10 companies with no recent interactions in 30+ days.,"“Fetch companies without logged interactions in the last 30+ days. Prompt the user to log a follow-up call, meeting, or email.”"
+10,Incomplete Address Information,4 companies have incomplete address information. Update for accurate records.,“Identify companies with missing or incomplete address fields. Recommend updating full address details for accuracy and compliance.”
+,,,

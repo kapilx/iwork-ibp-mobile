@@ -1,0 +1,20 @@
+{
+    "collectionName": "components_dashboard_enrollment_banners",
+    "info": {
+        "displayName": "Enrollment Banners",
+        "description": "Enrollment banner cards"
+    },
+    "options": {},
+    "attributes": {
+        "banner1": {
+            "type": "component",
+            "repeatable": false,
+            "component": "dashboard.enrollment-banner-item"
+        },
+        "banner2": {
+            "type": "component",
+            "repeatable": false,
+            "component": "dashboard.enrollment-banner-item"
+        }
+    }
+}

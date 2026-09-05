@@ -1,0 +1,16 @@
+{
+    "collectionName": "components_policy_template_enrollment_windows",
+    "info": {
+        "displayName": "Enrollment Window",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "startDate": {
+            "type": "date"
+        },
+        "endDate": {
+            "type": "date"
+        }
+    }
+}

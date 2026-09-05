@@ -1,0 +1,12 @@
+S. No,Nudge Title,Nudge,Development Prompt (for system / AI to generate the action)
+1,Incomplete Contact Profiles,18 contacts have incomplete profiles. Update missing fields for better engagement.,"“Identify contacts with incomplete profiles. Highlight missing fields like email, phone, designation, or department and prompt the user to update the details.”"
+2,Invalid / Outdated Email IDs,6 contacts have bounced emails. Update valid email IDs to ensure successful communication.,“Fetch contacts tagged with invalid or bounced emails. Recommend updating and verifying email details.”
+3,Unreachable Contacts,9 contacts marked unreachable. Try alternate contact details or verify availability.,"“Locate contacts for whom calls have failed or marked as unreachable. Suggest verifying phone numbers, alternate contacts, or updating communication preferences.”"
+4,No Recent Interaction,22 contacts have had no interaction for 45+ days. Engage to maintain relationship.,“Identify contacts with no logged interactions in the last 45+ days. Recommend scheduling calls or sending engagement emails.”
+5,Decision Maker Not Identified,7 companies have contacts but no decision-maker assigned. Identify and tag the right person.,“Fetch companies where no contact is tagged as the decision-maker. Suggest identifying and marking the primary decision authority.”
+6,Contacts without Company Mapping,4 contacts are not linked to any company. Assign them to the appropriate organization.,“Locate contacts not linked to any company. Recommend mapping them to the correct organization for clean data structure.”
+7,Duplicate Contacts Detected,5 possible duplicate contacts found. Review and merge records.,"“Identify contacts flagged as potential duplicates based on name, email, or mobile. Suggest merging or cleaning them.”"
+8,Birthday / Anniversary Due,12 contacts have birthdays/anniversaries this week. Schedule greetings.,“Fetch upcoming birthdays or anniversaries for contacts. Recommend sending personalized greetings or automating messages.”
+9,Contact Role Change Needed,8 contacts may have updated roles or designations. Refresh information.,“Locate contacts whose designations or roles changed in CRM updates or external sources. Suggest updating profiles to maintain accuracy.”
+10,Inactive Decision Makers,3 decision makers have been inactive for 60+ days. Re-engage with updated proposals or check-ins.,“Identify decision-makers with no recent engagement. Recommend initiating contact with new updates or check-in messages.”
+,,,

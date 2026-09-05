@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MIR Screen — Design Options</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;color:#1e293b;font-size:13px;line-height:1.5}
+/* ── Switcher ── */
+.switcher{position:fixed;top:0;left:0;right:0;z-index:200;background:#0f172a;display:flex;align-items:center;gap:10px;padding:8px 20px}
+.switcher h1{color:#94a3b8;font-size:12px;font-weight:500;margin-right:12px;white-space:nowrap}
+.opt-btn{padding:5px 16px;border-radius:20px;border:1px solid #334155;background:transparent;color:#94a3b8;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s}
+.opt-btn.active{background:#3b82f6;border-color:#3b82f6;color:#fff}
+.option{display:none;padding-top:44px;min-height:100vh}
+.option.visible{display:block}
+/* ── Shared ── */
+.card{background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:16px}
+.kpi-grid{display:grid;gap:12px;margin-bottom:16px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.kpi-card{padding:14px 16px;border-radius:8px;background:#fff;border:1px solid #e2e8f0}
+.kpi-card.red{border-left:3px solid #ef4444}
+.kpi-card.amber{border-left:3px solid #f59e0b}
+.kpi-card.green{border-left:3px solid #10b981}
+.kpi-card.blue{border-left:3px solid #3b82f6}
+.kpi-label{font-size:11px;color:#64748b;font-weight:500;margin-bottom:3px}
+.kpi-val{font-size:26px;font-weight:800;color:#1e293b}
+.kpi-sub{font-size:11px;color:#94a3b8;margin-top:2px}
+table{width:100%;border-collapse:collapse}
+th{background:#f8fafc;text-align:left;padding:8px 10px;font-size:11px;font-weight:700;color:#64748b;border-bottom:1px solid #e2e8f0;text-transform:uppercase;letter-spacing:.4px}
+td{padding:7px 10px;border-bottom:1px solid #f1f5f9;font-size:12px;color:#374151;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+input[type=text],textarea{width:100%;border:1px solid #e2e8f0;border-radius:5px;padding:5px 7px;font-size:12px;background:#f8fafc;color:#374151;font-family:inherit;resize:vertical}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.b-draft{background:#fef3c7;color:#92400e}
+.b-red{background:#fee2e2;color:#991b1b}
+.b-green{background:#d1fae5;color:#065f46}
+.b-blue{background:#dbeafe;color:#1e40af}
+.b-purple{background:#ede9fe;color:#5b21b6}
+.chip{display:inline-flex;align-items:center;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px}
+.chip-auto{background:#e0f2fe;color:#0369a1}
+.chip-manual{background:#fef3c7;color:#92400e}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-size:12px;font-weight:700}
+.btn-primary{background:#3b82f6;color:#fff}
+.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.btn-outline{background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
+.sub-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;margin-top:20px}
+.sub-head h3{font-size:13px;font-weight:700;color:#1e293b}
+.sub-head .note{font-size:11px;color:#94a3b8;margin-left:auto}
+.area{max-width:1100px;margin:0 auto;padding:16px 20px}
+.lock{font-size:11px;color:#94a3b8;cursor:pointer;margin-left:4px;user-select:none}
+.lock:hover{color:#3b82f6}
+.ai-box{background:linear-gradient(135deg,#ede9fe,#e0f2fe);border:1px solid #c4b5fd;border-radius:8px;padding:10px 14px;margin-bottom:16px}
+.ai-box .ai-tag{font-size:10px;font-weight:800;color:#7c3aed;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.ai-box p{font-size:12px;color:#1e293b}
+.tbl-wrap{border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tbl-foot{padding:7px 12px;background:#f8fafc;border-top:1px solid #e2e8f0;font-size:11px;color:#64748b}
+.tbl-foot a{color:#3b82f6;text-decoration:none}
+.divider{height:1px;background:#e2e8f0;margin:20px 0}
+/* progress bars */
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bar-label{width:75px;font-size:11px;color:#64748b;text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:18px;background:#f1f5f9;border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:7px;font-size:10px;font-weight:700;color:#fff;white-space:nowrap}
+.bar-num{width:55px;font-size:11px;color:#374151;text-align:right;flex-shrink:0}
+.f-red{background:#ef4444}.f-amber{background:#f59e0b}.f-blue{background:#3b82f6}.f-green{background:#10b981}
+/* score */
+.score-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9}
+.score-name{flex:1.5;font-size:12px;font-weight:500}
+.score-count{width:75px;font-size:11px;color:#64748b;text-align:center}
+.score-bar-wrap{flex:2;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:4px}
+.score-pts{width:55px;text-align:right;font-size:12px;font-weight:700}
+.score-max{color:#94a3b8;font-weight:400}
+/* ── Option A ── */
+.mir-hdr{background:#1e3a5f;color:#fff;padding:0 20px;position:sticky;top:44px;z-index:150;display:flex;align-items:center;gap:10px;min-height:50px}
+.mir-hdr .co{font-size:15px;font-weight:800}
+.mir-hdr .meta{font-size:11px;color:#93c5fd}
+.mir-hdr .due{font-size:11px;color:#fde68a;margin-left:auto}
+.mir-hdr .hdr-btns{display:flex;gap:8px;padding:10px 0;margin-left:12px}
+.tab-nav{background:#fff;border-bottom:2px solid #e2e8f0;padding:0 20px;position:sticky;top:94px;z-index:149;display:flex;overflow-x:auto}
+.tab-btn{padding:11px 16px;font-size:12px;font-weight:700;color:#64748b;cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tab-btn:hover{color:#1e293b}
+.tab-btn.active{color:#3b82f6;border-bottom-color:#3b82f6}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+/* ── Option B ── */
+.wiz-hdr{background:#1e3a5f;color:#fff;padding:12px 20px;display:flex;align-items:center;gap:12px}
+.wiz-hdr .co{font-size:15px;font-weight:800}
+.wiz-steps{background:#fff;border-bottom:1px solid #e2e8f0;padding:12px 20px;display:flex;align-items:center;overflow-x:auto;gap:0}
+.ws-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.ws-done{background:#10b981;color:#fff}
+.ws-active{background:#3b82f6;color:#fff}
+.ws-pending{background:#e2e8f0;color:#94a3b8}
+.ws-label{font-size:11px;font-weight:700;margin:0 8px;white-space:nowrap}
+.ws-active-lbl{color:#3b82f6}
+.ws-done-lbl{color:#10b981}
+.ws-pending-lbl{color:#94a3b8}
+.ws-line{width:28px;height:2px;flex-shrink:0}
+.ws-line-done{background:#10b981}
+.ws-line-pending{background:#e2e8f0}
+.wiz-body{max-width:900px;margin:0 auto;padding:20px}
+.wiz-foot{background:#fff;border-top:1px solid #e2e8f0;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;bottom:0;z-index:100}
+.step-panel{display:none}
+.step-panel.active{display:block}
+.step-hdr{margin-bottom:16px}
+.step-hdr h2{font-size:18px;font-weight:800;color:#1e293b}
+.step-hdr p{font-size:12px;color:#64748b;margin-top:3px}
+/* risk matrix */
+.risk-cat{font-size:11px;font-weight:800;color:#7c3aed;text-transform:uppercase;letter-spacing:.5px;padding:5px 10px;background:#faf5ff;border-radius:4px;margin:10px 0 4px}
+.risk-hdr{display:flex;padding:4px 10px;font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid #e2e8f0}
+.risk-row-r{display:flex;align-items:center;padding:6px 10px;border-bottom:1px solid #f1f5f9}
+.risk-row-r:last-child{border-bottom:none}
+.risk-type-col{flex:1.5;font-size:12px;color:#374151}
+.risk-chk{width:80px;text-align:center}
+.risk-rem{flex:2}
+/* portfolio */
+.tag-insurer{display:inline-block;background:#ede9fe;color:#5b21b6;border-radius:4px;font-size:10px;font-weight:700;padding:1px 6px}
+</style>
+</head>
+<body>
+
+<!-- SWITCHER -->
+<div class="switcher">
+  <h1>MIR Screen · Design Options</h1>
+  <button class="opt-btn active" id="btn-a" onclick="showOpt('a')">Option A — Sectioned Dashboard</button>
+  <button class="opt-btn" id="btn-b" onclick="showOpt('b')">Option B — Guided Wizard</button>
+</div>
+
+<!-- ════════════════════════════════════════════════════════
+     OPTION A — SECTIONED DASHBOARD
+════════════════════════════════════════════════════════ -->
+<div class="option visible" id="option-a">
+
+  <div class="mir-hdr">
+    <div>
+      <div class="co">TeamLease Services Ltd</div>
+      <div class="meta">Monthly Information Report · May 2026</div>
+    </div>
+    <span class="badge b-draft">● Draft</span>
+    <div class="due">⏱ Due: 5 Jun 2026 · 3 days remaining</div>
+    <div class="hdr-btns">
+      <button class="btn btn-ghost">Save Draft</button>
+      <button class="btn btn-primary">Submit for Approval →</button>
+    </div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="showTab(this,'ta-summary')">① Executive Summary</button>
+    <button class="tab-btn" onclick="showTab(this,'ta-claims')">② Claims</button>
+    <button class="tab-btn" onclick="showTab(this,'ta-portfolio')">③ Portfolio &amp; Coverage</button>
+    <button class="tab-btn" onclick="showTab(this,'ta-renewals')">④ Renewals</button>
+    <button class="tab-btn" onclick="showTab(this,'ta-risk')">⑤ Risk Matrix</button>
+    <button class="tab-btn" onclick="showTab(this,'ta-score')">⑥ Service Score</button>
+    <button class="tab-btn" onclick="showTab(this,'ta-plan')">⑦ Monthly Plan</button>
+  </div>
+
+  <!-- ① Executive Summary -->
+  <div id="ta-summary" class="tab-panel active">
+    <div class="area">
+      <div class="kpi-grid g4">
+        <div class="kpi-card red"><div class="kpi-label">Critical Attention</div><div class="kpi-val">9</div><div class="kpi-sub">policies flagged this month</div></div>
+        <div class="kpi-card amber"><div class="kpi-label">Total Policies</div><div class="kpi-val">47</div><div class="kpi-sub">active across all lines</div></div>
+        <div class="kpi-card blue"><div class="kpi-label">Total Inception Premium</div><div class="kpi-val">₹8.4 Cr</div><div class="kpi-sub">ex service tax</div></div>
+        <div class="kpi-card green"><div class="kpi-label">Service Score</div><div class="kpi-val">77.5</div><div class="kpi-sub">out of 100</div></div>
+      </div>
+      <div class="ai-box">
+        <div class="ai-tag">🤖 AI Summary</div>
+        <p>3 GMC policies and 2 GPA policies are approaching renewal. Loss ratio on GMC-P105344870 is <strong>182%</strong> — well above the 80% benchmark. Non-Health Claims service score is <strong>0/15</strong> and needs immediate attention before submission.</p>
+      </div>
+      <div class="sub-head"><h3>Critical Issues Needing Immediate Attention</h3><span class="chip chip-auto">Auto-populated</span><span class="note">CRM must review and add remarks / action before submission</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Policy Type</th><th>No. of Policies</th><th style="text-align:right">Inception Premium</th><th>CRM Remarks <span class="lock">🔒</span></th><th>Action Taken <span class="lock">🔒</span></th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Marine Specific</td><td>1</td><td style="text-align:right;font-family:monospace">₹6,217</td><td><input type="text" value="Renewal Notice shared to client on 15-May-20"></td><td><input type="text" value="Following up with Insurer for Competitive quotes"></td></tr>
+            <tr><td>2</td><td>WC</td><td>1</td><td style="text-align:right;font-family:monospace">₹90,51,627</td><td><input type="text" value="Renewal Notice shared to client on 15-May-20"></td><td><input type="text" value="Following up with Insurer for Competitive quotes"></td></tr>
+            <tr><td>3</td><td>GMC</td><td>1</td><td style="text-align:right;font-family:monospace">₹1,43,08,922</td><td><input type="text" value="Renewal Notice shared to client on 15-May-20"></td><td><input type="text" value="Following up with Insurer for Competitive quotes"></td></tr>
+            <tr><td>4</td><td>GMC</td><td>1</td><td style="text-align:right;font-family:monospace">₹3,44,44,287</td><td><input type="text" value="Renewal Notice shared to client on 15-May-20"></td><td><input type="text" value="Following up with Insurer for Competitive quotes"></td></tr>
+            <tr><td>5</td><td>GMC</td><td>1</td><td style="text-align:right;font-family:monospace">₹56,34,474</td><td><input type="text" placeholder="Add remarks…"></td><td><input type="text" placeholder="Add action…"></td></tr>
+            <tr><td>6</td><td>GPA</td><td>1</td><td style="text-align:right;font-family:monospace">₹48,19,488</td><td><input type="text" placeholder="Add remarks…"></td><td><input type="text" placeholder="Add action…"></td></tr>
+            <tr><td>7</td><td>GPA</td><td>1</td><td style="text-align:right;font-family:monospace">₹1,09,339</td><td><input type="text" placeholder="Add remarks…"></td><td><input type="text" placeholder="Add action…"></td></tr>
+            <tr><td>8</td><td>GMC</td><td>1</td><td style="text-align:right;font-family:monospace">₹29,74,544</td><td><input type="text" placeholder="Add remarks…"></td><td><input type="text" placeholder="Add action…"></td></tr>
+            <tr><td>9</td><td>GPA</td><td>1</td><td style="text-align:right;font-family:monospace">₹84,063</td><td><input type="text" placeholder="Add remarks…"></td><td><input type="text" placeholder="Add action…"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② Claims (consolidated) -->
+  <div id="ta-claims" class="tab-panel">
+    <div class="area">
+      <!-- KPIs -->
+      <div class="kpi-grid g4">
+        <div class="kpi-card red"><div class="kpi-label">Open Claims (EOM)</div><div class="kpi-val">127</div><div class="kpi-sub">GMC:109 · GPA:6 · Others:12</div></div>
+        <div class="kpi-card blue"><div class="kpi-label">Received (May)</div><div class="kpi-val">108</div><div class="kpi-sub">₹45.5L value received</div></div>
+        <div class="kpi-card green"><div class="kpi-label">Paid (May)</div><div class="kpi-val">42</div><div class="kpi-sub">₹7.8L settled this month</div></div>
+        <div class="kpi-card amber"><div class="kpi-label">Reimbursement &gt;45d</div><div class="kpi-val">6</div><div class="kpi-sub">₹7.4L outstanding — GPA</div></div>
+      </div>
+      <div class="ai-box">
+        <div class="ai-tag">🤖 AI Insight</div>
+        <p>Loss ratio on GMC-P105344870 is <strong>182%</strong> (claims ₹4.21Cr vs premium ₹2.3Cr). GPA aging claims (6 claims, ₹6L) are all &gt;45 days — TPA escalation recommended. 41 GPA claims pending documentation.</p>
+      </div>
+
+      <!-- Claim Status -->
+      <div class="sub-head"><h3>Claim Status by Policy</h3><span class="chip chip-auto">Auto-populated</span><span class="note">Snapshot at report creation date · Premium ex-service tax</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Policy (Grouped)</th><th style="text-align:right">Start of Month<br>No / Value</th><th style="text-align:right">Received MTD<br>No / Value</th><th style="text-align:right">Paid MTD<br>No / Value</th><th style="text-align:right">End of Month<br>No / Value</th><th>Remarks <span class="lock">🔒</span></th></tr></thead>
+          <tbody>
+            <tr><td><strong>GMC</strong> <span style="color:#94a3b8;font-size:11px">8 policies</span></td><td style="text-align:right;font-family:monospace">44 / ₹13.7L</td><td style="text-align:right;font-family:monospace">108 / ₹45.5L</td><td style="text-align:right;font-family:monospace">42 / ₹7.8L</td><td style="text-align:right;font-family:monospace"><strong>109 / ₹45.9L</strong></td><td><input type="text" placeholder="Add remarks…"></td></tr>
+            <tr><td><strong>GPA</strong> <span style="color:#94a3b8;font-size:11px">6 policies</span></td><td style="text-align:right;font-family:monospace">6 / ₹6.0L</td><td style="text-align:right;font-family:monospace">0 / ₹0</td><td style="text-align:right;font-family:monospace">0 / ₹0</td><td style="text-align:right;font-family:monospace"><strong>6 / ₹6.0L</strong></td><td><input type="text" placeholder="Add remarks…"></td></tr>
+            <tr><td><strong>All Risk</strong> <span style="color:#94a3b8;font-size:11px">1 policy</span></td><td style="text-align:right;font-family:monospace">1 / ₹18,282</td><td style="text-align:right;font-family:monospace">0 / ₹0</td><td style="text-align:right;font-family:monospace">0 / ₹0</td><td style="text-align:right;font-family:monospace"><strong>1 / ₹18,282</strong></td><td><input type="text" placeholder="Add remarks…"></td></tr>
+            <tr><td><strong>Marine / WC / Fire / Others</strong></td><td style="text-align:right;font-family:monospace">0 / ₹0</td><td style="text-align:right;font-family:monospace">0 / ₹0</td><td style="text-align:right;font-family:monospace">0 / ₹0</td><td style="text-align:right;font-family:monospace">0 / ₹0</td><td><input type="text" placeholder="Add remarks…"></td></tr>
+          </tbody>
+        </table>
+        <div class="tbl-foot">Grouped view · <a href="#">Expand all 30 policies</a></div>
+      </div>
+
+      <!-- Claim Aging -->
+      <div class="sub-head"><h3>Claim Aging Analysis</h3><span class="chip chip-auto">Auto-populated</span><span class="note">Reimbursement claims only</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div class="card" style="padding:16px">
+          <div style="font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px">Outstanding Aging Distribution</div>
+          <div class="bar-row"><div class="bar-label">&gt; 45 Days</div><div class="bar-track"><div class="bar-fill f-red" style="width:100%">6 claims · ₹7.4L</div></div><div class="bar-num" style="color:#ef4444;font-weight:700">25%</div></div>
+          <div class="bar-row"><div class="bar-label">&gt; 30 Days</div><div class="bar-track"><div class="bar-fill f-amber" style="width:55%">3 claims</div></div><div class="bar-num">12%</div></div>
+          <div class="bar-row"><div class="bar-label">&gt; 15 Days</div><div class="bar-track"><div class="bar-fill f-amber" style="width:35%">2</div></div><div class="bar-num">8%</div></div>
+          <div class="bar-row"><div class="bar-label">&lt; 15 Days</div><div class="bar-track"><div class="bar-fill f-green" style="width:75%">13 claims</div></div><div class="bar-num">54%</div></div>
+          <div style="margin-top:12px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:11px;color:#64748b">Total Outstanding: <strong style="color:#1e293b;font-size:13px">24 claims · ₹15.5L</strong></div>
+        </div>
+        <div class="tbl-wrap" style="margin:0">
+          <table>
+            <thead><tr><th>Policy</th><th style="text-align:center">Outstanding</th><th style="text-align:center;color:#ef4444">&gt;45d</th><th style="text-align:center">&gt;30d</th><th style="text-align:center">&gt;15d</th><th style="text-align:center">&lt;15d</th></tr></thead>
+            <tbody>
+              <tr><td>GPA P105883549</td><td style="text-align:center;font-family:monospace">6/₹6L</td><td style="text-align:center;font-family:monospace;color:#ef4444;font-weight:700">6/₹6L</td><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">0</td></tr>
+              <tr><td>GMC 190001132</td><td style="text-align:center;font-family:monospace">3/₹1.4L</td><td style="text-align:center;font-family:monospace;color:#ef4444;font-weight:700">3/₹1.4L</td><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">0</td></tr>
+              <tr><td>GMC P105276965</td><td style="text-align:center;font-family:monospace">18/₹4.6L</td><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center;font-family:monospace">0</td></tr>
+              <tr><td>All Risk 072300</td><td style="text-align:center;font-family:monospace">1/₹18K</td><td style="text-align:center;font-family:monospace;color:#ef4444;font-weight:700">1/₹18K</td><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pending Issues >30 <45 days -->
+      <div class="sub-head"><h3>Pending Claims — Issues &gt;30d &lt;45d</h3><span class="chip chip-auto">Auto-populated</span><span class="badge b-red" style="margin-left:8px">6 flagged</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Claim Ref #</th><th>Policy</th><th style="text-align:right">Claim Amount</th><th>Claim Date</th><th>Reason for Pendency <span class="lock">🔒</span></th></tr></thead>
+          <tbody>
+            <tr><td>—</td><td>All_Risk-072300/48/11/01</td><td style="text-align:right;font-family:monospace">₹18,282</td><td>01-Aug-2011</td><td><input type="text" placeholder="Enter reason…"></td></tr>
+            <tr><td>1</td><td>GPA-072300/42/11/05/00000169</td><td style="text-align:right;font-family:monospace">₹1,00,000</td><td>26-Jul-2011</td><td><input type="text" value="Documents awaited from claimant"></td></tr>
+            <tr><td>—</td><td>GPA-072300/42/11/05/00000169</td><td style="text-align:right;font-family:monospace">₹1,00,000</td><td>06-Sep-2011</td><td><input type="text" placeholder="Enter reason…"></td></tr>
+            <tr><td>4</td><td>GPA-072300/42/11/05/00000169</td><td style="text-align:right;font-family:monospace">₹2,00,000</td><td>14-Oct-2011</td><td><input type="text" placeholder="Enter reason…"></td></tr>
+            <tr><td>541497</td><td>GMC-072300/48/13/41/00000727</td><td style="text-align:right;font-family:monospace">₹3,950</td><td>11-Sep-2013</td><td><input type="text" placeholder="Enter reason…"></td></tr>
+          </tbody>
+        </table>
+        <div class="tbl-foot">Showing 5 of 24 pending claims · <a href="#">View all</a></div>
+      </div>
+
+      <!-- Claim Documentation -->
+      <div class="sub-head"><h3>Claim Documentation Status</h3><span class="chip chip-manual">Manual Entry</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:180px">Issue Type</th><th>Details / Status</th><th>Remarks <span class="lock">🔒</span></th><th>Action Taken <span class="lock">🔒</span></th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700">Claims Documentation</td><td><textarea>41 GPA Claims pending documentation</textarea></td><td><textarea placeholder="Add remarks…"></textarea></td><td><textarea>Following up for shortfall Documents</textarea></td></tr>
+            <tr><td style="font-weight:700">Policy Documentation</td><td><textarea>No Endorsements Pending</textarea></td><td><textarea placeholder="Add remarks…"></textarea></td><td><textarea placeholder="Add action…"></textarea></td></tr>
+            <tr><td style="font-weight:700">Uncovered Risks</td><td><textarea placeholder="Describe uncovered risks…"></textarea></td><td><textarea placeholder="Add remarks…"></textarea></td><td><textarea placeholder="Add action…"></textarea></td></tr>
+            <tr><td style="font-weight:700">Other Issues</td><td><textarea placeholder="Any other claim issues…"></textarea></td><td><textarea placeholder="Add remarks…"></textarea></td><td><textarea placeholder="Add action…"></textarea></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ Portfolio & Coverage -->
+  <div id="ta-portfolio" class="tab-panel">
+    <div class="area">
+      <div class="kpi-grid g3">
+        <div class="kpi-card blue"><div class="kpi-label">Total Policies</div><div class="kpi-val">47</div><div class="kpi-sub">across 4 insurers</div></div>
+        <div class="kpi-card blue"><div class="kpi-label">Total Sum Insured</div><div class="kpi-val">₹1,240 Cr</div><div class="kpi-sub">across all active policies</div></div>
+        <div class="kpi-card blue"><div class="kpi-label">Premium YTD</div><div class="kpi-val">₹22.3 Cr</div><div class="kpi-sub">incl. add-ons, ex del-ons</div></div>
+      </div>
+
+      <div class="sub-head"><h3>Portfolio Details</h3><span class="chip chip-auto">Auto-populated</span><span class="note">Premium figures ex-service tax</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Policy Name</th><th>Renewal Date</th><th style="text-align:right">Inception Premium</th><th style="text-align:right">Sum Insured</th><th style="text-align:right">Premium YTD</th><th style="text-align:right">Add-ons</th><th style="text-align:right">Del-ons</th><th style="text-align:right">Claims YTD</th><th>Insurer</th></tr></thead>
+          <tbody>
+            <tr><td>GMC - P105344870</td><td>30-Jun-2020</td><td style="text-align:right;font-family:monospace">₹2,91,90,074</td><td style="text-align:right;font-family:monospace">₹250 Cr</td><td style="text-align:right;font-family:monospace">₹6,74,25,856</td><td style="text-align:right;font-family:monospace">₹1,41,46,985</td><td style="text-align:right;font-family:monospace">₹37,45,348</td><td style="text-align:right;font-family:monospace">₹4,11,34,893</td><td><span class="tag-insurer">UII DO 9-72300</span></td></tr>
+            <tr><td>GPA - P105883549</td><td>30-Jun-2020</td><td style="text-align:right;font-family:monospace">₹40,84,312</td><td style="text-align:right;font-family:monospace">₹195 Cr</td><td style="text-align:right;font-family:monospace">₹51,34,239</td><td style="text-align:right;font-family:monospace">₹19,19,009</td><td style="text-align:right;font-family:monospace">₹14,61,606</td><td style="text-align:right;font-family:monospace">₹6,00,000</td><td><span class="tag-insurer">UII DO 9-72300</span></td></tr>
+            <tr><td>EDLI - ED000148</td><td>30-Jul-2020</td><td style="text-align:right;font-family:monospace">₹1,31,99,205</td><td style="text-align:right;font-family:monospace">₹5342 Cr</td><td style="text-align:right;font-family:monospace">₹5,71,05,353</td><td style="text-align:right;font-family:monospace">—</td><td style="text-align:right;font-family:monospace">₹4,02,961</td><td style="text-align:right;font-family:monospace">—</td><td><span class="tag-insurer">EXIDE LIFE</span></td></tr>
+            <tr><td>GTL - 35003717</td><td>14-Feb-2021</td><td style="text-align:right;font-family:monospace">₹50,51,863</td><td style="text-align:right;font-family:monospace">₹531 Cr</td><td style="text-align:right;font-family:monospace">₹60,75,928</td><td style="text-align:right;font-family:monospace">₹5,64,079</td><td style="text-align:right;font-family:monospace">—</td><td style="text-align:right;font-family:monospace">₹2,00,000</td><td><span class="tag-insurer">Max Life</span></td></tr>
+            <tr><td>WC - 4010/81292573</td><td>30-Jun-2020</td><td style="text-align:right;font-family:monospace">₹76,70,870</td><td style="text-align:right;font-family:monospace">₹1291 Cr</td><td style="text-align:right;font-family:monospace">₹1,08,38,676</td><td style="text-align:right;font-family:monospace">₹26,91,656</td><td style="text-align:right;font-family:monospace">₹5,83,289</td><td style="text-align:right;font-family:monospace">—</td><td><span class="tag-insurer">ICICI Lombard</span></td></tr>
+            <tr><td>All Risk - 072300/48/11</td><td>19-Apr-2012</td><td style="text-align:right;font-family:monospace">₹62,886</td><td style="text-align:right;font-family:monospace">₹96.7L</td><td style="text-align:right;font-family:monospace">₹71,929</td><td style="text-align:right;font-family:monospace">₹3,277</td><td style="text-align:right;font-family:monospace">₹951</td><td style="text-align:right;font-family:monospace">₹22,162</td><td><span class="tag-insurer">UII DO 9-72300</span></td></tr>
+          </tbody>
+        </table>
+        <div class="tbl-foot">Showing 6 of 47 policies · <a href="#">View all</a></div>
+      </div>
+
+      <div class="sub-head"><h3>Policy Details — Insurer Mapping</h3><span class="chip chip-auto">Auto-populated</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Policy Name</th><th>Insurer Name</th><th>Insurer Branch</th><th>Contact Person</th></tr></thead>
+          <tbody>
+            <tr><td>GMC - P105344870</td><td>United India Insurance (UII)</td><td>DO 9-72300, Bangalore</td><td>—</td></tr>
+            <tr><td>GPA - P105883549</td><td>United India Insurance (UII)</td><td>DO 9-72300, Bangalore</td><td>—</td></tr>
+            <tr><td>Fire - 60450011191</td><td>National Insurance (NIC)</td><td>DO 8-604500, Bangalore</td><td>—</td></tr>
+            <tr><td>Fidelity Guarantee</td><td>NIA</td><td>J.C. Road Branch 670201, Bangalore</td><td>—</td></tr>
+            <tr><td>D and O - 4025/156415</td><td>ICICI Lombard</td><td>Blr, Bangalore</td><td>—</td></tr>
+          </tbody>
+        </table>
+        <div class="tbl-foot">Showing 5 of 47 policies · <a href="#">View all</a></div>
+      </div>
+
+      <div class="sub-head"><h3>Head Count — Non-Health Insurance</h3><span class="chip chip-auto">Auto-populated</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Policy</th><th style="text-align:right">Sum Insured (Start)</th><th style="text-align:right">Additions</th><th style="text-align:right">Deletions</th><th style="text-align:right">Sum Insured (Closed)</th></tr></thead>
+          <tbody>
+            <tr><td>WC - 4010/81292573</td><td style="text-align:right;font-family:monospace">12,91,99,328</td><td style="text-align:right;font-family:monospace;color:#10b981">+3,22,37,57,162</td><td style="text-align:right;font-family:monospace;color:#ef4444">-1,21,98,98,26</td><td style="text-align:right;font-family:monospace;font-weight:700">14,92,44,83,664</td></tr>
+            <tr><td>GPA - P105883549</td><td style="text-align:right;font-family:monospace">19,53,06,60,000</td><td style="text-align:right;font-family:monospace;color:#10b981">+1,31,55,58,000</td><td style="text-align:right;font-family:monospace;color:#ef4444">-98,85,74,000</td><td style="text-align:right;font-family:monospace;font-weight:700">22,80,05,00,000</td></tr>
+            <tr><td>GPA - P105357685</td><td style="text-align:right;font-family:monospace">4,38,00,000</td><td style="text-align:right;font-family:monospace;color:#10b981">+2,18,00,000</td><td style="text-align:right;font-family:monospace;color:#ef4444">-1,81,20,000</td><td style="text-align:right;font-family:monospace;font-weight:700">4,80,00,000</td></tr>
+            <tr><td>EDLI - ED000148</td><td style="text-align:right;font-family:monospace">53,41,98,79,000</td><td style="text-align:right;font-family:monospace;color:#10b981">+5,60,77,43,000</td><td style="text-align:right;font-family:monospace;color:#ef4444">-19,66,67,7,000</td><td style="text-align:right;font-family:monospace;font-weight:700">57,06,09,45,000</td></tr>
+            <tr><td>Marine Specific - P100000024</td><td style="text-align:right;font-family:monospace">35,12,193</td><td style="text-align:right;font-family:monospace;color:#10b981">+0</td><td style="text-align:right;font-family:monospace;color:#ef4444">-0</td><td style="text-align:right;font-family:monospace;font-weight:700">35,12,193</td></tr>
+          </tbody>
+        </table>
+        <div class="tbl-foot">Group Health: No active health policies · <a href="#">View non-health details</a></div>
+      </div>
+
+      <div class="sub-head"><h3>Cash Deposit Account</h3><span class="chip chip-auto">Auto-populated</span></div>
+      <div class="card" style="padding:16px;text-align:center;color:#94a3b8;font-size:13px">No CD transactions this month</div>
+    </div>
+  </div>
+
+  <!-- ④ Renewals -->
+  <div id="ta-renewals" class="tab-panel">
+    <div class="area">
+      <div class="sub-head"><h3>Renewals Due in 3 Months</h3><span class="chip chip-auto">Auto-populated</span></div>
+      <div class="card" style="padding:20px;text-align:center;color:#94a3b8;font-size:13px">No renewal opportunities present in the next 3 months</div>
+      <div class="sub-head"><h3>Renewal Activity Calendar</h3><span class="chip chip-auto">Auto-populated</span></div>
+      <div class="card" style="padding:20px;text-align:center;color:#94a3b8;font-size:13px">No renewal activity calendar entries present</div>
+    </div>
+  </div>
+
+  <!-- ⑤ Risk Matrix -->
+  <div id="ta-risk" class="tab-panel">
+    <div class="area">
+      <div class="ai-box">
+        <div class="ai-tag">🤖 AI Risk Gap</div>
+        <p>Based on Industry Segment: <strong>Staffing / IT</strong>. Detected gaps: <strong>Cyber Insurance</strong> not covered · <strong>EPLI</strong> not covered · <strong>Key Man</strong> policy missing. Recommend discussing with client in next monthly meeting.</p>
+      </div>
+      <div class="sub-head"><h3>Risk Matrix</h3><span class="chip chip-manual">Manual Entry</span><span class="note">Check Exposure / Cover / Adequacy per risk type</span></div>
+      <div class="card" style="padding:0 16px 16px">
+        <div class="risk-hdr" style="margin-top:12px"><div style="flex:1.5">Risk Type</div><div class="risk-chk">Exposure</div><div class="risk-chk">Cover</div><div class="risk-chk">Adequacy</div><div style="flex:2">Remarks <span class="lock">🔒</span></div></div>
+
+        <div class="risk-cat">Financial Risk</div>
+        <div class="risk-row-r"><div class="risk-type-col">ALOP</div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Remarks…"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Bankers Indemnity</div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Remarks…"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">FLOP</div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Remarks…"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">MLOP</div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Remarks…"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Money</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="Covered under Money-0723001219P106537651"></div></div>
+
+        <div class="risk-cat">Liabilities Risk</div>
+        <div class="risk-row-r"><div class="risk-type-col">CGL</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="Multiple CGL policies active"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Cyber Insurance <span class="badge b-red" style="margin-left:6px;font-size:10px">Gap</span></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Remarks on gap…"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">D and O</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="D&O-4025/156415610/01/000 active"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">EPLI <span class="badge b-red" style="margin-left:6px;font-size:10px">Gap</span></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Remarks on gap…"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Prof. Indemnity</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="3 Prof. Indemnity policies active"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Public Liability</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" placeholder="Remarks…"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Crime Insurance</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="2 Crime Insurance policies active"></div></div>
+
+        <div class="risk-cat">People Risk</div>
+        <div class="risk-row-r"><div class="risk-type-col">GMC (Group Medical)</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="8 GMC policies active — loss ratio elevated"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">GPA (Group Personal Accident)</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="6 GPA policies active"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">GTL (Group Term Life)</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="2 GTL policies active — Max Life"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">EDLI</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="EDLI-ED000148 — EXIDE LIFE"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Key Man <span class="badge b-red" style="margin-left:6px;font-size:10px">Gap</span></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Remarks on gap…"></div></div>
+
+        <div class="risk-cat">Property Risk</div>
+        <div class="risk-row-r"><div class="risk-type-col">Fire</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="4 Fire policies active — NIC"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">All Risk</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="All_Risk-072300/48/11 active"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Marine Specific</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" placeholder="Remarks…"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Burglary</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" placeholder="Remarks…"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">EAR / CAR / CPM</div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Remarks…"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑥ Service Score -->
+  <div id="ta-score" class="tab-panel">
+    <div class="area">
+      <div style="display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:start">
+        <div class="kpi-card" style="text-align:center;padding:24px 16px">
+          <div class="kpi-label">Overall Service Score</div>
+          <div style="font-size:52px;font-weight:900;color:#1e293b;line-height:1.1">77.5</div>
+          <div style="font-size:14px;color:#94a3b8;margin-bottom:12px">/ 100</div>
+          <div style="height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden">
+            <div style="width:77.5%;height:100%;background:#f59e0b;border-radius:4px"></div>
+          </div>
+          <div style="font-size:11px;color:#f59e0b;font-weight:700;margin-top:6px">Needs Improvement</div>
+        </div>
+        <div class="card" style="padding:16px">
+          <div style="display:flex;align-items:center;gap:8px;padding-bottom:8px;border-bottom:2px solid #e2e8f0;margin-bottom:8px">
+            <div style="flex:1.5;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px">Service</div>
+            <div style="width:80px;font-size:11px;font-weight:700;color:#64748b;text-align:center;text-transform:uppercase;letter-spacing:.4px">Count</div>
+            <div style="flex:2;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px">Performance</div>
+            <div style="width:70px;text-align:right;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px">Score</div>
+            <div style="width:45px;text-align:right;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.4px">Remarks</div>
+          </div>
+          <div class="score-row"><div class="score-name">Endorsement</div><div class="score-count">340/347</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:98%;background:#10b981"></div></div><div class="score-pts">9.80 <span class="score-max">/10</span></div><td><input type="text" placeholder="Remarks…" style="width:80px;font-size:11px"></td></div>
+          <div class="score-row"><div class="score-name">Health Claims</div><div class="score-count">1976/2095</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:94%;background:#10b981"></div></div><div class="score-pts">14.10 <span class="score-max">/15</span></div><td><input type="text" placeholder="Remarks…" style="width:80px;font-size:11px"></td></div>
+          <div class="score-row"><div class="score-name" style="color:#ef4444;font-weight:700">Non-Health Claims ⚠</div><div class="score-count" style="color:#ef4444">0/7</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:2%;background:#ef4444"></div></div><div class="score-pts" style="color:#ef4444">0 <span class="score-max">/15</span></div><td><input type="text" placeholder="Remarks…" style="width:80px;font-size:11px"></td></div>
+          <div class="score-row"><div class="score-name">Held Cover Note</div><div class="score-count">29/29</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:100%;background:#10b981"></div></div><div class="score-pts">15 <span class="score-max">/15</span></div><td><input type="text" placeholder="Remarks…" style="width:80px;font-size:11px"></td></div>
+          <div class="score-row"><div class="score-name">Policy Document</div><div class="score-count">29/29</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:100%;background:#10b981"></div></div><div class="score-pts">10 <span class="score-max">/10</span></div><td><input type="text" placeholder="Remarks…" style="width:80px;font-size:11px"></td></div>
+          <div class="score-row"><div class="score-name">Policy Docket</div><div class="score-count">29/29</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:100%;background:#10b981"></div></div><div class="score-pts">5 <span class="score-max">/5</span></div><td><input type="text" placeholder="Remarks…" style="width:80px;font-size:11px"></td></div>
+          <div class="score-row"><div class="score-name">MIR</div><div class="score-count">9/11</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:82%;background:#f59e0b"></div></div><div class="score-pts">8.20 <span class="score-max">/10</span></div><td><input type="text" placeholder="Remarks…" style="width:80px;font-size:11px"></td></div>
+          <div class="score-row"><div class="score-name">Quarterly Meeting</div><div class="score-count">2/4</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:50%;background:#f59e0b"></div></div><div class="score-pts">2.50 <span class="score-max">/5</span></div><td><input type="text" placeholder="Remarks…" style="width:80px;font-size:11px"></td></div>
+          <div class="score-row"><div class="score-name">Monthly Meeting</div><div class="score-count">7/11</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:64%;background:#f59e0b"></div></div><div class="score-pts">3.20 <span class="score-max">/5</span></div><td><input type="text" placeholder="Remarks…" style="width:80px;font-size:11px"></td></div>
+          <div class="score-row"><div class="score-name">Renewal Notice</div><div class="score-count">35/36</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:97%;background:#10b981"></div></div><div class="score-pts">9.70 <span class="score-max">/10</span></div><td><input type="text" placeholder="Remarks…" style="width:80px;font-size:11px"></td></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⑦ Monthly Plan -->
+  <div id="ta-plan" class="tab-panel">
+    <div class="area">
+      <div class="sub-head"><h3>Current Month Plan</h3><span class="chip chip-manual">Manual Entry</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:140px">Category</th><th>Timelines / Details</th><th>Responsibility <span class="lock">🔒</span></th><th>Remarks <span class="lock">🔒</span></th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700;color:#3b82f6">DOCUMENTATION</td><td><textarea>No Endorsements Pending</textarea></td><td><textarea placeholder="Who is responsible?">—</textarea></td><td><textarea placeholder="Add remarks…">—</textarea></td></tr>
+            <tr><td style="font-weight:700;color:#ef4444">CLAIMS</td><td><textarea>41 GPA Claims Pending</textarea></td><td><textarea>Following up for pendency documents</textarea></td><td><textarea placeholder="Add remarks…">—</textarea></td></tr>
+            <tr><td style="font-weight:700;color:#7c3aed">MEETINGS</td><td><textarea>Meeting on 16-Jun-26 to submit Q</textarea></td><td><textarea>Monthly Meeting</textarea></td><td><textarea placeholder="Add remarks…">—</textarea></td></tr>
+            <tr><td style="font-weight:700;color:#64748b">OTHERS</td><td><textarea placeholder="Other activities…"></textarea></td><td><textarea placeholder="Responsibility…"></textarea></td><td><textarea placeholder="Remarks…"></textarea></td></tr>
+            <tr><td style="font-weight:700;color:#10b981">RENEWALS</td><td><textarea>No Renewals for Current Month</textarea></td><td><textarea>—</textarea></td><td><textarea>—</textarea></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sub-head"><h3>Other Activities</h3><span class="chip chip-manual">Manual Entry</span></div>
+      <div class="card" style="padding:16px">
+        <div style="margin-bottom:14px">
+          <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:5px">Special Initiatives <span class="lock">🔒</span></div>
+          <textarea style="min-height:60px">Enrollment drive initiated for TeamLease Midland Group Employees</textarea>
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:5px">Monthly Meeting Issues <span class="lock">🔒</span></div>
+          <textarea style="min-height:60px">No Issues</textarea>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:5px">Other Issues <span class="lock">🔒</span></div>
+          <textarea style="min-height:60px" placeholder="Any other issues to report…"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end option-a -->
+
+
+<!-- ════════════════════════════════════════════════════════
+     OPTION B — GUIDED WIZARD
+════════════════════════════════════════════════════════ -->
+<div class="option" id="option-b">
+
+  <div class="wiz-hdr">
+    <div>
+      <div class="co">TeamLease Services Ltd</div>
+      <div style="font-size:11px;color:#93c5fd">Monthly Information Report · May 2026</div>
+    </div>
+    <span class="badge b-draft" style="margin-left:12px">● Draft</span>
+    <div style="margin-left:auto;font-size:11px;color:#fde68a">⏱ Due: 5 Jun 2026 · 3 days left</div>
+  </div>
+
+  <div class="wiz-steps">
+    <div class="w-step">
+      <div class="ws-dot ws-done" id="wd1">✓</div>
+      <div class="ws-label ws-done-lbl">Executive Summary</div>
+    </div>
+    <div class="ws-line ws-line-done"></div>
+    <div class="w-step">
+      <div class="ws-dot ws-active" id="wd2">2</div>
+      <div class="ws-label ws-active-lbl">Claims</div>
+    </div>
+    <div class="ws-line ws-line-pending"></div>
+    <div class="w-step">
+      <div class="ws-dot ws-pending" id="wd3">3</div>
+      <div class="ws-label ws-pending-lbl">Portfolio &amp; Coverage</div>
+    </div>
+    <div class="ws-line ws-line-pending"></div>
+    <div class="w-step">
+      <div class="ws-dot ws-pending" id="wd4">4</div>
+      <div class="ws-label ws-pending-lbl">Risk &amp; Service Score</div>
+    </div>
+    <div class="ws-line ws-line-pending"></div>
+    <div class="w-step">
+      <div class="ws-dot ws-pending" id="wd5">5</div>
+      <div class="ws-label ws-pending-lbl">Monthly Plan &amp; Submit</div>
+    </div>
+  </div>
+
+  <div class="wiz-body">
+
+    <!-- Step 1: Summary (shown as done) -->
+    <div class="step-panel" id="step-1">
+      <div class="step-hdr"><h2>Step 1 — Executive Summary</h2><p>Review critical attention items and add CRM remarks for each policy.</p></div>
+      <div class="kpi-grid g4">
+        <div class="kpi-card red"><div class="kpi-label">Critical Items</div><div class="kpi-val">9</div><div class="kpi-sub">require CRM remarks</div></div>
+        <div class="kpi-card amber"><div class="kpi-label">Total Policies</div><div class="kpi-val">47</div></div>
+        <div class="kpi-card blue"><div class="kpi-label">Total Premium</div><div class="kpi-val">₹8.4 Cr</div></div>
+        <div class="kpi-card green"><div class="kpi-label">Filled</div><div class="kpi-val">9/9</div><div class="kpi-sub" style="color:#10b981">All items addressed ✓</div></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Policy</th><th style="text-align:right">Premium</th><th>Remarks <span class="lock">🔒</span></th><th>Action <span class="lock">🔒</span></th><th style="text-align:center">Status</th></tr></thead>
+          <tbody>
+            <tr><td>WC</td><td style="text-align:right;font-family:monospace">₹90,51,627</td><td><input type="text" value="Renewal Notice shared on 15-May-20"></td><td><input type="text" value="Following up for Competitive quotes"></td><td style="text-align:center"><span class="badge b-green">✓</span></td></tr>
+            <tr><td>GMC (3 entries)</td><td style="text-align:right;font-family:monospace">₹5,43,87,683</td><td><input type="text" value="Renewal Notice shared on 15-May-20"></td><td><input type="text" value="Following up for Competitive quotes"></td><td style="text-align:center"><span class="badge b-green">✓</span></td></tr>
+            <tr><td>GPA (3 entries)</td><td style="text-align:right;font-family:monospace">₹50,12,890</td><td><input type="text" value="Renewal Notice shared on 15-May-20"></td><td><input type="text" value="Following up for Competitive quotes"></td><td style="text-align:center"><span class="badge b-green">✓</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Step 2: Claims (active) -->
+    <div class="step-panel active" id="step-2">
+      <div class="step-hdr"><h2>Step 2 — Claims Review</h2><p>System has pre-filled all claim data as of today. Review and add your remarks.</p></div>
+
+      <div class="kpi-grid g4">
+        <div class="kpi-card red"><div class="kpi-label">Open Claims (EOM)</div><div class="kpi-val">127</div><div class="kpi-sub">GMC:109 · GPA:6 · Others:12</div></div>
+        <div class="kpi-card blue"><div class="kpi-label">Received (May)</div><div class="kpi-val">108</div><div class="kpi-sub">₹45.5L value received</div></div>
+        <div class="kpi-card green"><div class="kpi-label">Paid (May)</div><div class="kpi-val">42</div><div class="kpi-sub">₹7.8L settled</div></div>
+        <div class="kpi-card amber"><div class="kpi-label">Aging &gt;45 Days</div><div class="kpi-val">6</div><div class="kpi-sub">₹7.4L — GPA reimbursement</div></div>
+      </div>
+
+      <div class="ai-box"><div class="ai-tag">🤖 AI Insight</div><p>GMC loss ratio 182%. GPA aging: 6 claims &gt;45 days — TPA escalation recommended. 41 GPA docs pending.</p></div>
+
+      <div class="sub-head"><h3>Claim Status</h3><span class="chip chip-auto">Auto-populated · read-only</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Policy</th><th style="text-align:right">Opening</th><th style="text-align:right">+ Received</th><th style="text-align:right">− Paid</th><th style="text-align:right">Closing</th><th>Remarks <span class="lock">🔒</span></th></tr></thead>
+          <tbody>
+            <tr><td><strong>GMC</strong> (×8)</td><td style="text-align:right;font-family:monospace">44 / ₹13.7L</td><td style="text-align:right;font-family:monospace;color:#10b981">+108 / ₹45.5L</td><td style="text-align:right;font-family:monospace;color:#ef4444">−42 / ₹7.8L</td><td style="text-align:right;font-family:monospace;font-weight:700">109 / ₹45.9L</td><td><input type="text" placeholder="Add remarks…"></td></tr>
+            <tr><td><strong>GPA</strong> (×6)</td><td style="text-align:right;font-family:monospace">6 / ₹6.0L</td><td style="text-align:right;font-family:monospace;color:#10b981">+0</td><td style="text-align:right;font-family:monospace;color:#ef4444">−0</td><td style="text-align:right;font-family:monospace;font-weight:700">6 / ₹6.0L</td><td><input type="text" placeholder="Add remarks…"></td></tr>
+            <tr><td><strong>All Risk / Others</strong></td><td style="text-align:right;font-family:monospace">1 / ₹18K</td><td style="text-align:right;font-family:monospace;color:#10b981">+0</td><td style="text-align:right;font-family:monospace;color:#ef4444">−0</td><td style="text-align:right;font-family:monospace;font-weight:700">1 / ₹18K</td><td><input type="text" placeholder="Add remarks…"></td></tr>
+          </tbody>
+        </table>
+        <div class="tbl-foot"><a href="#">Expand all 30 policies</a></div>
+      </div>
+
+      <div class="sub-head"><h3>Claim Aging — Reimbursement</h3><span class="chip chip-auto">Auto-populated · read-only</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div class="card" style="padding:16px">
+          <div style="font-size:11px;font-weight:700;color:#64748b;margin-bottom:10px">Outstanding Distribution</div>
+          <div class="bar-row"><div class="bar-label">&gt;45 Days</div><div class="bar-track"><div class="bar-fill f-red" style="width:100%">6 claims · ₹7.4L</div></div><div class="bar-num" style="color:#ef4444;font-weight:700">25%</div></div>
+          <div class="bar-row"><div class="bar-label">&gt;30 Days</div><div class="bar-track"><div class="bar-fill f-amber" style="width:55%">3 claims</div></div><div class="bar-num">12%</div></div>
+          <div class="bar-row"><div class="bar-label">&gt;15 Days</div><div class="bar-track"><div class="bar-fill f-amber" style="width:35%">2</div></div><div class="bar-num">8%</div></div>
+          <div class="bar-row"><div class="bar-label">&lt;15 Days</div><div class="bar-track"><div class="bar-fill f-green" style="width:75%">13 claims</div></div><div class="bar-num">54%</div></div>
+          <div style="margin-top:10px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:11px;color:#64748b">Total: <strong style="color:#1e293b">24 claims · ₹15.5L</strong></div>
+        </div>
+        <div class="tbl-wrap" style="margin:0">
+          <table>
+            <thead><tr><th>Policy</th><th style="text-align:center">O/S</th><th style="text-align:center;color:#ef4444">&gt;45d</th><th style="text-align:center">&gt;30d</th><th style="text-align:center">&gt;15d</th><th style="text-align:center">&lt;15d</th></tr></thead>
+            <tbody>
+              <tr><td style="font-size:11px">GPA P105883549</td><td style="text-align:center;font-family:monospace;font-size:11px">6/₹6L</td><td style="text-align:center;font-family:monospace;font-size:11px;color:#ef4444;font-weight:700">6/₹6L</td><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">0</td></tr>
+              <tr><td style="font-size:11px">GMC 190001132</td><td style="text-align:center;font-family:monospace;font-size:11px">3/₹1.4L</td><td style="text-align:center;font-family:monospace;font-size:11px;color:#ef4444;font-weight:700">3/₹1.4L</td><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">0</td></tr>
+              <tr><td style="font-size:11px">GMC P105276965</td><td style="text-align:center;font-family:monospace;font-size:11px">18/₹4.6L</td><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">0</td><td style="text-align:center">0</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="sub-head"><h3>Pending Claims — Issues &gt;30d &lt;45d</h3><span class="chip chip-auto">Auto-populated</span><span class="badge b-red" style="margin-left:8px">6 flagged</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Ref #</th><th>Policy</th><th style="text-align:right">Amount</th><th>Date</th><th>Reason for Pendency <span class="lock">🔒</span></th></tr></thead>
+          <tbody>
+            <tr><td>—</td><td style="font-size:11px">All_Risk-072300/48/11/01</td><td style="text-align:right;font-family:monospace">₹18,282</td><td>01-Aug-2011</td><td><input type="text" placeholder="Enter reason…"></td></tr>
+            <tr><td>1</td><td style="font-size:11px">GPA-072300/42/11/05</td><td style="text-align:right;font-family:monospace">₹1,00,000</td><td>26-Jul-2011</td><td><input type="text" value="Documents awaited from claimant"></td></tr>
+            <tr><td>541497</td><td style="font-size:11px">GMC-072300/48/13/41</td><td style="text-align:right;font-family:monospace">₹3,950</td><td>11-Sep-2013</td><td><input type="text" placeholder="Enter reason…"></td></tr>
+          </tbody>
+        </table>
+        <div class="tbl-foot"><a href="#">View all 24 pending claims</a></div>
+      </div>
+
+      <div class="sub-head"><h3>Claim Documentation Status</h3><span class="chip chip-manual">Manual Entry</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:160px">Issue Type</th><th>Details</th><th>Remarks <span class="lock">🔒</span></th><th>Action <span class="lock">🔒</span></th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700">Claims Documentation</td><td><textarea style="min-height:36px">41 GPA Claims pending</textarea></td><td><textarea style="min-height:36px" placeholder="Remarks…"></textarea></td><td><textarea style="min-height:36px">Following up for shortfall Documents</textarea></td></tr>
+            <tr><td style="font-weight:700">Policy Documentation</td><td><textarea style="min-height:36px">No Endorsements Pending</textarea></td><td><textarea style="min-height:36px" placeholder="Remarks…"></textarea></td><td><textarea style="min-height:36px" placeholder="Action…"></textarea></td></tr>
+            <tr><td style="font-weight:700">Uncovered Risks</td><td><textarea style="min-height:36px" placeholder="Describe uncovered risks…"></textarea></td><td><textarea style="min-height:36px" placeholder="Remarks…"></textarea></td><td><textarea style="min-height:36px" placeholder="Action…"></textarea></td></tr>
+            <tr><td style="font-weight:700">Other Issues</td><td><textarea style="min-height:36px" placeholder="Any other issues…"></textarea></td><td><textarea style="min-height:36px" placeholder="Remarks…"></textarea></td><td><textarea style="min-height:36px" placeholder="Action…"></textarea></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Step 3: Portfolio -->
+    <div class="step-panel" id="step-3">
+      <div class="step-hdr"><h2>Step 3 — Portfolio &amp; Coverage</h2><p>Review portfolio details, policy-insurer mapping, headcount, and cash deposit account.</p></div>
+      <div class="kpi-grid g3">
+        <div class="kpi-card blue"><div class="kpi-label">Total Policies</div><div class="kpi-val">47</div></div>
+        <div class="kpi-card blue"><div class="kpi-label">Total Sum Insured</div><div class="kpi-val">₹1,240 Cr</div></div>
+        <div class="kpi-card blue"><div class="kpi-label">Premium YTD</div><div class="kpi-val">₹22.3 Cr</div></div>
+      </div>
+      <div class="sub-head"><h3>Portfolio Details</h3><span class="chip chip-auto">Auto-populated</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Policy</th><th>Renewal Date</th><th style="text-align:right">Incep. Premium</th><th style="text-align:right">Sum Insured</th><th style="text-align:right">Premium YTD</th><th style="text-align:right">Add-ons</th><th style="text-align:right">Del-ons</th><th style="text-align:right">Claims YTD</th><th>Insurer</th></tr></thead>
+          <tbody>
+            <tr><td style="font-size:11px">GMC P105344870</td><td>30-Jun-20</td><td style="text-align:right;font-family:monospace;font-size:11px">₹2,91,90,074</td><td style="text-align:right;font-family:monospace;font-size:11px">₹250 Cr</td><td style="text-align:right;font-family:monospace;font-size:11px">₹6,74,25,856</td><td style="text-align:right;font-family:monospace;font-size:11px">₹1,41,46,985</td><td style="text-align:right;font-family:monospace;font-size:11px">₹37,45,348</td><td style="text-align:right;font-family:monospace;font-size:11px">₹4,11,34,893</td><td><span class="tag-insurer">UII</span></td></tr>
+            <tr><td style="font-size:11px">GPA P105883549</td><td>30-Jun-20</td><td style="text-align:right;font-family:monospace;font-size:11px">₹40,84,312</td><td style="text-align:right;font-family:monospace;font-size:11px">₹195 Cr</td><td style="text-align:right;font-family:monospace;font-size:11px">₹51,34,239</td><td style="text-align:right;font-family:monospace;font-size:11px">₹19,19,009</td><td style="text-align:right;font-family:monospace;font-size:11px">₹14,61,606</td><td style="text-align:right;font-family:monospace;font-size:11px">₹6,00,000</td><td><span class="tag-insurer">UII</span></td></tr>
+            <tr><td style="font-size:11px">EDLI ED000148</td><td>30-Jul-20</td><td style="text-align:right;font-family:monospace;font-size:11px">₹1,31,99,205</td><td style="text-align:right;font-family:monospace;font-size:11px">₹5342 Cr</td><td style="text-align:right;font-family:monospace;font-size:11px">₹5,71,05,353</td><td style="text-align:right;font-family:monospace;font-size:11px">—</td><td style="text-align:right;font-family:monospace;font-size:11px">₹4,02,961</td><td style="text-align:right;font-family:monospace;font-size:11px">—</td><td><span class="tag-insurer">EXIDE</span></td></tr>
+          </tbody>
+        </table>
+        <div class="tbl-foot"><a href="#">Expand all 47 policies</a></div>
+      </div>
+      <div class="sub-head"><h3>Policy Details — Insurer Mapping</h3><span class="chip chip-auto">Auto-populated</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Policy</th><th>Insurer</th><th>Branch</th><th>Contact</th></tr></thead>
+          <tbody>
+            <tr><td>GMC / GPA</td><td>United India Insurance (UII)</td><td>DO 9-72300, Bangalore</td><td>—</td></tr>
+            <tr><td>Fire / NIC policies</td><td>National Insurance Co. (NIC)</td><td>DO 8-604500, Bangalore</td><td>—</td></tr>
+            <tr><td>D &amp; O</td><td>ICICI Lombard</td><td>Blr, Bangalore</td><td>—</td></tr>
+            <tr><td>Fidelity Guarantee</td><td>NIA</td><td>J.C. Road 670201, Bangalore</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sub-head"><h3>Head Count — Non-Health Insurance</h3><span class="chip chip-auto">Auto-populated</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Policy</th><th style="text-align:right">Sum Insured (Opening)</th><th style="text-align:right">Additions</th><th style="text-align:right">Deletions</th><th style="text-align:right">Sum Insured (Closing)</th></tr></thead>
+          <tbody>
+            <tr><td>WC 4010/81292573</td><td style="text-align:right;font-family:monospace;font-size:11px">12,91,99,328</td><td style="text-align:right;font-family:monospace;font-size:11px;color:#10b981">+3,22,37,57,162</td><td style="text-align:right;font-family:monospace;font-size:11px;color:#ef4444">-1,21,98,98,26</td><td style="text-align:right;font-family:monospace;font-size:11px;font-weight:700">14,92,44,83,664</td></tr>
+            <tr><td>GPA P105883549</td><td style="text-align:right;font-family:monospace;font-size:11px">19,53,06,60,000</td><td style="text-align:right;font-family:monospace;font-size:11px;color:#10b981">+1,31,55,58,000</td><td style="text-align:right;font-family:monospace;font-size:11px;color:#ef4444">-98,85,74,000</td><td style="text-align:right;font-family:monospace;font-size:11px;font-weight:700">22,80,05,00,000</td></tr>
+            <tr><td>EDLI ED000148</td><td style="text-align:right;font-family:monospace;font-size:11px">53,41,98,79,000</td><td style="text-align:right;font-family:monospace;font-size:11px;color:#10b981">+5,60,77,43,000</td><td style="text-align:right;font-family:monospace;font-size:11px;color:#ef4444">-19,66,67,7,000</td><td style="text-align:right;font-family:monospace;font-size:11px;font-weight:700">57,06,09,45,000</td></tr>
+            <tr><td colspan="5" style="color:#94a3b8;font-style:italic;text-align:center">Group Health: No active health policies this period</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sub-head"><h3>Cash Deposit Account</h3><span class="chip chip-auto">Auto-populated</span></div>
+      <div class="card" style="padding:16px;text-align:center;color:#94a3b8">No CD transactions this month</div>
+    </div>
+
+    <!-- Step 4: Risk + Score -->
+    <div class="step-panel" id="step-4">
+      <div class="step-hdr"><h2>Step 4 — Risk Matrix &amp; Service Score</h2><p>Review risk coverage per category and check your service score before submission.</p></div>
+      <div class="ai-box"><div class="ai-tag">🤖 AI Risk Gap</div><p>Industry: <strong>Staffing / IT</strong>. Gaps detected: <strong>Cyber Insurance</strong> · <strong>EPLI</strong> · <strong>Key Man</strong> not covered. Recommend discussing in next monthly meeting.</p></div>
+      <div class="sub-head"><h3>Risk Matrix</h3><span class="chip chip-manual">Manual Entry</span></div>
+      <div class="card" style="padding:0 16px 16px">
+        <div class="risk-hdr" style="margin-top:10px"><div style="flex:1.5">Risk Type</div><div class="risk-chk">Exposure</div><div class="risk-chk">Cover</div><div class="risk-chk">Adequacy</div><div style="flex:2">Remarks <span class="lock">🔒</span></div></div>
+        <div class="risk-cat">Financial Risk</div>
+        <div class="risk-row-r"><div class="risk-type-col">ALOP / FLOP / MLOP</div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Remarks…"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Money</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="Money-0723001219P106537651"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Bankers Indemnity</div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Remarks…"></div></div>
+        <div class="risk-cat">Liabilities Risk</div>
+        <div class="risk-row-r"><div class="risk-type-col">CGL</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="Multiple CGL policies active"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">D &amp; O</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="D&O 4025/156415610 active"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Cyber Insurance <span class="badge b-red" style="margin-left:4px">Gap</span></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Note gap reason…"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">EPLI <span class="badge b-red" style="margin-left:4px">Gap</span></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Note gap reason…"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Prof. Indemnity / Public Liability / Crime Insurance</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="Active across multiple policies"></div></div>
+        <div class="risk-cat">People Risk</div>
+        <div class="risk-row-r"><div class="risk-type-col">GMC / GPA / GTL / EDLI</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="All active — GMC loss ratio elevated"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">Key Man <span class="badge b-red" style="margin-left:4px">Gap</span></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Note gap reason…"></div></div>
+        <div class="risk-cat">Property Risk</div>
+        <div class="risk-row-r"><div class="risk-type-col">Fire / All Risk / Marine / Burglary / WC</div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-chk"><input type="checkbox" checked></div><div class="risk-rem"><input type="text" value="All active — see portfolio for details"></div></div>
+        <div class="risk-row-r"><div class="risk-type-col">EAR / CAR / CPM / MCE / MBD</div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-chk"><input type="checkbox"></div><div class="risk-rem"><input type="text" placeholder="Remarks…"></div></div>
+      </div>
+
+      <div class="sub-head" style="margin-top:24px"><h3>Service Score</h3><span class="chip chip-auto">Auto-populated</span></div>
+      <div style="display:grid;grid-template-columns:160px 1fr;gap:16px">
+        <div class="kpi-card amber" style="text-align:center;padding:20px 12px">
+          <div class="kpi-label">Overall Score</div>
+          <div style="font-size:44px;font-weight:900;color:#1e293b;line-height:1">77.5</div>
+          <div style="font-size:13px;color:#94a3b8;margin-bottom:8px">/ 100</div>
+          <div style="height:7px;background:#e2e8f0;border-radius:4px;overflow:hidden;margin-bottom:6px"><div style="width:77.5%;height:100%;background:#f59e0b;border-radius:4px"></div></div>
+          <div style="font-size:11px;color:#f59e0b;font-weight:700">Needs Improvement</div>
+        </div>
+        <div class="card" style="padding:12px 16px">
+          <div class="score-row"><div class="score-name">Endorsement</div><div class="score-count">340/347</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:98%;background:#10b981"></div></div><div class="score-pts">9.80<span class="score-max">/10</span></div></div>
+          <div class="score-row"><div class="score-name">Health Claims</div><div class="score-count">1976/2095</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:94%;background:#10b981"></div></div><div class="score-pts">14.10<span class="score-max">/15</span></div></div>
+          <div class="score-row"><div class="score-name" style="color:#ef4444;font-weight:700">Non-Health Claims ⚠</div><div class="score-count" style="color:#ef4444">0/7</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:2%;background:#ef4444"></div></div><div class="score-pts" style="color:#ef4444">0<span class="score-max">/15</span></div></div>
+          <div class="score-row"><div class="score-name">Held Cover Note</div><div class="score-count">29/29</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:100%;background:#10b981"></div></div><div class="score-pts">15<span class="score-max">/15</span></div></div>
+          <div class="score-row"><div class="score-name">Policy Document</div><div class="score-count">29/29</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:100%;background:#10b981"></div></div><div class="score-pts">10<span class="score-max">/10</span></div></div>
+          <div class="score-row"><div class="score-name">Policy Docket</div><div class="score-count">29/29</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:100%;background:#10b981"></div></div><div class="score-pts">5<span class="score-max">/5</span></div></div>
+          <div class="score-row"><div class="score-name">MIR</div><div class="score-count">9/11</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:82%;background:#f59e0b"></div></div><div class="score-pts">8.20<span class="score-max">/10</span></div></div>
+          <div class="score-row"><div class="score-name">Quarterly Meeting</div><div class="score-count">2/4</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:50%;background:#f59e0b"></div></div><div class="score-pts">2.50<span class="score-max">/5</span></div></div>
+          <div class="score-row"><div class="score-name">Monthly Meeting</div><div class="score-count">7/11</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:64%;background:#f59e0b"></div></div><div class="score-pts">3.20<span class="score-max">/5</span></div></div>
+          <div class="score-row"><div class="score-name">Renewal Notice</div><div class="score-count">35/36</div><div class="score-bar-wrap"><div class="score-bar-fill" style="width:97%;background:#10b981"></div></div><div class="score-pts">9.70<span class="score-max">/10</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5: Plan + Submit -->
+    <div class="step-panel" id="step-5">
+      <div class="step-hdr"><h2>Step 5 — Monthly Plan &amp; Submit</h2><p>Fill in current month plan, special initiatives, and submit for Lead CRM approval.</p></div>
+      <div class="sub-head"><h3>Current Month Plan</h3><span class="chip chip-manual">Manual Entry</span></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th style="width:130px">Category</th><th>Timelines / Details</th><th>Responsibility <span class="lock">🔒</span></th><th>Remarks <span class="lock">🔒</span></th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:700;color:#3b82f6">DOCUMENTATION</td><td><textarea style="min-height:36px">No Endorsements Pending</textarea></td><td><textarea style="min-height:36px">—</textarea></td><td><textarea style="min-height:36px">—</textarea></td></tr>
+            <tr><td style="font-weight:700;color:#ef4444">CLAIMS</td><td><textarea style="min-height:36px">41 GPA Claims Pending</textarea></td><td><textarea style="min-height:36px">Following up for pendency documents</textarea></td><td><textarea style="min-height:36px">—</textarea></td></tr>
+            <tr><td style="font-weight:700;color:#7c3aed">MEETINGS</td><td><textarea style="min-height:36px">Meeting on 16-Jun-26 to submit Q</textarea></td><td><textarea style="min-height:36px">Monthly Meeting</textarea></td><td><textarea style="min-height:36px">—</textarea></td></tr>
+            <tr><td style="font-weight:700;color:#64748b">OTHERS</td><td><textarea style="min-height:36px" placeholder="Other activities…"></textarea></td><td><textarea style="min-height:36px" placeholder="Responsibility…"></textarea></td><td><textarea style="min-height:36px" placeholder="Remarks…"></textarea></td></tr>
+            <tr><td style="font-weight:700;color:#10b981">RENEWALS</td><td><textarea style="min-height:36px">No Renewals for Current Month</textarea></td><td><textarea style="min-height:36px">—</textarea></td><td><textarea style="min-height:36px">—</textarea></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sub-head"><h3>Other Activities</h3><span class="chip chip-manual">Manual Entry</span></div>
+      <div class="card" style="padding:16px">
+        <div style="margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:5px">Special Initiatives <span class="lock">🔒</span></div><textarea style="min-height:56px">Enrollment drive initiated for TeamLease Midland Group Employees</textarea></div>
+        <div style="margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:5px">Monthly Meeting Issues <span class="lock">🔒</span></div><textarea style="min-height:48px">No Issues</textarea></div>
+        <div><div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:5px">Other Issues <span class="lock">🔒</span></div><textarea style="min-height:48px" placeholder="Any other issues…"></textarea></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Completeness Check -->
+      <div class="card" style="padding:20px">
+        <div style="font-size:14px;font-weight:800;color:#1e293b;margin-bottom:16px">Completeness Check</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:#10b981;font-size:16px">✓</span> Executive Summary filled (9/9)</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:#10b981;font-size:16px">✓</span> Claims reviewed &amp; remarks added</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:#10b981;font-size:16px">✓</span> Portfolio data present</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:#f59e0b;font-size:16px">⚠</span> Risk Matrix — 3 gaps noted</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:#10b981;font-size:16px">✓</span> Monthly plan filled</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:#10b981;font-size:16px">✓</span> Service score reviewed</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:6px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#475569">
+          <strong>Submitting to:</strong> Ramakrishna V (Lead CRM) for approval<br>
+          <span style="font-size:11px;color:#94a3b8">Approved MIR will be published by Lead CRM before HR can view it</span>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-outline" onclick="goStep(4)">← Back: Review</button>
+          <button class="btn btn-primary" style="margin-left:auto">Submit for Approval →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="wiz-foot">
+    <div style="font-size:12px;color:#64748b" id="wiz-progress-txt">Step 2 of 5 — Claims Review</div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" id="btn-back" onclick="wizBack()">← Back</button>
+      <button class="btn btn-primary" id="btn-next" onclick="wizNext()">Save &amp; Continue →</button>
+    </div>
+  </div>
+
+</div><!-- end option-b -->
+
+<script>
+function showOpt(o){
+  document.getElementById('option-a').classList.toggle('visible',o==='a');
+  document.getElementById('option-b').classList.toggle('visible',o==='b');
+  document.getElementById('btn-a').classList.toggle('active',o==='a');
+  document.getElementById('btn-b').classList.toggle('active',o==='b');
+}
+function showTab(btn,id){
+  document.querySelectorAll('#option-a .tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#option-a .tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+var wStep=2;
+var stepLabels=['','Executive Summary','Claims','Portfolio & Coverage','Risk & Service Score','Monthly Plan & Submit'];
+function updateWiz(){
+  for(var i=1;i<=5;i++){
+    var dot=document.getElementById('wd'+i);
+    var lbl=dot.nextElementSibling;
+    if(i<wStep){dot.className='ws-dot ws-done';dot.textContent='✓';lbl.className='ws-label ws-done-lbl';}
+    else if(i===wStep){dot.className='ws-dot ws-active';dot.textContent=i;lbl.className='ws-label ws-active-lbl';}
+    else{dot.className='ws-dot ws-pending';dot.textContent=i;lbl.className='ws-label ws-pending-lbl';}
+  }
+  document.querySelectorAll('.ws-line').forEach(function(l,i){
+    l.className='ws-line '+(i<wStep-1?'ws-line-done':'ws-line-pending');
+  });
+  document.getElementById('wiz-progress-txt').textContent='Step '+wStep+' of 5 — '+stepLabels[wStep];
+  document.getElementById('btn-back').style.display=wStep===1?'none':'';
+  document.getElementById('btn-next').textContent=wStep===5?'Submit for Approval →':'Save & Continue →';
+}
+function goStep(n){
+  document.querySelectorAll('.step-panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('step-'+n).classList.add('active');
+  wStep=n;updateWiz();
+  document.getElementById('option-b').scrollTo(0,0);
+}
+function wizNext(){if(wStep<5)goStep(wStep+1);}
+function wizBack(){if(wStep>1)goStep(wStep-1);}
+updateWiz();
+</script>
+</body>
+</html>

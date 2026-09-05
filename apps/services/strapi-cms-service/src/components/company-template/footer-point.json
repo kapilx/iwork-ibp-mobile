@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_company_template_footer_points",
+    "info": {
+        "displayName": "Footer Point",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "text": {
+            "type": "customField",
+            "customField": "plugin::jodit-editor.jodit"
+        }
+    }
+}

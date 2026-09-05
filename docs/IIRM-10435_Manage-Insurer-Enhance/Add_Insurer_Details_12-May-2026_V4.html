@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Add Insurer Details - Revised Wireframe V2</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:14px;background:#FAF8F3;color:#2D2D2D;min-height:100vh}
+.topbar{background:#fff;border-bottom:2px solid #F0A500;height:52px;display:flex;align-items:center;padding:0 20px;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:6px}
+.logo-text{font-size:15px;font-weight:800}.logo-text .i{color:#E05A00}.logo-text .n{color:#F0A500}.logo-sub{font-size:9px;color:#888;display:block;line-height:1;font-weight:400}
+.nav{display:flex;gap:4px;margin-left:auto;align-items:center}.nav span{font-size:13px;color:#555;padding:6px 10px;border-radius:4px}.nav span:hover{background:#FEF3E2;color:#E05A00}
+.user-badge{width:32px;height:32px;border-radius:50%;background:#E05A00;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-left:8px}
+.layout{display:flex;min-height:calc(100vh - 52px)}
+.sidebar{width:58px;background:#fff;border-right:1px solid #E8E4D8;display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:6px;position:relative;flex-shrink:0}
+.sb-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#888}
+.sb-icon:hover{background:#FEF3E2;color:#E05A00}.sb-icon.active{background:#F0A500;color:#fff}
+.main{flex:1;padding:24px 32px 96px;max-width:1180px}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:#E05A00;margin-bottom:16px}.breadcrumb .sep{color:#bbb}.breadcrumb .cur{color:#2D2D2D;font-weight:600}
+.variant-help{font-size:12px;color:#6B7280;margin-bottom:8px;font-weight:500}
+.variant-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.v-tab{padding:7px 15px;border-radius:99px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid #E5E7EB;color:#6B7280;background:#fff}
+.v-tab:hover{border-color:#F0A500;color:#E05A00}.v-tab.active{background:#E05A00;color:#fff;border-color:#E05A00}
+.v-panel{display:none}.v-panel.active{display:block}
+.section-card{background:#fff;border:1px solid #E8E4D8;border-radius:10px;padding:24px 28px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.section-title{font-size:16px;font-weight:600;color:#2D2D2D;padding-bottom:12px;border-bottom:1px solid #E8E4D8;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.section-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;background:#FEF3E2;color:#E05A00;letter-spacing:.04em}
+.form-grid{display:grid;gap:20px 24px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}.span2{grid-column:span 2}.span3{grid-column:span 3}
+.field{display:flex;flex-direction:column;gap:6px}.lbl{font-size:13px;color:#4B5563;font-weight:500;display:flex;align-items:center;gap:5px}.req{color:#E05A00;font-size:12px}
+input[type=text],input[type=url],input[type=email],input[type=tel],select,textarea{width:100%;height:42px;border:1.5px solid #D1D5DB;border-radius:6px;padding:0 12px;font-size:13px;color:#1F2937;background:#fff;outline:none;transition:border-color .15s;appearance:none}
+input::placeholder,textarea::placeholder{color:#9CA3AF}input:focus,select:focus,textarea:focus{border-color:#F0A500;box-shadow:0 0 0 3px rgba(240,165,0,.12)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer}
+textarea{height:100px;padding:10px 12px;resize:vertical}.readonly,input[readonly]{background:#F9FAFB;color:#6B7280}.hint-text{font-size:11px;color:#9CA3AF;margin-top:3px;line-height:1.45}.char-count{font-size:11px;color:#9CA3AF;text-align:right;margin-top:-4px}
+.tooltip-wrap{position:relative;display:inline-flex;align-items:center}.tooltip-icon{width:15px;height:15px;border-radius:50%;background:#D1D5DB;color:#6B7280;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:help}
+.tooltip-box{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1F2937;color:#fff;font-size:11px;padding:7px 10px;border-radius:6px;width:280px;line-height:1.5;z-index:60;font-weight:400;white-space:normal;pointer-events:none}
+.tooltip-wrap:hover .tooltip-box{display:block}.irdai-tag{font-size:10px;font-weight:600;padding:1px 7px;border-radius:4px;background:#E0F2FE;color:#0369A1;letter-spacing:.03em}
+.info-note{background:#FFFBEB;border:1px solid #FCD34D;border-radius:6px;padding:10px 14px;font-size:12px;color:#92400E;display:flex;gap:8px;margin-bottom:16px;line-height:1.5}
+.search-dd{position:relative}.search-dd-input-wrap{display:flex;align-items:center;border:1.5px solid #D1D5DB;border-radius:6px;overflow:hidden;background:#fff}.search-dd-input-wrap:focus-within{border-color:#F0A500;box-shadow:0 0 0 3px rgba(240,165,0,.12)}
+.search-dd-input-wrap input{border:none;height:42px;flex:1;padding:0 12px;box-shadow:none;outline:none}.search-dd-input-wrap input:focus{border:none;box-shadow:none}.search-dd-btn{height:42px;width:36px;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:#9CA3AF;border-left:1px solid #E5E7EB}
+.dd-list{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1.5px solid #E5E7EB;border-radius:8px;z-index:55;box-shadow:0 8px 20px rgba(0,0,0,.12);max-height:220px;overflow-y:auto}.dd-list.open{display:block}.dd-item{padding:9px 14px;font-size:13px;cursor:pointer;color:#374151;display:flex;justify-content:space-between;gap:12px}.dd-item:hover{background:#FEF3E2}.code-badge{font-size:11px;color:#9CA3AF;font-family:monospace;white-space:nowrap}.dd-add{padding:9px 14px;font-size:13px;cursor:pointer;color:#E05A00;font-weight:500;border-top:1px solid #F3F4F6}
+.logo-upload{border:2px dashed #D1D5DB;border-radius:8px;padding:42px 24px;text-align:center;cursor:pointer;width:360px;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center}.logo-upload:hover{border-color:#F0A500;background:#FFFDF7}.logo-upload-icon{font-size:36px;color:#BFC3C9;margin-bottom:14px}.logo-upload-text{font-size:14px;color:#374151;font-weight:500}.logo-upload-hint{font-size:12px;color:#6B7280;margin-top:6px}
+.add-more-row{display:flex;justify-content:flex-end;margin-top:10px}.add-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid #1A73E8;background:#fff;color:#1A73E8;font-size:22px;line-height:18px;display:flex;align-items:center;justify-content:center;cursor:pointer}.add-btn:hover{background:#EAF2FF}
+.subsection{margin-top:22px;padding-top:18px;border-top:1px dashed #E5E7EB}.subsection:first-child{margin-top:0}.subsection-title{font-size:14px;font-weight:600;color:#2D2D2D;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.segment{display:flex;border:1.5px solid #D1D5DB;border-radius:6px;overflow:hidden;height:42px}.segment button{flex:1;border:none;border-right:1px solid #D1D5DB;background:#fff;font-size:13px;cursor:pointer;color:#374151}.segment button:last-child{border-right:none}.segment button.active{background:#E8EDFF;color:#1A73E8}
+.bottom-bar{position:fixed;bottom:0;right:0;left:58px;background:#fff;border-top:1px solid #E8E4D8;padding:12px 32px;display:flex;justify-content:flex-end;gap:12px;z-index:50}.btn-cancel{height:38px;padding:0 22px;border:1.5px solid #D1D5DB;border-radius:6px;background:#fff;color:#374151;font-size:14px;font-weight:500;cursor:pointer}.btn-submit{height:38px;padding:0 28px;background:#1F2937;border:none;border-radius:6px;color:#fff;font-size:14px;font-weight:500;cursor:pointer}
+.wizard-tabs{display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid #E8E4D8;border-radius:10px;overflow:hidden;margin-bottom:20px}.wizard-tabs button{height:48px;border:0;border-right:1px solid #E8E4D8;background:#fff;color:#6B7280;font-size:13px;font-weight:600;cursor:pointer}.wizard-tabs button:last-child{border-right:0}.wizard-tabs button.active{background:#E05A00;color:#fff}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.tab-actions{display:flex;justify-content:space-between;align-items:center;margin-top:18px}.tab-actions .right{display:flex;gap:10px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}.span2,.span3{grid-column:auto}.bottom-bar{left:0}.nav{display:none}.logo-upload{width:100%}.wizard-tabs{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo">
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="18" fill="#E05A00"/><text x="18" y="23" text-anchor="middle" fill="#fff" font-size="13" font-weight="800">ii</text></svg>
+    <div class="logo-text"><span class="i">india</span><span class="n">insure</span><span class="logo-sub">the risk manager</span></div>
+  </div>
+  <div class="nav"><span>iTicket</span><span>Feedback</span><span>Poppins</span><span>Reports</span><span>iLearn</span><span>Knowledge Central</span><span>Manthan</span><span>My Mails</span><span>🔔</span><span>System, Admin</span><div class="user-badge">SA</div></div>
+</div>
+<div class="layout">
+  <aside class="sidebar"><div class="sb-icon">🏠</div><div class="sb-icon">📋</div><div class="sb-icon">👤</div><div class="sb-icon">📖</div><div class="sb-icon">🛡</div><div class="sb-icon active">🔑</div><div class="sb-icon">⚙️</div><div class="sb-icon">📎</div><div class="sb-icon">📁</div><div class="sb-icon">🔒</div><div class="sb-icon">₹</div></aside>
+  <main class="main">
+    <div class="breadcrumb"><span>Manage insurer</span><span class="sep">‹</span><span class="cur">Add insurer details</span></div>
+    <div class="variant-help">💡 Two options: Section layout and progress-tab layout. Option C removed.</div>
+    <div class="variant-bar"><button class="v-tab active" onclick="switchVariant('A',this)">Option A — Recommended sections</button><button class="v-tab" onclick="switchVariant('B',this)">Option B — Progress tabs</button></div>
+
+    <template id="insurerDetailsTemplate">
+      <div class="form-grid g2">
+        <div class="field"><div class="lbl">Insurer name (Legal name) <span class="req">*</span><div class="tooltip-wrap"><div class="tooltip-icon">?</div><div class="tooltip-box">Duplicate validation must check exact matches and fuzzy/near matches before save.</div></div></div><input type="text" placeholder="Enter insurer legal name" /><div class="hint-text">Duplicate validation + fuzzy search warning.</div></div>
+        <div class="field"><div class="lbl">Display name <span class="req">*</span></div><input type="text" placeholder="Enter display name" /></div>
+        <div class="field"><div class="lbl">Type of company <span class="req">*</span></div><select><option value="">Select</option><option>Public Sector</option><option>Private Sector</option><option>PL-DM</option><option>PL-POSP</option><option>IIRM-CE</option></select></div>
+        <div class="field"><div class="lbl">Insurance company type <span class="req">*</span></div><select><option value="">Select</option><option>Life Insurance</option><option>General Insurance</option><option>Health Insurance</option><option>Composite Insurance</option><option>Reinsurance</option></select></div>
+        <div class="field"><div class="lbl">Company tag <span class="req">*</span></div><input type="text" value="Company" readonly /></div>
+        <div class="field"><div class="lbl">Country <span class="req">*</span></div><input type="text" value="India" readonly /><div class="hint-text">Default based on logged-in user country.</div></div>
+        <div class="field"><div class="lbl">Insurer Code / Corporate Registration Number <span class="req">*</span><span class="irdai-tag">IRDAI</span><div class="tooltip-wrap"><div class="tooltip-icon">?</div><div class="tooltip-box">For India, insurer code / corporate registration number should be as per IRDAI or applicable registration reference. Localization for other countries needs separate R&D.</div></div></div><div class="search-dd"><div class="search-dd-input-wrap"><input type="text" placeholder="Search or enter insurer code / registration number" /><button class="search-dd-btn" type="button">▾</button></div></div></div>
+        <div class="field"><div class="lbl">Website</div><input type="url" placeholder="Enter website URL" /></div>
+        <div class="field span2"><div class="lbl">Remarks</div><textarea placeholder="Enter remarks" maxlength="500"></textarea><div class="char-count">0/500</div></div>
+      </div>
+    </template>
+
+    <template id="logoTemplate">
+      <div class="lbl" style="margin-bottom:10px">Insurer Logo</div>
+      <div class="logo-upload"><div class="logo-upload-icon">⬆</div><div class="logo-upload-text">Click to upload logo</div><div class="logo-upload-hint">Recommended: 400x225px (16:9), PNG or JPEG</div></div>
+    </template>
+
+    <template id="branchDetailsTemplate">
+      <div class="subsection">
+        <div class="subsection-title">Branch type & hierarchy</div>
+        <div class="form-grid g2">
+          <div class="field"><div class="lbl">Branch type <span class="req">*</span></div><select><option value="">Select branch type</option><option>CO - Corporate Office</option><option>HO - Head Office</option><option>DO - Divisional Office</option><option>BO - Branch Office</option><option>AO - Area Office</option><option>RO - Regional Office</option><option>ZO - Zonal Office</option><option>Facultative Reinsurance Unit</option><option>India Branch Office</option><option>Operations Hub</option><option>Representative Office</option><option>Treaty Management Unit</option><option>Underwriting Desk</option></select></div>
+          <div class="field"><div class="lbl">Parent branch</div><select><option value="">Select parent branch</option><option>HYD-RO-001 - Hyderabad Regional Office</option><option>MUM-HO-001 - Mumbai Head Office</option><option>DEL-ZO-001 - Delhi Zonal Office</option></select></div>
+          <div class="field"><div class="lbl">Branch Code</div><input type="text" placeholder="Enter branch code" /></div>
+          <div class="field"><div class="lbl">Branch name</div><input type="text" placeholder="Enter branch name" /></div>
+        </div>
+      </div>
+      <div class="subsection">
+        <div class="subsection-title">Address fields</div>
+        <div class="form-grid g2">
+          <div class="field"><div class="lbl">Address line <span class="req">*</span></div><input type="text" placeholder="Enter address line" /></div>
+          <div class="field"><div class="lbl">Address line 2</div><input type="text" placeholder="Enter address line 2" /></div>
+          <div class="field"><div class="lbl">Area</div><input type="text" placeholder="Enter area" /></div>
+          <div class="field"><div class="lbl">Country</div><input type="text" value="India" readonly /></div>
+          <div class="field"><div class="lbl">State <span class="req">*</span></div><select><option value="">Select state</option><option>Delhi</option><option>Karnataka</option><option>Maharashtra</option><option>Tamil Nadu</option><option>Telangana</option></select></div>
+          <div class="field"><div class="lbl">City <span class="req">*</span></div><select><option value="">Select city</option><option>Hyderabad</option><option>Mumbai</option><option>Bengaluru</option><option>Delhi</option><option>Chennai</option></select></div>
+          <div class="field"><div class="lbl">Pin code <span class="req">*</span></div><input type="text" maxlength="6" placeholder="Enter pin code" /></div>
+        </div>
+      </div>
+      <div class="subsection">
+        <div class="subsection-title">Branch contact fields</div>
+        <div class="form-grid g2">
+          <div class="field"><div class="lbl">Branch contact name</div><input type="text" placeholder="Enter contact name" /></div>
+          <div class="field"><div class="lbl">Branch phone number</div><input type="tel" placeholder="Enter phone number" /></div>
+          <div class="field"><div class="lbl">Branch email address</div><input type="email" placeholder="Enter email address" /></div>
+          <div class="field"><div class="lbl">Branch alternate phone number</div><input type="tel" placeholder="Enter alternate phone number" /></div>
+          <div class="field"><div class="lbl">Branch support number</div><input type="tel" placeholder="Enter support number" /></div>
+        </div>
+      </div>
+      <div class="add-more-row"><button class="add-btn" title="Add another branch">+</button></div>
+    </template>
+
+    <template id="kycTemplate">
+      <div class="form-grid g2">
+        <div class="field"><div class="lbl">Corporate Identification / Registration Number</div><input type="text" placeholder="Enter corporate identification / registration number" /></div>
+        <div class="field"><div class="lbl">PAN</div><input type="text" placeholder="Enter PAN" /></div>
+        <div class="field"><div class="lbl">TAN</div><input type="text" placeholder="Enter TAN" /></div>
+        <div class="subsection span2">
+          <div class="subsection-title">Registered Address</div>
+          <div class="form-grid g2">
+            <div class="field"><div class="lbl">Address line</div><input type="text" placeholder="Enter address line" /></div>
+            <div class="field"><div class="lbl">Address line 2</div><input type="text" placeholder="Enter address line 2" /></div>
+            <div class="field"><div class="lbl">Area</div><input type="text" placeholder="Enter area" /></div>
+            <div class="field"><div class="lbl">Country</div><input type="text" value="India" readonly /></div>
+            <div class="field"><div class="lbl">State</div><select><option value="">Select state</option><option>Telangana</option><option>Maharashtra</option><option>Karnataka</option></select></div>
+            <div class="field"><div class="lbl">City</div><select><option value="">Select city</option><option>Hyderabad</option><option>Mumbai</option><option>Bengaluru</option></select></div>
+            <div class="field"><div class="lbl">Pin code</div><input type="text" maxlength="6" placeholder="Enter pin code" /></div>
+          </div>
+        </div>
+        <div class="subsection span2">
+          <div class="subsection-title">GST details 1</div>
+          <div class="form-grid g2">
+            <div class="field"><div class="lbl">State</div><select><option value="">Select state</option><option>Telangana</option><option>Maharashtra</option><option>Karnataka</option></select></div>
+            <div class="field"><div class="lbl">Category</div><div class="segment"><button class="active" type="button">GST</button><button type="button">IGST</button><button type="button">CGST</button></div></div>
+            <div class="field"><div class="lbl">GST number</div><input type="text" placeholder="Enter GST number" /></div>
+          </div>
+          <div class="add-more-row"><button class="add-btn" title="Add another GST">+</button></div>
+        </div>
+      </div>
+    </template>
+
+    <div id="vA" class="v-panel active">
+      <section class="section-card"><div class="section-title">Insurer details</div><div data-template="insurerDetailsTemplate"></div></section>
+      <section class="section-card"><div class="section-title">Logo</div><div data-template="logoTemplate"></div></section>
+      <section class="section-card"><div class="section-title">Branch details 1 <span class="section-badge">Add more allowed</span></div><div data-template="branchDetailsTemplate"></div></section>
+      <section class="section-card"><div class="section-title">KYC details</div><div data-template="kycTemplate"></div></section>
+    </div>
+
+    <div id="vB" class="v-panel">
+      <div class="wizard-tabs">
+        <button class="active" onclick="switchTab('insurer',this)">1. Insurer Details</button>
+        <button onclick="switchTab('logo',this)">2. Logo</button>
+        <button onclick="switchTab('branch',this)">3. Branch Details</button>
+        <button onclick="switchTab('kyc',this)">4. KYC Details</button>
+      </div>
+      <div id="tab-insurer" class="tab-panel active">
+        <section class="section-card"><div class="section-title">Insurer details</div><div data-template="insurerDetailsTemplate"></div><div class="tab-actions"><span></span><div class="right"><button class="btn-submit" onclick="switchTabByName('logo')">Next: Logo</button></div></div></section>
+      </div>
+      <div id="tab-logo" class="tab-panel">
+        <section class="section-card"><div class="section-title">Logo</div><div data-template="logoTemplate"></div><div class="tab-actions"><button class="btn-cancel" onclick="switchTabByName('insurer')">Back</button><div class="right"><button class="btn-submit" onclick="switchTabByName('branch')">Next: Branch Details</button></div></div></section>
+      </div>
+      <div id="tab-branch" class="tab-panel">
+        <section class="section-card"><div class="section-title">Branch details 1 <span class="section-badge">Add more allowed</span></div><div data-template="branchDetailsTemplate"></div><div class="tab-actions"><button class="btn-cancel" onclick="switchTabByName('logo')">Back</button><div class="right"><button class="btn-submit" onclick="switchTabByName('kyc')">Next: KYC Details</button></div></div></section>
+      </div>
+      <div id="tab-kyc" class="tab-panel">
+        <section class="section-card"><div class="section-title">KYC details</div><div data-template="kycTemplate"></div><div class="tab-actions"><button class="btn-cancel" onclick="switchTabByName('branch')">Back</button><div class="right"><button class="btn-submit">Save and Exit</button></div></div></section>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="bottom-bar"><button class="btn-cancel">Cancel</button><button class="btn-submit">Save and Exit</button></div>
+<script>
+function hydrateTemplates(){document.querySelectorAll('[data-template]').forEach((el,idx)=>{const t=document.getElementById(el.dataset.template);el.innerHTML=t.innerHTML})}
+hydrateTemplates();
+function switchVariant(v,btn){['A','B'].forEach(x=>document.getElementById('v'+x).classList.toggle('active',x===v));document.querySelectorAll('.v-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active')}
+function switchTab(name,btn){document.querySelectorAll('#vB .tab-panel').forEach(p=>p.classList.remove('active'));document.getElementById('tab-'+name).classList.add('active');document.querySelectorAll('#vB .wizard-tabs button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+function switchTabByName(name){const btn=[...document.querySelectorAll('#vB .wizard-tabs button')].find(b=>b.textContent.toLowerCase().includes(name));if(btn)switchTab(name,btn)}
+</script>
+</body>
+</html>

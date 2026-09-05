@@ -1,0 +1,345 @@
+"viewname","definition"
+"vr_active_user_info"," SELECT (((usr.first_name)::text || ' '::text) || (usr.last_name)::text) AS user_name,
+    usr.email_id AS user_email,
+    (((mgr.first_name)::text || ' '::text) || (mgr.last_name)::text) AS manager_name,
+    mgr.email_id AS manager_email,
+    usr.iirm_emp_id AS iirm_employee_id,
+    org.name AS organisation,
+    orgb.name AS branch,
+    orgv.name AS vertical,
+    dept.name AS department,
+    desg.name AS designation,
+    string_agg((rl.name)::text, ', '::text) AS roles,
+    usr.login_name AS login,
+    usr.id AS uid,
+    usr.reporting_user_id AS manager_uid
+   FROM (((((((((users usr
+     JOIN employee emp ON (((emp.user_id = usr.id) AND ((usr.user_status_key)::text = 'USER_STATUS_ACTIVE'::text))))
+     JOIN employee mgr ON ((emp.reporting_manager_employee_id = mgr.id)))
+     JOIN organisation org ON ((org.id = emp.organisation_id)))
+     JOIN org_vertical orgv ON (((org.id = orgv.organisation_id) AND (emp.vertical_id = orgv.id))))
+     JOIN org_department dept ON ((emp.department_id = dept.id)))
+     JOIN org_designation desg ON ((emp.designation_id = desg.id)))
+     JOIN org_branch orgb ON ((emp.branch_id = orgb.id)))
+     JOIN user_role ur ON ((usr.id = ur.user_id)))
+     JOIN roles rl ON ((ur.role_id = rl.id)))
+  GROUP BY (((usr.first_name)::text || ' '::text) || (usr.last_name)::text), usr.email_id, (((mgr.first_name)::text || ' '::text) || (mgr.last_name)::text), mgr.email_id, org.name, orgv.name, dept.name, orgb.name, usr.login_name, desg.name, usr.id, usr.reporting_user_id
+UNION
+ SELECT (((usr.first_name)::text || ' '::text) || (usr.last_name)::text) AS user_name,
+    usr.email_id AS user_email,
+    (((mgr.first_name)::text || ' '::text) || (mgr.last_name)::text) AS manager_name,
+    mgr.email_id AS manager_email,
+    usr.iirm_emp_id AS iirm_employee_id,
+    org.name AS organisation,
+    orgb.name AS branch,
+    orgv.name AS vertical,
+    dept.name AS department,
+    desg.name AS designation,
+    string_agg((rl.name)::text, ', '::text) AS roles,
+    usr.login_name AS login,
+    usr.id AS uid,
+    usr.reporting_user_id AS manager_uid
+   FROM (((((((((users usr
+     JOIN employee emp ON (((emp.user_id = usr.id) AND ((usr.user_status_key)::text = 'USER_STATUS_ACTIVE'::text) AND (usr.reporting_user_id IS NULL))))
+     LEFT JOIN employee mgr ON ((emp.reporting_manager_employee_id = mgr.id)))
+     JOIN organisation org ON ((org.id = emp.organisation_id)))
+     JOIN org_vertical orgv ON (((org.id = orgv.organisation_id) AND (emp.vertical_id = orgv.id))))
+     JOIN org_department dept ON ((emp.department_id = dept.id)))
+     JOIN org_designation desg ON ((emp.designation_id = desg.id)))
+     JOIN org_branch orgb ON ((emp.branch_id = orgb.id)))
+     JOIN user_role ur ON ((usr.id = ur.user_id)))
+     JOIN roles rl ON ((ur.role_id = rl.id)))
+  GROUP BY (((usr.first_name)::text || ' '::text) || (usr.last_name)::text), usr.email_id, (((mgr.first_name)::text || ' '::text) || (mgr.last_name)::text), mgr.email_id, org.name, orgv.name, dept.name, orgb.name, usr.login_name, desg.name, usr.id, usr.reporting_user_id;"
+"vr_lookup_info"," SELECT org.name AS organisation,
+    ld.lookup_name,
+    ld.value AS lookup_value,
+    ldir.value AS irdai_category,
+    ldii.value AS iirm_category,
+        CASE ld.status
+            WHEN 0 THEN 'Inactive'::text
+            ELSE 'Active'::text
+        END AS lookup_status,
+    ldn.value AS respective_active_policy_type,
+    ld.value_key AS lookup_value_key,
+    ld.lookup_order AS display_order,
+    ' - '::text AS reference,
+    ld.description AS lookup_description,
+    ld.id AS lookup_id,
+    ld.lookup_key AS unique_lookup_key,
+    ldn.id AS respective_active_policy_type_lid
+   FROM (((((lookup_data ld
+     JOIN organisation org ON ((org.id = ld.organisation_id)))
+     LEFT JOIN policy_type_segregation pts ON ((pts.policy_type_lid = ld.id)))
+     LEFT JOIN lookup_data ldn ON ((pts.assoc_active_policy_type_lid = ldn.id)))
+     LEFT JOIN lookup_data ldir ON ((pts.irdai_policy_type_lid = ldir.id)))
+     LEFT JOIN lookup_data ldii ON ((pts.iirm_policy_type_lid = ldii.id)))
+  WHERE (1 = 1)
+  ORDER BY org.name, ld.lookup_name, ld.value;"
+"vr_org_branch"," SELECT org.name AS organisation_name,
+    brn.name AS branch_name,
+    org.id AS organisation_id,
+    brn.id AS branch_id
+   FROM (org_branch brn
+     JOIN organisation org ON (((org.id = brn.organisation_id) AND (brn.status_lid = 16101))));"
+"vr_org_designation"," SELECT org.name AS organisation_name,
+    desg.name AS designation_name,
+    desg.grade_level,
+    org.id AS organisation_id,
+    desg.id AS designation_id
+   FROM (org_designation desg
+     JOIN organisation org ON ((org.id = desg.organisation_id)))
+  WHERE (desg.status_lid = 16101)
+  ORDER BY org.name, desg.grade_level;"
+"vr_org_vertical_department"," SELECT org.name AS organisation_name,
+    sbu.name AS sbu_name,
+    ver.name AS vertical_name,
+    dept.name AS department_name,
+    org.id AS organisation_id,
+    sbu.id AS sbu_id,
+    ver.id AS vertical_id,
+    dept.id AS department_id
+   FROM (((organisation org
+     JOIN org_sbu sbu ON (((sbu.organisation_id = org.id) AND (sbu.status_lid = 16101))))
+     JOIN org_vertical ver ON (((org.id = ver.organisation_id) AND (sbu.id = ver.sbu_id) AND (ver.status_lid = 16101))))
+     JOIN org_department dept ON (((ver.id = dept.vertical_id) AND (dept.status_lid = 16101))))
+  ORDER BY org.name, sbu.name, ver.name, dept.name;"
+"vr_role_permission_info"," SELECT aclcat.name AS function_name,
+    aclact.name AS action_name,
+    rl.name AS permitted_role_name,
+    ' -- '::text AS reference,
+    rlaclmap.id AS rolefunctionaction_mapping_id,
+    aclcatactmap.id AS functionaction_mapping_id,
+    aclcat.id AS function_id,
+    aclact.id AS action_id,
+    rl.id AS role_id
+   FROM ((((acl_category_action_map aclcatactmap
+     JOIN acl_categories aclcat ON ((aclcatactmap.acl_category_id = aclcat.id)))
+     JOIN acl_actions aclact ON ((aclcatactmap.acl_action_id = aclact.id)))
+     JOIN role_acl_category_action_map rlaclmap ON ((rlaclmap.acl_category_action_id = aclcatactmap.id)))
+     JOIN roles rl ON ((rlaclmap.role_id = rl.id)));"
+"vr_user_access"," SELECT ahl.entity_type,
+    ahl.action AS operation,
+    ((((((usr.first_name)::text || ' '::text) || (usr.last_name)::text) || ' ('::text) || (usr.email_id)::text) || ')'::text) AS create_by,
+    ahl.created_at
+   FROM (audit_history_log ahl
+     JOIN users usr ON ((usr.id = (ahl.user_id)::bigint)))
+  WHERE ((ahl.action)::text = ANY (ARRAY[('LOGIN'::character varying)::text, ('PASSWORD-RESET'::character varying)::text]));"
+"vr_user_activity"," SELECT 'Company'::text AS entity_type,
+    entity.company_name AS entity_name,
+    'Creation'::text AS operation,
+    concat(users.first_name, ' ', users.last_name) AS created_by,
+    ld.value AS status,
+    entity.created_at
+   FROM ((company entity
+     JOIN users ON ((entity.created_by = users.id)))
+     JOIN lookup_data ld ON ((ld.id = entity.status_lid)))
+UNION
+ SELECT 'Contact'::text AS entity_type,
+    concat(entity.first_name, ' ', entity.last_name) AS entity_name,
+    'Creation'::text AS operation,
+    concat(users.first_name, ' ', users.last_name) AS created_by,
+    ld.value AS status,
+    entity.created_at
+   FROM ((contact entity
+     JOIN users ON ((entity.created_by = users.id)))
+     JOIN lookup_data ld ON ((ld.id = entity.status_lid)))
+UNION
+ SELECT 'Insurer'::text AS entity_type,
+    entity.name AS entity_name,
+    'Creation'::text AS operation,
+    concat(users.first_name, ' ', users.last_name) AS created_by,
+    ld.value AS status,
+    entity.created_at
+   FROM ((insurer entity
+     JOIN users ON ((entity.created_by = users.id)))
+     JOIN lookup_data ld ON ((ld.id = entity.status_lid)))
+UNION
+ SELECT 'Broker'::text AS entity_type,
+    entity.broker_name AS entity_name,
+    'Creation'::text AS operation,
+    concat(users.first_name, ' ', users.last_name) AS created_by,
+    ld.value AS status,
+    entity.created_at
+   FROM ((broker entity
+     JOIN users ON ((entity.created_by = users.id)))
+     JOIN lookup_data ld ON ((ld.id = entity.status_lid)))
+UNION
+ SELECT 'TPA'::text AS entity_type,
+    entity.name AS entity_name,
+    'Creation'::text AS operation,
+    concat(users.first_name, ' ', users.last_name) AS created_by,
+    ld.value AS status,
+    entity.created_at
+   FROM ((tpa entity
+     JOIN users ON ((entity.created_by = users.id)))
+     JOIN lookup_data ld ON ((ld.id = entity.status_lid)))
+UNION
+ SELECT otld.value AS entity_type,
+    cmp.company_name AS entity_name,
+    'Creation'::text AS operation,
+    concat(users.first_name, ' ', users.last_name) AS created_by,
+    sld.value AS status,
+    entity.created_at
+   FROM ((((opportunity entity
+     JOIN users ON ((entity.created_by = users.id)))
+     JOIN company cmp ON ((cmp.id = entity.company_id)))
+     JOIN lookup_data otld ON ((otld.id = entity.opportunity_type_lid)))
+     JOIN lookup_data sld ON ((sld.id = entity.status_lid)))
+UNION
+ SELECT 'Meeting'::text AS entity_type,
+    entity.meeting_subject AS entity_name,
+    'Creation'::text AS operation,
+    concat(users.first_name, ' ', users.last_name) AS created_by,
+    ld.value AS status,
+    entity.created_at
+   FROM ((meeting entity
+     JOIN users ON ((entity.created_by = users.id)))
+     JOIN lookup_data ld ON ((ld.id = entity.meeting_status_lid)))
+UNION
+ SELECT 'Task'::text AS entity_type,
+    entity.task_name AS entity_name,
+    'Creation'::text AS operation,
+    concat(users.first_name, ' ', users.last_name) AS created_by,
+    ld.value AS status,
+    entity.created_at
+   FROM ((task entity
+     JOIN users ON ((entity.created_by = users.id)))
+     JOIN lookup_data ld ON ((ld.id = entity.task_status_lid)))
+UNION
+ SELECT 'Note'::text AS entity_type,
+    substr(entity.description, 1, 20) AS entity_name,
+    'Creation'::text AS operation,
+    concat(users.first_name, ' ', users.last_name) AS created_by,
+    'Active'::text AS status,
+    entity.created_at
+   FROM (note entity
+     JOIN users ON ((entity.created_by = users.id)));"
+"vr_user_hierarchy"," SELECT ((((((usr.first_name)::text || ''::text) || (usr.last_name)::text) || ' ('::text) || (usr.email_id)::text) || ')'::text) AS employee_from,
+    'Higher Ups'::text AS hierarchy,
+    ((((((mgr.first_name)::text || ''::text) || (mgr.last_name)::text) || ' ('::text) || (mgr.email_id)::text) || ')'::text) AS employee_to,
+    usr.id AS from_reference_id,
+    mgr.id AS to_reference_id,
+    usrsld.value AS from_reference_status,
+    mgrsld.value AS to_reference_status
+   FROM ((((employee_hierarchy eh
+     JOIN users usr ON ((usr.id = eh.user_id)))
+     JOIN users mgr ON ((mgr.id = eh.reporting_user_id)))
+     JOIN lookup_data usrsld ON ((usrsld.id = usr.status_lid)))
+     JOIN lookup_data mgrsld ON ((mgrsld.id = mgr.status_lid)))
+UNION
+ SELECT ((((((usr.first_name)::text || ''::text) || (usr.last_name)::text) || ' ('::text) || (usr.email_id)::text) || ')'::text) AS employee_from,
+    'Reportees'::text AS hierarchy,
+    ((((((mgr.first_name)::text || ''::text) || (mgr.last_name)::text) || ' ('::text) || (mgr.email_id)::text) || ')'::text) AS employee_to,
+    usr.id AS from_reference_id,
+    mgr.id AS to_reference_id,
+    usrsld.value AS from_reference_status,
+    mgrsld.value AS to_reference_status
+   FROM ((((employee_hierarchy eh
+     JOIN users usr ON ((usr.id = eh.reporting_user_id)))
+     JOIN users mgr ON ((mgr.id = eh.user_id)))
+     JOIN lookup_data usrsld ON ((usrsld.id = usr.status_lid)))
+     JOIN lookup_data mgrsld ON ((mgrsld.id = mgr.status_lid)));"
+"vr_user_hierarchy_raw"," WITH RECURSIVE hierarchy_up AS (
+         SELECT users.id,
+            users.id AS original_user_id,
+            users.first_name,
+            users.reporting_user_id,
+            0 AS level,
+            (users.first_name)::text AS path,
+            'Self'::text AS direction,
+            users.organisation_id,
+            users.organisation_id AS mgr_organisation_id
+           FROM users
+          WHERE ((users.user_type_key)::text = ANY (ARRAY[('USER_TYPE_IIRM_EMPLOYEE'::character varying)::text, ('USER_TYPE_COMPANY_EMPLOYEE_AND_IIRM_EMPLOYEE'::character varying)::text]))
+        UNION ALL
+         SELECT u.id,
+            h.original_user_id,
+            u.first_name,
+            u.reporting_user_id,
+            (h.level + 1),
+            (((u.first_name)::text || ' -> '::text) || h.path),
+            'Manager'::text AS direction,
+            h.organisation_id,
+            u.organisation_id AS mgr_organisation_id
+           FROM (users u
+             JOIN hierarchy_up h ON (((h.reporting_user_id = u.id) AND ((u.user_type_key)::text = ANY (ARRAY[('USER_TYPE_IIRM_EMPLOYEE'::character varying)::text, ('USER_TYPE_COMPANY_EMPLOYEE_AND_IIRM_EMPLOYEE'::character varying)::text])))))
+        ), hierarchy_down AS (
+         SELECT users.id,
+            users.id AS original_user_id,
+            users.first_name,
+            users.reporting_user_id,
+            0 AS level,
+            (users.first_name)::text AS path,
+            'Reportee'::text AS direction,
+            users.organisation_id,
+            users.organisation_id AS mgr_organisation_id
+           FROM users
+          WHERE ((users.user_type_key)::text = ANY (ARRAY[('USER_TYPE_IIRM_EMPLOYEE'::character varying)::text, ('USER_TYPE_COMPANY_EMPLOYEE_AND_IIRM_EMPLOYEE'::character varying)::text]))
+        UNION ALL
+         SELECT u.id,
+            h.original_user_id,
+            u.first_name,
+            u.reporting_user_id,
+            (h.level - 1),
+            ((h.path || ' -> '::text) || (u.first_name)::text),
+            'Reportee'::text AS direction,
+            h.organisation_id,
+            u.organisation_id AS mgr_organisation_id
+           FROM (users u
+             JOIN hierarchy_down h ON (((u.reporting_user_id = h.id) AND ((u.user_type_key)::text = ANY (ARRAY[('USER_TYPE_IIRM_EMPLOYEE'::character varying)::text, ('USER_TYPE_COMPANY_EMPLOYEE_AND_IIRM_EMPLOYEE'::character varying)::text])))))
+        )
+ SELECT organisation_id AS manager_organisation_id,
+    original_user_id AS manager_id,
+    ( SELECT TRIM(BOTH FROM (((users.first_name)::text || ' '::text) || (users.last_name)::text)) AS btrim
+           FROM users
+          WHERE (users.id = combined.original_user_id)) AS manager_name,
+    mgr_organisation_id AS employee_organisation_id,
+    ( SELECT TRIM(BOTH FROM (((users.first_name)::text || ' '::text) || (users.last_name)::text)) AS btrim
+           FROM users
+          WHERE (users.id = combined.id)) AS employee_id,
+    first_name AS employee_name,
+    level AS skip_level,
+        CASE
+            WHEN (level > 0) THEN (('Manager (Level '::text || level) || ')'::text)
+            WHEN (level = 0) THEN 'Self'::text
+            ELSE (('Reportee (Level '::text || abs(level)) || ')'::text)
+        END AS relationship,
+    direction AS hierarchy,
+    path AS hierarchy_path,
+        CASE
+            WHEN (level > 0) THEN (repeat('↑ '::text, level) || (first_name)::text)
+            WHEN (level = 0) THEN ('● '::text || (first_name)::text)
+            ELSE (repeat('↓ '::text, abs(level)) || (first_name)::text)
+        END AS visual_hierarchy
+   FROM ( SELECT hierarchy_up.id,
+            hierarchy_up.original_user_id,
+            hierarchy_up.first_name,
+            hierarchy_up.reporting_user_id,
+            hierarchy_up.level,
+            hierarchy_up.path,
+            hierarchy_up.direction,
+            hierarchy_up.organisation_id,
+            hierarchy_up.mgr_organisation_id
+           FROM hierarchy_up
+          WHERE (hierarchy_up.level >= 0)
+        UNION ALL
+         SELECT hierarchy_down.id,
+            hierarchy_down.original_user_id,
+            hierarchy_down.first_name,
+            hierarchy_down.reporting_user_id,
+            hierarchy_down.level,
+            hierarchy_down.path,
+            hierarchy_down.direction,
+            hierarchy_down.organisation_id,
+            hierarchy_down.mgr_organisation_id
+           FROM hierarchy_down
+          WHERE (hierarchy_down.level < 0)) combined
+  ORDER BY original_user_id,
+        CASE direction
+            WHEN 'Manager'::text THEN 1
+            WHEN 'Self'::text THEN 2
+            WHEN 'Reportee'::text THEN 3
+            ELSE NULL::integer
+        END, level DESC, ( SELECT TRIM(BOTH FROM (((users.first_name)::text || ' '::text) || (users.last_name)::text)) AS btrim
+           FROM users
+          WHERE (users.id = combined.original_user_id));"

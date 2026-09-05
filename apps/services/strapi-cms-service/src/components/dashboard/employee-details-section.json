@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_dashboard_employee_details_sections",
+  "info": {
+    "displayName": "Employee Details Section",
+    "description": "Employee details section content"
+  },
+  "options": {},
+  "attributes": {
+    "greetingText": {
+      "type": "string",
+      "required": true,
+      "default": "Hello"
+    },
+    "noteText": {
+      "type": "text",
+      "required": true,
+      "default": "If these details are incorrect please contact your HR to make corrections."
+    },
+    "buttonText": {
+      "type": "string",
+      "required": true,
+      "default": "Start Your Enrolment"
+    },
+    "enrollmentInfoText": {
+      "type": "text",
+      "required": true,
+      "default": "Open until 28 Feb'26,\nEnroll in 4 policies now!\nEnrollment ends in 14 days"
+    }
+  }
+}

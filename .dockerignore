@@ -1,0 +1,2 @@
+# Ignoring env files
+environments/.env.dev

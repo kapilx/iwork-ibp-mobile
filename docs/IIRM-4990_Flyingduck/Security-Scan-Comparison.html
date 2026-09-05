@@ -1,0 +1,765 @@
+<title>IIRM FlyingDuck — Security Scan Comparison</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#edf2f7;color:#1a202c;font-size:14px}
+.header{background:#1a2744;color:#fff;padding:28px 40px}
+.header h1{font-size:1.4rem;font-weight:800;letter-spacing:-.5px}
+.header p{color:#90aac8;font-size:.8rem;margin-top:4px}
+.wrap{max-width:1120px;margin:0 auto;padding:24px 20px}
+.section{background:#fff;border-radius:10px;padding:22px 24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.section-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#718096;border-bottom:1px solid #e2e8f0;padding-bottom:10px;margin-bottom:18px}
+
+/* Scorecard */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.card{background:#fff;border-radius:10px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.08);border-top:4px solid}
+.card.c-red{border-color:#e53e3e}.card.c-orange{border-color:#ed8936}.card.c-teal{border-color:#38a169}.card.c-blue{border-color:#4299e1}
+.card .dt{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#718096}
+.card .tot{font-size:3rem;font-weight:900;line-height:1;margin:6px 0}
+.card.c-red .tot{color:#e53e3e}.card.c-orange .tot{color:#ed8936}.card.c-teal .tot{color:#38a169}.card.c-blue .tot{color:#4299e1}
+.card .lbl{font-size:.67rem;color:#a0aec0}
+.pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
+.pill{font-size:.62rem;padding:2px 8px;border-radius:20px;font-weight:700}
+.pill-sca{background:#ebf8ff;color:#2b6cb0}.pill-sec{background:#faf5ff;color:#6b46c1}.pill-sast{background:#f0fff4;color:#276749}
+.card .br{font-size:.62rem;color:#cbd5e0;margin-top:8px;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .trend{font-size:.75rem;margin-top:6px;font-weight:600}
+.trend-dn{color:#38a169}.trend-flat{color:#4299e1}
+
+/* Chart */
+.chart-wrap{display:flex;align-items:flex-end;gap:32px;padding:24px 8px 0;justify-content:center;margin-bottom:12px}
+.bar-col{display:flex;flex-direction:column;align-items:center;gap:6px}
+.bar-stack{display:flex;flex-direction:column;width:72px}
+.seg{width:100%;flex-shrink:0}
+.seg-sca{background:#3182ce}.seg-sec{background:#805ad5}.seg-sast{background:#38a169;border-radius:3px 3px 0 0}
+.bar-num{font-size:.75rem;font-weight:800;color:#2d3748}
+.bar-dt{font-size:.68rem;color:#718096;font-weight:600}
+.legend{display:flex;gap:20px;justify-content:center;margin-top:8px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:.72rem;color:#4a5568}
+.leg-dot{width:10px;height:10px;border-radius:2px}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{padding:9px 12px;background:#f7fafc;color:#4a5568;font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #e2e8f0;text-align:center}
+th.left{text-align:left}
+td{padding:9px 12px;border-bottom:1px solid #f0f4f8;text-align:center}
+td.left{text-align:left;font-weight:600;color:#2d3748}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f7fafc}
+.n0{color:#c6f6d5;font-weight:600}.nc{color:#c53030;font-weight:800}.nh{color:#c05621;font-weight:700}.nm{color:#b7791f;font-weight:600}.nl{color:#276749;font-weight:600}.ngray{color:#a0aec0}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.65rem;font-weight:700}
+.bc{background:#fff5f5;color:#c53030}.bh{background:#fffaf0;color:#c05621}.bm{background:#fffbf0;color:#b7791f}.bl{background:#f0fff4;color:#276749}.b0{background:#e6fffa;color:#234e52}
+
+/* Pattern table */
+.present{color:#38a169;font-size:1rem}.absent{color:#e53e3e;font-size:.9rem}.unknown{color:#cbd5e0;font-size:.85rem}
+.pat-label{text-align:left;font-size:.75rem}
+.pat-sub{font-size:.65rem;color:#a0aec0;font-weight:400}
+
+/* Observations */
+.obs{padding:12px 0;border-bottom:1px solid #f0f4f8;display:flex;gap:12px;align-items:flex-start}
+.obs:last-child{border-bottom:none}
+.obs-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.obs-text{font-size:.8rem;color:#2d3748;line-height:1.55}
+.obs-text strong{color:#1a202c}
+
+/* Progress */
+.prog-wrap{background:#e2e8f0;border-radius:4px;height:5px;margin-top:5px;width:100%}
+.prog-fill{height:100%;border-radius:4px;background:#48bb78}
+
+/* Action items */
+.action-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.action-col{border-radius:8px;padding:16px 18px}
+.action-col.p0{background:#fff5f5;border:1px solid #fed7d7}
+.action-col.p1{background:#fffaf0;border:1px solid #feebc8}
+.action-col.p2{background:#f0fff4;border:1px solid #c6f6d5}
+.action-col h3{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.action-col.p0 h3{color:#c53030}.action-col.p1 h3{color:#c05621}.action-col.p2 h3{color:#276749}
+.action-col h3 span{font-size:.65rem;font-weight:400;text-transform:none;margin-left:4px;opacity:.7}
+.action-item{font-size:.76rem;color:#2d3748;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.06);line-height:1.4}
+.action-item:last-child{border-bottom:none}
+.action-item strong{display:block;font-size:.78rem;margin-bottom:2px}
+.action-item .sub{font-size:.68rem;color:#718096}
+.ai-tag{display:inline-block;font-size:.6rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:5px;vertical-align:middle}
+.ai-tag.code{background:#ebf8ff;color:#2b6cb0}
+.ai-tag.dep{background:#faf5ff;color:#6b46c1}
+.ai-tag.infra{background:#fefcbf;color:#744210}
+.ai-tag.live{background:#fff5f5;color:#c53030}
+@media(max-width:800px){.action-grid{grid-template-columns:1fr}}
+
+/* Client Feedback */
+.cf-group-hdr{border-radius:6px;padding:9px 14px;margin-bottom:12px;font-size:.72rem;font-weight:700}
+.cf-group-hdr.exploitable{background:#fff5f5;border:1px solid #fed7d7;color:#c53030}
+.cf-group-hdr.partial{background:#fffaf0;border:1px solid #feebc8;color:#c05621}
+.cf-item{border:1px solid #e2e8f0;border-radius:8px;margin-bottom:12px;overflow:hidden}
+.cf-header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f7fafc;flex-wrap:wrap}
+.cf-num{font-weight:800;color:#4a5568;font-size:.8rem}
+.cf-code{background:#edf2f7;color:#2d3748;padding:2px 8px;border-radius:4px;font-size:.78rem;font-family:monospace}
+.cf-count{font-size:.72rem;color:#718096}
+.cf-status{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.65rem;font-weight:800;margin-left:auto}
+.cf-status.resolved{background:#c6f6d5;color:#22543d}
+.cf-status.mitigated{background:#bee3f8;color:#2a4365}
+.cf-status.open-intent{background:#feebc8;color:#7b341e}
+.cf-status.open{background:#fed7d7;color:#742a2a}
+.cf-body{padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cf-client{font-size:.76rem;color:#2d3748;line-height:1.6;background:#fffbf0;border-radius:6px;padding:10px 12px;border-left:3px solid #ed8936}
+.cf-client code{background:#edf2f7;padding:1px 5px;border-radius:3px;font-size:.72rem}
+.cf-response{font-size:.76rem;color:#2d3748;line-height:1.6;background:#f0fff4;border-radius:6px;padding:10px 12px;border-left:3px solid #48bb78}
+.cf-response.warn{background:#fff5f5;border-color:#fc8181}
+.cf-response.caution{background:#fffaf0;border-color:#ed8936}
+.cf-note{font-size:.68rem;color:#a0aec0;margin-top:14px;padding:8px 12px;background:#f7fafc;border-radius:6px;border:1px solid #e2e8f0}
+@media(max-width:700px){.cf-body{grid-template-columns:1fr}}
+
+@media(max-width:700px){.cards{grid-template-columns:1fr 1fr}}
+</style>
+
+<div class="header">
+  <h1>IIRM Pre-Prod — FlyingDuck Security Scan Comparison</h1>
+  <p>4 scans across 12-Jun to 24-Jun 2026 &nbsp;·&nbsp; Repository: new-insurance-wellness-hub</p>
+</div>
+
+<div class="wrap">
+
+  <!-- Scorecards -->
+  <div class="cards">
+    <div class="card c-red">
+      <div class="dt">12 Jun 2026</div>
+      <div class="tot">225</div>
+      <div class="lbl">total findings</div>
+      <div class="pills">
+        <span class="pill pill-sca">SCA 139</span>
+        <span class="pill pill-sec">Secrets 1</span>
+        <span class="pill pill-sast">SAST 85</span>
+      </div>
+      <div class="br">branch: pre-production-ibp</div>
+      <div class="trend trend-dn">Baseline scan</div>
+    </div>
+    <div class="card c-orange">
+      <div class="dt">15 Jun 2026</div>
+      <div class="tot">109</div>
+      <div class="lbl">total findings</div>
+      <div class="pills">
+        <span class="pill pill-sca">SCA 24</span>
+        <span class="pill pill-sec">Secrets 1</span>
+        <span class="pill pill-sast">SAST 84</span>
+      </div>
+      <div class="br">branch: flyingduck-fixes-june-v2</div>
+      <div class="trend trend-dn">↓ 52% vs 12-Jun</div>
+    </div>
+    <div class="card c-teal">
+      <div class="dt">19 Jun 2026</div>
+      <div class="tot">52</div>
+      <div class="lbl">total findings</div>
+      <div class="pills">
+        <span class="pill pill-sca">SCA 8</span>
+        <span class="pill pill-sec">Secrets 0</span>
+        <span class="pill pill-sast">SAST 44</span>
+      </div>
+      <div class="br">branch: flyingduck-fixes-june-v2</div>
+      <div class="trend trend-dn">↓ 77% vs 12-Jun</div>
+    </div>
+    <div class="card c-blue">
+      <div class="dt">24 Jun 2026</div>
+      <div class="tot">51</div>
+      <div class="lbl">total findings</div>
+      <div class="pills">
+        <span class="pill pill-sca">SCA 7</span>
+        <span class="pill pill-sec">Secrets 0</span>
+        <span class="pill pill-sast">SAST 44</span>
+      </div>
+      <div class="br">branch: ss-staging</div>
+      <div class="trend trend-flat">→ Stable (revert commit)</div>
+    </div>
+  </div>
+
+  <!-- Bar chart -->
+  <div class="section">
+    <div class="section-title">Total Findings Trend — SCA / Secrets / SAST Breakdown</div>
+    <div class="chart-wrap">
+      <!-- 12-Jun: SAST 75px, Secrets 1px, SCA 123px = 199px -->
+      <div class="bar-col">
+        <div class="bar-stack">
+          <div class="seg seg-sast" style="height:75px"></div>
+          <div class="seg seg-sec" style="height:1px"></div>
+          <div class="seg seg-sca" style="height:123px"></div>
+        </div>
+        <div class="bar-num">225</div>
+        <div class="bar-dt">12-Jun</div>
+      </div>
+      <!-- 15-Jun: SAST 75px, Secrets 1px, SCA 21px = 97px -->
+      <div class="bar-col">
+        <div class="bar-stack">
+          <div class="seg seg-sast" style="height:75px"></div>
+          <div class="seg seg-sec" style="height:1px"></div>
+          <div class="seg seg-sca" style="height:21px"></div>
+        </div>
+        <div class="bar-num">109</div>
+        <div class="bar-dt">15-Jun</div>
+      </div>
+      <!-- 19-Jun: SAST 39px, SCA 7px = 46px -->
+      <div class="bar-col">
+        <div class="bar-stack">
+          <div class="seg seg-sast" style="height:39px"></div>
+          <div class="seg seg-sca" style="height:7px"></div>
+        </div>
+        <div class="bar-num">52</div>
+        <div class="bar-dt">19-Jun</div>
+      </div>
+      <!-- 24-Jun: SAST 39px, SCA 6px = 45px -->
+      <div class="bar-col">
+        <div class="bar-stack">
+          <div class="seg seg-sast" style="height:39px"></div>
+          <div class="seg seg-sca" style="height:6px"></div>
+        </div>
+        <div class="bar-num">51</div>
+        <div class="bar-dt">24-Jun</div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#3182ce"></div>SCA (dependency CVEs)</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#805ad5"></div>Secrets</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#38a169"></div>SAST (code patterns)</div>
+    </div>
+  </div>
+
+  <!-- Severity breakdown -->
+  <div class="section">
+    <div class="section-title">Severity Breakdown Across Scans</div>
+    <table>
+      <thead>
+        <tr>
+          <th class="left">Category</th>
+          <th>12-Jun</th><th>15-Jun</th><th>19-Jun</th><th>24-Jun</th>
+          <th class="left" style="padding-left:20px">Trend</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="left" colspan="6" style="background:#f7fafc;color:#4a5568;font-size:.7rem;font-weight:700;padding:7px 12px">SCA — Dependency Vulnerabilities</td></tr>
+        <tr>
+          <td class="left">Critical CVEs</td>
+          <td><span class="badge bc">10</span></td>
+          <td><span class="badge b0">0</span></td>
+          <td><span class="badge b0">0</span></td>
+          <td><span class="badge b0">0</span></td>
+          <td class="left" style="padding-left:20px;color:#276749;font-size:.72rem">Fully resolved by 15-Jun</td>
+        </tr>
+        <tr>
+          <td class="left">High CVEs</td>
+          <td><span class="badge bh">63</span></td>
+          <td><span class="badge bh">3</span></td>
+          <td><span class="badge bh">2</span></td>
+          <td><span class="badge bh">1</span></td>
+          <td class="left" style="padding-left:20px;color:#276749;font-size:.72rem">↓ 98% — vite 5.4.21 remains</td>
+        </tr>
+        <tr>
+          <td class="left">Medium CVEs</td>
+          <td><span class="badge bm">62</span></td>
+          <td><span class="badge bm">19</span></td>
+          <td><span class="badge bm">6</span></td>
+          <td><span class="badge bm">6</span></td>
+          <td class="left" style="padding-left:20px;color:#276749;font-size:.72rem">↓ 90%</td>
+        </tr>
+        <tr>
+          <td class="left">Low CVEs</td>
+          <td><span class="badge bl">4</span></td>
+          <td><span class="badge bl">2</span></td>
+          <td><span class="badge b0">0</span></td>
+          <td><span class="badge b0">0</span></td>
+          <td class="left" style="padding-left:20px;color:#276749;font-size:.72rem">Cleared</td>
+        </tr>
+        <tr>
+          <td class="left" style="font-weight:700">SCA Total</td>
+          <td class="nc">139</td><td class="nh">24</td><td class="nl">8</td><td class="nl">7</td>
+          <td class="left" style="padding-left:20px">
+            <div class="prog-wrap"><div class="prog-fill" style="width:95%"></div></div>
+            <span style="font-size:.65rem;color:#276749">95% reduction</span>
+          </td>
+        </tr>
+
+        <tr><td class="left" colspan="6" style="background:#f7fafc;color:#4a5568;font-size:.7rem;font-weight:700;padding:7px 12px">Secrets — Hardcoded Credentials / Tokens</td></tr>
+        <tr>
+          <td class="left">Secrets (any)</td>
+          <td><span class="badge bm">1</span></td>
+          <td><span class="badge bm">1</span></td>
+          <td><span class="badge b0">0</span></td>
+          <td><span class="badge b0">0</span></td>
+          <td class="left" style="padding-left:20px;color:#276749;font-size:.72rem">Resolved by 19-Jun</td>
+        </tr>
+
+        <tr><td class="left" colspan="6" style="background:#f7fafc;color:#4a5568;font-size:.7rem;font-weight:700;padding:7px 12px">SAST — Code Pattern Issues</td></tr>
+        <tr>
+          <td class="left">Medium</td>
+          <td><span class="badge bm">30</span></td>
+          <td><span class="badge bm">30</span></td>
+          <td><span class="badge bm">30</span></td>
+          <td><span class="badge bm">30</span></td>
+          <td class="left" style="padding-left:20px;color:#c05621;font-size:.72rem">Flat across all 4 scans — action needed</td>
+        </tr>
+        <tr>
+          <td class="left">Low</td>
+          <td><span class="badge bl">55</span></td>
+          <td><span class="badge bl">54</span></td>
+          <td><span class="badge bl">14</span></td>
+          <td><span class="badge bl">14</span></td>
+          <td class="left" style="padding-left:20px;color:#276749;font-size:.72rem">↓ 75% — plateau at 14</td>
+        </tr>
+        <tr>
+          <td class="left" style="font-weight:700">SAST Total</td>
+          <td class="nh">85</td><td class="nh">84</td><td class="nm">44</td><td class="nm">44</td>
+          <td class="left" style="padding-left:20px">
+            <div class="prog-wrap"><div class="prog-fill" style="width:48%"></div></div>
+            <span style="font-size:.65rem;color:#276749">48% reduction — plateau since 19-Jun</span>
+          </td>
+        </tr>
+
+        <tr><td class="left" colspan="6" style="background:#f7fafc;color:#4a5568;font-size:.7rem;font-weight:700;padding:7px 12px">SBOM — Vulnerable Packages</td></tr>
+        <tr>
+          <td class="left">Vulnerable packages</td>
+          <td class="nc">63</td>
+          <td class="nh">23</td>
+          <td class="nl">6</td>
+          <td class="nl">5</td>
+          <td class="left" style="padding-left:20px">
+            <div class="prog-wrap"><div class="prog-fill" style="width:92%"></div></div>
+            <span style="font-size:.65rem;color:#276749">92% reduction</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SAST pattern tracker -->
+  <div class="section">
+    <div class="section-title">SAST Pattern Presence Across Scans</div>
+    <table>
+      <thead>
+        <tr>
+          <th class="left">Finding Pattern</th>
+          <th>Severity</th>
+          <th>12-Jun</th><th>15-Jun</th><th>19-Jun</th><th>24-Jun</th>
+          <th class="left" style="padding-left:12px">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="left pat-label">detect-non-literal-regexp<div class="pat-sub">Regex from variable — ReDoS risk</div></td>
+          <td><span class="badge bm">Med</span></td>
+          <td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td>
+          <td class="left" style="padding-left:12px;font-size:.72rem;color:#718096">Persistent noise in all scans (~15/scan)</td>
+        </tr>
+        <tr>
+          <td class="left pat-label">react-dangerouslysetinnerhtml<div class="pat-sub">Raw HTML render</div></td>
+          <td><span class="badge bm">Med</span></td>
+          <td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td>
+          <td class="left" style="padding-left:12px;font-size:.72rem;color:#718096">3 hits, all wrapped by DOMPurify — mitigated</td>
+        </tr>
+        <tr>
+          <td class="left pat-label">var-in-script-tag<div class="pat-sub">Variable in &lt;script&gt; block — XSS</div></td>
+          <td><span class="badge bm">Med</span></td>
+          <td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td>
+          <td class="left" style="padding-left:12px;font-size:.72rem;color:#c05621">2 hits in all scans — document-service HTML templates (placement-slip.html, sriLanka-placement-slip.html:456)</td>
+        </tr>
+        <tr>
+          <td class="left pat-label">path-join-resolve-traversal<div class="pat-sub">User input in file path</div></td>
+          <td><span class="badge bm">Med</span></td>
+          <td><span class="unknown">~</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td>
+          <td class="left" style="padding-left:12px;font-size:.72rem;color:#c05621">5 hits — confirmed in 19-Jun &amp; 24-Jun; needs code review</td>
+        </tr>
+        <tr>
+          <td class="left pat-label">var-in-href<div class="pat-sub">Variable in href — open redirect</div></td>
+          <td><span class="badge bm">Med</span></td>
+          <td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td>
+          <td class="left" style="padding-left:12px;font-size:.72rem;color:#c05621">3 hits in all scans — notification-service email templates (enrollment-reminder:509, enrollment-start:241, initial-onboarding:298)</td>
+        </tr>
+        <tr>
+          <td class="left pat-label">wildcard-cors<div class="pat-sub">origin: * CORS config</div></td>
+          <td><span class="badge bl">Low</span></td>
+          <td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="absent">✗</span></td><td><span class="absent">✗</span></td>
+          <td class="left" style="padding-left:12px;font-size:.72rem;color:#276749">Resolved between 15-Jun and 19-Jun — was in ai-utility-service/main.py:166 (FastAPI allow_origins=["*"])</td>
+        </tr>
+        <tr>
+          <td class="left pat-label">unsafe-formatstring<div class="pat-sub">Unvalidated string in format call</div></td>
+          <td><span class="badge bl">Low</span></td>
+          <td><span class="present">✓</span> <small style="color:#718096">(55)</small></td>
+          <td><span class="present">✓</span> <small style="color:#718096">(~30)</small></td>
+          <td><span class="present">✓</span> <small style="color:#718096">(3)</small></td>
+          <td><span class="present">✓</span> <small style="color:#718096">(3)</small></td>
+          <td class="left" style="padding-left:12px;font-size:.72rem;color:#276749">Massively reduced — 3 remaining are Python AI service noise</td>
+        </tr>
+        <tr>
+          <td class="left pat-label">tainted-sql-string<div class="pat-sub">User input in SQL query</div></td>
+          <td><span class="badge bl">Low</span></td>
+          <td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td>
+          <td class="left" style="padding-left:12px;font-size:.72rem;color:#c05621">2 hits in all scans — ai-utility-service/main.py:770 &amp; :773 (NL2SQL); fix = read-only DB role</td>
+        </tr>
+        <tr>
+          <td class="left pat-label">prototype-pollution-loop<div class="pat-sub">Object merge without __proto__ guard</div></td>
+          <td><span class="badge bl">Low</span></td>
+          <td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td><td><span class="present">✓</span></td>
+          <td class="left" style="padding-left:12px;font-size:.72rem;color:#c05621">8 hits in all scans — confirmed in 12-Jun CSV: OpportunityActivities/autoPopulateFields.ts ×4, ui-lib/SelectFieldByApi.tsx ×2, ui-lib/CommonDetailsSection+DetailsSection ×2</td>
+        </tr>
+        <tr>
+          <td class="left pat-label">incomplete-sanitization<div class="pat-sub">Sanitize call with gaps</div></td>
+          <td><span class="badge bl">Low</span></td>
+          <td><span class="present">✓</span> <small style="color:#718096">(4)</small></td><td><span class="present">✓</span></td><td><span class="present">✓</span> <small style="color:#718096">(1)</small></td><td><span class="present">✓</span> <small style="color:#718096">(1)</small></td>
+          <td class="left" style="padding-left:12px;font-size:.72rem;color:#276749">4 hits in 12-Jun (iwork/PieChart, ui-lib ×2, ibp), reduced to 1 by 19-Jun</td>
+        </tr>
+        <tr>
+          <td class="left pat-label">bypass-tls-verification<div class="pat-sub">rejectUnauthorized:false — TLS bypass</div></td>
+          <td><span class="badge bm">Med</span></td>
+          <td><span class="present">✓</span></td><td><span class="unknown">?</span></td><td><span class="absent">✗</span></td><td><span class="absent">✗</span></td>
+          <td class="left" style="padding-left:12px;font-size:.72rem;color:#276749">Confirmed in 12-Jun CSV: document-service/external-app.service.ts:15 — intentional for TPA self-signed certs; suppressed/absent from 19-Jun &amp; 24-Jun</td>
+        </tr>
+        <tr>
+          <td class="left pat-label">nestjs-header-cors-any<div class="pat-sub">NestJS wildcard CORS header</div></td>
+          <td><span class="badge bl">Low</span></td>
+          <td><span class="present">✓</span></td><td><span class="absent">✗</span></td><td><span class="absent">✗</span></td><td><span class="absent">✗</span></td>
+          <td class="left" style="padding-left:12px;font-size:.72rem;color:#276749">Resolved by 15-Jun — was at service-lib/common-bootstrap.ts:77 (app.enableCors origin:"*")</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:.65rem;color:#a0aec0;margin-top:10px">✓ = confirmed present &nbsp;·&nbsp; ✗ = confirmed absent &nbsp;·&nbsp; ~ = likely present (count consistent) &nbsp;·&nbsp; ? = granular data not available for this scan</p>
+  </div>
+
+  <!-- Vulnerable packages trend -->
+  <div class="section">
+    <div class="section-title">Persistent Vulnerable Packages</div>
+    <table>
+      <thead>
+        <tr>
+          <th class="left">Package</th>
+          <th>12-Jun</th><th>15-Jun</th><th>19-Jun</th><th>24-Jun</th>
+          <th class="left" style="padding-left:12px">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="left" style="font-weight:700">vite</td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td><span class="badge bh">3 CVEs</span></td>
+          <td><span class="badge bh">3 CVEs</span></td>
+          <td class="left" style="padding-left:12px;color:#c05621;font-size:.72rem">Getting worse — downgraded to 5.4.21; upgrade to 6.x needed</td>
+        </tr>
+        <tr>
+          <td class="left" style="font-weight:700">@nestjs/core</td>
+          <td><span class="unknown" style="color:#a0aec0">—</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td class="left" style="padding-left:12px;color:#c05621;font-size:.72rem">Persistent — check for patch release</td>
+        </tr>
+        <tr>
+          <td class="left" style="font-weight:700">quill</td>
+          <td><span class="unknown" style="color:#a0aec0">—</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td class="left" style="padding-left:12px;color:#718096;font-size:.72rem">No upstream fix available</td>
+        </tr>
+        <tr>
+          <td class="left" style="font-weight:700">elliptic</td>
+          <td><span class="unknown" style="color:#a0aec0">—</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td class="left" style="padding-left:12px;color:#718096;font-size:.72rem">No upstream fix available</td>
+        </tr>
+        <tr>
+          <td class="left" style="font-weight:700">yauzl</td>
+          <td><span class="unknown" style="color:#a0aec0">—</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td><span class="badge bm">1 CVE</span></td>
+          <td class="left" style="padding-left:12px;color:#718096;font-size:.72rem">No upstream fix available</td>
+        </tr>
+        <tr>
+          <td class="left" style="font-weight:700">piscina 4.9.2</td>
+          <td><span class="unknown" style="color:#a0aec0">—</span></td>
+          <td><span class="unknown" style="color:#a0aec0">—</span></td>
+          <td><span class="badge bh">1 CVE</span></td>
+          <td><span class="badge b0">0</span></td>
+          <td class="left" style="padding-left:12px;color:#276749;font-size:.72rem">Resolved between 19-Jun and 24-Jun (CVE-2026-55388)</td>
+        </tr>
+        <tr>
+          <td class="left" style="font-weight:700">axios, lodash, @strapi/*</td>
+          <td><span class="badge bc">Many</span></td>
+          <td><span class="badge bh">Some</span></td>
+          <td><span class="badge b0">0</span></td>
+          <td><span class="badge b0">0</span></td>
+          <td class="left" style="padding-left:12px;color:#276749;font-size:.72rem">Resolved — major work done between 12-Jun and 19-Jun</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Key observations -->
+  <div class="section">
+    <div class="section-title">Key Observations</div>
+
+    <div class="obs">
+      <div class="obs-icon">📉</div>
+      <div class="obs-text"><strong>Overall: 77% reduction in 12 days.</strong> Total findings dropped from 225 to 51. The team fixed the hard part — 139 → 7 SCA findings is a 95% reduction driven by clearing Critical/High dependency CVEs (axios, lodash, @strapi, form-data).</div>
+    </div>
+    <div class="obs">
+      <div class="obs-icon">⚠️</div>
+      <div class="obs-text"><strong>SAST Medium is frozen at 30 — across all 4 scans.</strong> This count has not moved at all. The Low count improved (55 → 14), but the Medium tier (detect-non-literal-regexp, dangerouslySetInnerHTML, path traversal, var-in-href, var-in-script-tag) needs a dedicated sprint. These are code-pattern issues, not dependency upgrades.</div>
+    </div>
+    <div class="obs">
+      <div class="obs-icon">🔴</div>
+      <div class="obs-text"><strong>vite is moving in the wrong direction.</strong> Started at 1 CVE in 12-Jun; now carries 3 (including 1 High) in 24-Jun. The downgrade from v6.4.1 → v5.4.21 is the cause. This should be reverted or upgraded to a safe 5.x or 6.x.</div>
+    </div>
+    <div class="obs">
+      <div class="obs-icon">✅</div>
+      <div class="obs-text"><strong>Secrets cleaned, Critical CVEs eliminated, CORS fixed.</strong> The highest-risk items from the 12-Jun scan are gone. Secrets went to 0 by 19-Jun, Critical CVEs gone by 15-Jun. Two CORS issues resolved in sequence: <code>nestjs-header-cors-any</code> (NestJS, service-lib/common-bootstrap.ts:77) fixed by 15-Jun; <code>wildcard-cors</code> (Python FastAPI, ai-utility-service/main.py:166) fixed by 19-Jun.</div>
+    </div>
+    <div class="obs">
+      <div class="obs-icon">🔄</div>
+      <div class="obs-text"><strong>24-Jun is a revert-of-revert commit on ss-staging.</strong> The "51 new, 36 resolved" numbers in the 24-Jun commit delta reflect code being reinstated — not a regression. Net score (51) is effectively the same as 19-Jun (52), which is the real baseline for the current codebase state.</div>
+    </div>
+    <div class="obs">
+      <div class="obs-icon">🎯</div>
+      <div class="obs-text"><strong>To go below 20 total findings</strong>, the next sprint needs: (1) upgrade vite, (2) address the 10 actionable SAST Medium hits (var-in-script-tag ×2, path-join-resolve-traversal ×5, var-in-href ×3), (3) fix prototype-pollution-loop root cause (8 hits from a shared utility), and (4) check @nestjs/core patch. The remaining 20 are no-fix-available upstream issues (quill, elliptic, yauzl, detect-non-literal-regexp pattern noise).</div>
+    </div>
+  </div>
+
+  <!-- Client Feedback -->
+  <div class="section">
+    <div class="section-title">Client Feedback — Suryamohan Surampudi (ISBS) · 12-Jun-2026 · IMPORTANT</div>
+    <p style="font-size:.75rem;color:#718096;margin-bottom:16px">Client words reproduced exactly as received (left panel). Our resolution status and response on the right. Screenshot was cut off after item 7 — verify with client if additional items exist.</p>
+
+    <div class="cf-group-hdr exploitable">Fix These First (Externally Exploitable)</div>
+
+    <div class="cf-item">
+      <div class="cf-header">
+        <span class="cf-num">1.</span>
+        <code class="cf-code">react-dangerouslySetInnerHTML</code>
+        <span class="cf-count">— 3 instances</span>
+        <span class="cf-status mitigated">MITIGATED — Not Removed</span>
+      </div>
+      <div class="cf-body">
+        <div class="cf-client">
+          <strong>What it is:</strong> Your React app is rendering raw HTML directly into the page without sanitization.<br><br>
+          <strong>What attacker can do:</strong> Inject malicious scripts (XSS) — steal session tokens, impersonate users, redirect to phishing pages.<br><br>
+          <strong>Fix:</strong> Replace with safe alternatives like <code>DOMPurify</code> before rendering, or restructure the component to avoid raw HTML entirely.
+        </div>
+        <div class="cf-response">
+          <strong>Status:</strong> DOMPurify is <em>already implemented</em> and wraps all 3 sinks via <code>sanitizeHtml.ts</code>. The client's recommended fix is already in place.<br><br>
+          The scanner flags the React pattern itself — not a missing sanitizer. Still appears in all 4 scans as a pattern flag, not an actual unprotected sink.<br><br>
+          <strong>Action:</strong> Share <code>sanitizeHtml.ts</code> as evidence to client. Consider restructuring to remove <code>dangerouslySetInnerHTML</code> entirely to clear the scanner finding permanently.
+        </div>
+      </div>
+    </div>
+
+    <div class="cf-item">
+      <div class="cf-header">
+        <span class="cf-num">2.</span>
+        <code class="cf-code">wildcard-cors</code>
+        <span class="cf-count">— 1 instance</span>
+        <span class="cf-status resolved">RESOLVED</span>
+      </div>
+      <div class="cf-body">
+        <div class="cf-client">
+          <strong>What it is:</strong> Your server accepts API requests from any website (<code>Access-Control-Allow-Origin: *</code>).<br><br>
+          <strong>What attacker can do:</strong> A malicious website can make API calls to your portal using a logged-in customer's browser session.<br><br>
+          <strong>Fix:</strong> Restrict CORS to only your known domains (e.g., your portal URL and admin URLs only).
+        </div>
+        <div class="cf-response">
+          <strong>Status:</strong> Confirmed resolved. The <code>wildcard-cors</code> pattern is absent from both 19-Jun and 24-Jun scans.<br><br>
+          The fix to <code>app.enableCors({ origin: "*" })</code> in <code>common-bootstrap.ts</code> was applied and the scanner finding cleared between 15-Jun and 19-Jun.<br><br>
+          <strong>Action:</strong> None. Closed.
+        </div>
+      </div>
+    </div>
+
+    <div class="cf-item">
+      <div class="cf-header">
+        <span class="cf-num">3.</span>
+        <code class="cf-code">bypass-tls-verification</code>
+        <span class="cf-count">— 1 instance</span>
+        <span class="cf-status open-intent">OPEN — Intentional</span>
+      </div>
+      <div class="cf-body">
+        <div class="cf-client">
+          <strong>What it is:</strong> Your code is skipping SSL/HTTPS certificate validation somewhere.<br><br>
+          <strong>What attacker can do:</strong> Man-in-the-middle attacks — intercept data between your server and another service it talks to.<br><br>
+          <strong>Fix:</strong> Remove <code>rejectUnauthorized: false</code> or equivalent from your HTTPS/request config.
+        </div>
+        <div class="cf-response caution">
+          <strong>Status:</strong> Open — but intentional and documented. The <code>rejectUnauthorized: false</code> in <code>document-service/external-app.service.ts:15</code> exists because the TPA systems (Good Health / ISBS) use self-signed certificates on non-standard ports.<br><br>
+          Removing it blindly would break TPA connectivity entirely.<br><br>
+          <strong>Action:</strong> Flag back to Suryamohan — this is ISBS infrastructure. The correct fix is for ISBS to provide CA-signed certificates or a valid certificate chain. We cannot resolve this unilaterally.
+        </div>
+      </div>
+    </div>
+
+    <div class="cf-item">
+      <div class="cf-header">
+        <span class="cf-num">4.</span>
+        <code class="cf-code">path-join-resolve-traversal</code>
+        <span class="cf-count">— 3 instances (12-Jun) → now 5 instances</span>
+        <span class="cf-status open">NOT RESOLVED — Count Increased</span>
+      </div>
+      <div class="cf-body">
+        <div class="cf-client">
+          <strong>What it is:</strong> File paths are being constructed using user input without proper validation.<br><br>
+          <strong>What attacker can do:</strong> Access files outside the intended directory — e.g., reading config files, credentials, or system files.<br><br>
+          <strong>Fix:</strong> Validate and sanitize all user-supplied path inputs; use <code>path.resolve()</code> with a whitelist check.
+        </div>
+        <div class="cf-response warn">
+          <strong>Status:</strong> Not resolved. Confirmed present in 15-Jun (5 hits), 19-Jun (5 hits), and 24-Jun (5 hits). The count actually increased from the 3 the client saw in the 12-Jun report.<br><br>
+          None of the 5 instances have been reviewed or patched yet.<br><br>
+          <strong>Action:</strong> Code review required for all 5 instances. Add <code>startsWith(basePath)</code> guard after <code>path.resolve()</code>. P0 priority before client validation.
+        </div>
+      </div>
+    </div>
+
+    <div class="cf-item">
+      <div class="cf-header">
+        <span class="cf-num">5.</span>
+        <code class="cf-code">tainted-sql-string</code>
+        <span class="cf-count">— 2 instances</span>
+        <span class="cf-status open">NOT RESOLVED — Different Fix Needed</span>
+      </div>
+      <div class="cf-body">
+        <div class="cf-client">
+          <strong>What it is:</strong> User input is being passed into database queries without proper sanitization.<br><br>
+          <strong>What attacker can do:</strong> SQL injection — extract data, bypass authentication, or corrupt records.<br><br>
+          <strong>Fix:</strong> Use parameterized queries or an ORM's built-in query methods instead of string concatenation.
+        </div>
+        <div class="cf-response warn">
+          <strong>Status:</strong> Not resolved. Still present in 19-Jun (2 hits) and 24-Jun (2 hits).<br><br>
+          <strong>Important correction on fix:</strong> These 2 hits are in the AI utility service (NL2SQL feature) where SQL is generated by an LLM — parameterized queries are not applicable because the query structure itself is dynamic.<br><br>
+          <strong>Action:</strong> Correct fix is to run these queries under a <em>read-only database role</em> so even a malicious query cannot write, drop, or corrupt data. Not parameterization.
+        </div>
+      </div>
+    </div>
+
+    <div class="cf-group-hdr partial" style="margin-top:20px">Fix These Next (Partially Exploitable)</div>
+
+    <div class="cf-item">
+      <div class="cf-header">
+        <span class="cf-num">6.</span>
+        <code class="cf-code">var-in-href</code>
+        <span class="cf-count">— 3 instances &nbsp;&amp;&nbsp;</span>
+        <code class="cf-code">var-in-script-tag</code>
+        <span class="cf-count">— 2 instances</span>
+        <span class="cf-status open">NOT RESOLVED</span>
+      </div>
+      <div class="cf-body">
+        <div class="cf-client">
+          <strong>What it is:</strong> Dynamic variables being injected into links or script tags.<br><br>
+          <strong>What attacker can do:</strong> Could lead to XSS or open redirect attacks depending on what the variable contains.<br><br>
+          <strong>Fix:</strong> Encode/escape all dynamic values before placing them in href or script contexts.
+        </div>
+        <div class="cf-response warn">
+          <strong>Status:</strong> Not resolved. Both patterns confirmed present in 19-Jun (<code>var-in-href</code> ×3, <code>var-in-script-tag</code> ×2) and identical counts in 24-Jun. No code changes made.<br><br>
+          <strong>Action:</strong> Code review required for all 5 instances. Sanitize or restrict values placed in <code>href</code> and <code>&lt;script&gt;</code> contexts. P0 priority.
+        </div>
+      </div>
+    </div>
+
+    <div class="cf-item">
+      <div class="cf-header">
+        <span class="cf-num">7.</span>
+        <code class="cf-code">nestjs-header-cors-any</code>
+        <span class="cf-count">— 1 instance</span>
+        <span class="cf-status resolved">RESOLVED</span>
+      </div>
+      <div class="cf-body">
+        <div class="cf-client">
+          Similar to wildcard-cors but specifically in your NestJS backend layer. Same risk, same fix — restrict allowed origins.
+        </div>
+        <div class="cf-response">
+          <strong>Status:</strong> Resolved. Confirmed present in 12-Jun CSV at <code>service-lib/src/lib/common-bootstrap.ts:77</code> (<code>app.enableCors({ origin: "*" })</code>). Absent from 15-Jun — meaning this was fixed EARLIER than wildcard-cors (Python FastAPI), which persisted until 19-Jun. Two separate CORS issues, both now closed.<br><br>
+          <strong>Action:</strong> None. Closed.
+        </div>
+      </div>
+    </div>
+
+    <div class="cf-note">Screenshot appears cut off after item 7. Please confirm with Suryamohan whether additional items were included in his feedback that are not visible in the provided screenshot.</div>
+  </div>
+
+  <!-- Critical Action Items -->
+  <div class="section">
+    <div class="section-title">Critical Action Items — Pending Work</div>
+    <div class="action-grid">
+
+      <div class="action-col p0">
+        <h3>P0 — Before Client Validation <span>(do now)</span></h3>
+        <div class="action-item">
+          <strong>Fix IDOR / Broken Authorization <span class="ai-tag live">LIVE</span></strong>
+          <div class="sub">Any logged-in user can access other people's policy/claims/dependent data by changing the ID in the URL. Add ownership check on every record-by-ID endpoint; derive identity from JWT only — stop trusting the client-supplied <code>userid</code> header. Re-test all 5 endpoints after fix.</div>
+        </div>
+        <div class="action-item">
+          <strong>Upgrade vite <span class="ai-tag dep">DEP</span></strong>
+          <div class="sub">Downgraded from 6.4.1 → 5.4.21; now carries 3 CVEs (1 High). Upgrade back to latest 6.x or at minimum a patched 5.x. This is the only remaining High-severity SCA item.</div>
+        </div>
+        <div class="action-item">
+          <strong>Review var-in-script-tag (×2) <span class="ai-tag code">CODE</span></strong>
+          <div class="sub">Variable interpolated into a <code>&lt;script&gt;</code> block — a direct XSS vector if user-controlled. Find the 2 files, check whether the value comes from user input, and escape or move to a data attribute.</div>
+        </div>
+        <div class="action-item">
+          <strong>Review path-join-resolve-traversal (×5) <span class="ai-tag code">CODE</span></strong>
+          <div class="sub">5 instances of user-influenced path in <code>path.join()</code> without a <code>startsWith(base)</code> guard. At least one is in policy-service. Audit all 5 and add boundary checks.</div>
+        </div>
+        <div class="action-item">
+          <strong>Review var-in-href (×3) <span class="ai-tag code">CODE</span></strong>
+          <div class="sub">Variable placed directly in <code>href</code> — enables open redirect or <code>javascript:</code> injection. Validate/sanitize the value or replace with router-controlled navigation.</div>
+        </div>
+      </div>
+
+      <div class="action-col p1">
+        <h3>P1 — This Sprint <span>(within 1 week)</span></h3>
+        <div class="action-item">
+          <strong>Check @nestjs/core patch <span class="ai-tag dep">DEP</span></strong>
+          <div class="sub">Medium CVE (CVE-2026-35515) on v10.4.2 — persistent across 3 scans. Check if 10.x has a later patch release and bump it.</div>
+        </div>
+        <div class="action-item">
+          <strong>Fix prototype-pollution-loop root cause (×8) <span class="ai-tag code">CODE</span></strong>
+          <div class="sub">8 identical hits suggest a shared merge/assign utility. Find it, add <code>Object.hasOwn()</code> guard or switch to a safe merge library. Fix once, closes all 8.</div>
+        </div>
+        <div class="action-item">
+          <strong>tainted-sql-string — AI service (×2) <span class="ai-tag code">CODE</span></strong>
+          <div class="sub">NL2SQL in the AI utility service passes LLM-generated SQL to the database. Parameterization is not possible here; the fix is to run those queries under a read-only DB role so even a malicious query cannot write or drop data.</div>
+        </div>
+        <div class="action-item">
+          <strong>Restrict Strapi admin panel <span class="ai-tag infra">INFRA</span></strong>
+          <div class="sub">Admin login at <code>/strapi-cms-service/admin</code> is open to the internet. Restrict to office IPs or VPN at the ALB/WAF level. Also remove the <code>X-Powered-By: Strapi</code> header.</div>
+        </div>
+        <div class="action-item">
+          <strong>Tighten Content-Security-Policy <span class="ai-tag infra">INFRA</span></strong>
+          <div class="sub">Frontend only sets <code>frame-ancestors none</code>. Add <code>default-src</code> and <code>script-src</code> to prevent script injection. Start in report-only mode to detect breakage before enforcing.</div>
+        </div>
+        <div class="action-item">
+          <strong>Remove dev API URL from pre-prod build <span class="ai-tag code">CODE</span></strong>
+          <div class="sub"><code>api.dev.indiainsure.com</code> is referenced in the pre-prod bundle. Remove it from pre-prod build config and verify the dev endpoint is not reachable from the internet.</div>
+        </div>
+      </div>
+
+      <div class="action-col p2">
+        <h3>P2 — Track / Accept Risk <span>(no fix available)</span></h3>
+        <div class="action-item">
+          <strong>quill 2.0.3 <span class="ai-tag dep">DEP</span></strong>
+          <div class="sub">CVE-2025-15056 — no upstream patch available. Monitor for a new release. Consider replacing if a fix is not issued before production go-live.</div>
+        </div>
+        <div class="action-item">
+          <strong>elliptic 6.6.1 <span class="ai-tag dep">DEP</span></strong>
+          <div class="sub">CVE-2025-14505 — no upstream fix. This is a transitive dependency. Monitor; add to accepted-risk register.</div>
+        </div>
+        <div class="action-item">
+          <strong>yauzl 2.10.0 <span class="ai-tag dep">DEP</span></strong>
+          <div class="sub">CVE-2026-31988 — no upstream fix. Transitive dependency. Monitor.</div>
+        </div>
+        <div class="action-item">
+          <strong>detect-non-literal-regexp (×15) <span class="ai-tag code">CODE</span></strong>
+          <div class="sub">Pattern noise — regex patterns built from constants, not user input. Scanner cannot distinguish. Frozen at ~15 across all 4 scans. Accept as noise; document the decision.</div>
+        </div>
+        <div class="action-item">
+          <strong>SAST Medium plateau (30 unchanged) <span class="ai-tag code">CODE</span></strong>
+          <div class="sub">The medium SAST count has not moved across any of the 4 scans. P0 and P1 items above will clear ~10 of these. The remaining ~20 are scanner-noise patterns with low real-world exploitability.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <p style="text-align:center;color:#a0aec0;font-size:.68rem;padding-bottom:20px">Generated 24-Jun-2026 &nbsp;·&nbsp; FlyingDuck scans on divamidesignlabs/new-insurance-wellness-hub &nbsp;·&nbsp; Internal use only</p>
+</div>

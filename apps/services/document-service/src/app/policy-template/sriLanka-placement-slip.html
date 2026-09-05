@@ -1,0 +1,3720 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Placement Slip</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 12mm 0;
+        font-family: "Helvetica", Arial, sans-serif;
+        background: #f5f5f5;
+        color: #111;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* Outer thick orange frame with stepped corners */
+      .page-outer {
+        position: relative;
+        display: inline-block;
+        border: 6px solid #ff8c00;
+        padding: 5px;
+        margin-bottom: 6mm; /* visual gap between pages on screen */
+        background: #fff;
+      }
+      .page-outer::before,
+      .page-outer::after {
+        content: "";
+        position: absolute;
+        left: 30px;
+        right: 30px;
+        height: 6px;
+        background: #ff8c00;
+      }
+      .page-outer::before {
+        top: -6px;
+      }
+      .page-outer::after {
+        bottom: -6px;
+      }
+
+      /* Inner thin orange line */
+      .page {
+        width: 210mm;
+        height: 297mm;
+        padding: 12mm 10mm 6mm;
+        background: #fff;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        box-shadow: inset 0 0 0 2px #ff8c00, 0 4px 10px rgba(0, 0, 0, 0.08);
+      }
+
+      .page-frame {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0; /* prevent flex overflow issues */
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 14px;
+        gap: 12px;
+        flex: 0 0 auto;
+      }
+
+      .page-title {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-decoration: underline;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        overflow: hidden;
+      }
+      .logo-container img {
+        display: block;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+      }
+      .logo-placeholder {
+        width: 130px;
+        height: 48px;
+        border: 1px dashed #999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        color: #777;
+        letter-spacing: 2px;
+      }
+
+      .insurer-table {
+        margin-top: 6px;
+        align-self: flex-start;
+      }
+      .insurer-table table {
+        border-collapse: collapse;
+        max-width: 100%;
+      }
+      .insurer-table th,
+      .insurer-table td {
+        border: 1px solid #444;
+        padding: 6px 8px;
+        font-size: 11px;
+        text-align: left;
+        vertical-align: middle;
+      }
+      .insurer-table th {
+        min-width: 120px;
+        font-weight: 700;
+        background: #f7f3eb;
+      }
+
+      .page-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        padding-top: 3mm; /* reduced space for better content flow */
+        padding-bottom: 2px;
+      }
+      .page-body .section:first-child {
+        margin-top: 1mm; /* reduced margin for better content flow */
+      }
+
+      .section {
+        margin-bottom: 12px; /* reduced margin for better space utilization */
+        break-inside: auto;
+        page-break-inside: auto;
+      }
+
+      .section-heading {
+        font-size: 13px;
+        font-weight: 700;
+        margin: 0 0 10px;
+        text-transform: uppercase;
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+      .section p {
+        margin: 0 0 12px;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .footer-separator {
+        margin-top: 16px;
+        border-top: 1px solid #d9a66c;
+        flex: 0 0 auto;
+      }
+
+      .page-footer {
+        margin-top: auto; /* <- pins footer to bottom of the page */
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding-top: 10px;
+        font-size: 10px;
+        min-height: 28px; /* stable footprint so no late reflow */
+        flex: 0 0 auto;
+      }
+      .footer-info {
+        max-width: 70%;
+      }
+      .footer-info div {
+        margin-bottom: 4px;
+      }
+      .footer-organization {
+        font-weight: 700;
+        font-size: 11px;
+        text-transform: uppercase;
+      }
+      .footer-meta {
+        text-align: right;
+      }
+
+      /* Horizontal (up-down) table */
+      .table-horizontal {
+        margin-top: 8px; /* reduced margin for better space utilization */
+      }
+      .table-horizontal table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      .table-horizontal th,
+      .table-horizontal td {
+        border: 1px solid #444;
+        padding: 10px 12px;
+        font-size: 12px;
+        vertical-align: top;
+      }
+      .table-horizontal thead th {
+        background: #f7f3eb;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      /* Key/Value (left-right) table */
+      .kv-table table {
+        border-collapse: collapse;
+        width: 100%;
+        break-inside: auto; /* Allow table to break across pages */
+      }
+      .kv-table tr.kv-group-divider td {
+        padding: 3px 0;
+        border: none;
+        height: 4px;
+        background: transparent;
+      }
+      .kv-table th,
+      .kv-table td {
+        border: 1px solid #444;
+        padding: 6px 8px; /* reduced padding for better space utilization */
+        font-size: 12px;
+        vertical-align: top;
+        break-inside: auto; /* Allow cells to break if needed */
+      }
+      .kv-table th {
+        width: 220px;
+        background: #f7f3eb;
+      }
+
+      .kv-subtable table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .kv-subtable th,
+      .kv-subtable td {
+        border: 1px solid #444;
+        padding: 6px 8px;
+        font-size: 12px;
+      }
+      .kv-subtable thead th {
+        background: #faf7f0;
+      }
+
+      /* Letter intro */
+      .intro-greeting {
+        font-size: 12px;
+        margin: 0 0 12px;
+      }
+      .intro-subject {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 14px;
+      }
+
+      .closing-section p {
+        font-size: 12px;
+        line-height: 1.6;
+        margin: 0 0 12px;
+      }
+      .contact-list {
+        margin: 0 0 12px 18px;
+        padding: 0;
+      }
+      .contact-list li {
+        margin: 6px 0;
+        font-size: 12px;
+      }
+
+      .signature-block {
+        font-size: 12px;
+      }
+      .signature-org {
+        text-transform: uppercase;
+      }
+      .signature-authority {
+        letter-spacing: 0.3px;
+        margin-top: 80px;
+      }
+
+      /* Company page headings + spacing between subsections */
+      .company-main-title {
+        text-align: center;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: underline;
+        margin: 0 0 8px; /* reduced margin */
+      }
+      .company-subheading {
+        margin: 12px 0 8px; /* reduced margins */
+      }
+      .company-block {
+        margin: 0 0 15px; /* reduced margin */
+      }
+
+      /* Warranties note styling */
+      .company-warranty-note p {
+        font-size: 12px;
+        line-height: 1.55;
+        margin: 0 0 8px;
+      }
+
+      body.paginating .page-body {
+        overflow: auto !important;
+      }
+
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
+      @media print {
+        body {
+          padding: 0;
+          background: #fff;
+        }
+
+        .page-outer {
+          display: block;
+          margin: 0;
+          page-break-after: always; /* one sheet per .page-outer */
+          border: 5px solid #ff8c00;
+          padding: 5px;
+        }
+        .page-outer:last-child {
+          page-break-after: auto;
+        }
+
+        .page-outer::before,
+        .page-outer::after {
+          display: none !important;
+        }
+
+        .page {
+          width: 205mm;
+          height: 292mm;
+          overflow: visible !important; /* <-- critical: no clipping in print */
+        }
+
+        .page-body {
+          overflow: visible !important; /* <-- critical: no clipping in print */
+          max-height: none !important; /* undo JS-pinned height for print */
+          padding-bottom: 0; /* optional: tighter bottom spacing */
+        }
+
+        .section,
+        .kv-table table,
+        .table-horizontal table {
+          page-break-inside: auto;
+          break-inside: auto;
+        }
+
+        .kv-table tr,
+        .table-horizontal tr,
+        .kv-table td,
+        .kv-table th,
+        .table-horizontal td,
+        .table-horizontal th {
+          page-break-inside: avoid;
+          break-inside: avoid;
+        }
+
+        thead {
+          display: table-header-group;
+        }
+        tfoot {
+          display: table-footer-group;
+        }
+        tbody {
+          display: table-row-group;
+        }
+
+        .section-heading {
+          break-after: avoid;
+          page-break-after: avoid;
+          orphans: 2;
+          widows: 2;
+        }
+
+        .section[data-is-continuation="true"] {
+          margin-top: 0;
+        }
+
+        .page-break {
+          break-before: page;
+          page-break-before: always;
+        }
+
+        tbody.page2 {
+          break-before: page;
+          page-break-before: always;
+        }
+      }
+
+      .nested-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0;
+      }
+
+      .nested-table th,
+      .nested-table td {
+        border: 1px solid #666;
+        padding: 4px 6px;
+        font-size: 11px;
+        vertical-align: top;
+      }
+
+      .nested-table th {
+        background: #f9f6f0;
+        font-weight: 600;
+        width: 40%;
+      }
+
+      .kv-subtable {
+        margin: 0;
+        padding: 0;
+      }
+
+      .kv-subtable .nested-table {
+        border: none;
+      }
+
+      .kv-subtable .nested-table th,
+      .kv-subtable .nested-table td {
+        border: 1px solid #999;
+      }
+      .section-subheading {
+        font-size: 12px;
+        margin: -6px 0 8px;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="placement-slip-root" class="container">{{PAGES}}</div>
+    <!-- Secure JSON data injection - prevents XSS by using proper JSON encoding -->
+    <!-- fd_secret_ignore -->
+    <script id="placement-slip-data" type="application/json">{{JSON_SERIALIZED_DATA}}</script>
+
+    <script>
+      (function () {
+        var debug = (function () {
+          var params = new URLSearchParams(window.location.search || "");
+          var enabled =
+            params.get("ps-debug") === "1" ||
+            params.get("debug") === "1" ||
+            params.has("ps-debug");
+
+          if (!enabled) {
+            try {
+              enabled =
+                window.localStorage &&
+                window.localStorage.getItem("placementSlipDebug") === "1";
+            } catch (err) {
+              // ignore storage access issues (private mode, etc.)
+            }
+          }
+
+          var buffer = [];
+          var panel = null;
+          var rootRef = null;
+
+          // function timestamp() {
+          //   // Get current time in IST (UTC+5:30)
+          //   const now = new Date();
+          //   // IST offset in minutes: 5 hours 30 minutes = 330
+          //   const istOffset = 330;
+          //   // Convert to milliseconds and add to UTC time
+          //   const istTime = new Date(
+          //     now.getTime() + (istOffset - now.getTimezoneOffset()) * 60000
+          //   );
+          //   // Format as ISO string (removing the Z to indicate local time)
+          //   return istTime.toISOString().replace("Z", "+05:30");
+          // }
+          function timestamp() {
+            const now = new Date();
+            // Convert to IST by adding 5 hours 30 minutes
+            const istTime = new Date(now.getTime() + (5 * 60 + 30) * 60000);
+
+            // Use toLocaleString for IST timezone
+            return (
+              istTime
+                .toLocaleString("en-IN", {
+                  timeZone: "Asia/Kolkata",
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                  hour12: false,
+                })
+                .replace(/(\d+)\/(\d+)\/(\d+),/, "$3-$2-$1T")
+                .replace(" ", "T") + "+05:30"
+            );
+          }
+
+          function log() {
+            if (!enabled) {
+              return;
+            }
+            var args = Array.prototype.slice.call(arguments);
+            buffer.push({ ts: timestamp(), args: args });
+            try {
+              console.log.apply(console, ["[placement-slip]"].concat(args));
+            } catch (_) {}
+          }
+
+          function warn() {
+            if (!enabled) {
+              return;
+            }
+            var args = Array.prototype.slice.call(arguments);
+            buffer.push({ ts: timestamp(), level: "warn", args: args });
+            try {
+              console.warn.apply(console, ["[placement-slip]"].concat(args));
+            } catch (_) {}
+          }
+
+          function ensureStyles() {
+            if (!enabled || document.getElementById("ps-debug-style")) {
+              return;
+            }
+            var style = document.createElement("style");
+            style.id = "ps-debug-style";
+            style.textContent =
+              ".ps-debug-outline{outline:2px dashed rgba(220,0,0,0.7)!important;position:relative;}" +
+              ".ps-debug-outline::after{content:attr(data-ps-debug-flag);position:absolute;top:-12px;right:4px;font:10px/1.2 monospace;color:#fff;background:rgba(220,0,0,0.85);padding:1px 4px;border-radius:2px;}" +
+              ".ps-debug-panel{position:fixed;left:12px;bottom:12px;z-index:2147483646;background:rgba(17,17,17,0.9);color:#f5f5f5;font:11px/1.5 monospace;padding:10px 12px;border-radius:6px;max-width:320px;max-height:50vh;overflow:auto;box-shadow:0 6px 18px rgba(0,0,0,0.35);}" +
+              ".ps-debug-panel h2{margin:0 0 6px;font-size:12px;font-weight:700;}" +
+              ".ps-debug-panel ul{margin:0;padding-left:16px;}" +
+              ".ps-debug-panel button{margin-top:8px;padding:4px 8px;font-size:10px;cursor:pointer;}";
+            document.head.appendChild(style);
+          }
+
+          function ensurePanel() {
+            if (!enabled) {
+              return null;
+            }
+            ensureStyles();
+            if (panel && document.body.contains(panel)) {
+              return panel;
+            }
+            panel = document.createElement("div");
+            panel.className = "ps-debug-panel";
+            panel.innerHTML =
+              '<h2>Placement Slip Debug</h2><div class="ps-debug-summary"></div>';
+            var btn = document.createElement("button");
+            btn.type = "button";
+            btn.textContent = "Copy snapshot";
+            btn.addEventListener("click", function () {
+              try {
+                var snapshot = JSON.stringify(getSnapshot(), null, 2);
+                if (!navigator.clipboard || !navigator.clipboard.writeText) {
+                  throw new Error("Clipboard API unavailable");
+                }
+                navigator.clipboard.writeText(snapshot).then(
+                  function () {
+                    btn.textContent = "Copied!";
+                    setTimeout(function () {
+                      btn.textContent = "Copy snapshot";
+                    }, 1500);
+                  },
+                  function () {
+                    btn.textContent = "Copy failed";
+                    setTimeout(function () {
+                      btn.textContent = "Copy snapshot";
+                    }, 2000);
+                  }
+                );
+              } catch (err) {
+                warn("Failed to copy snapshot", err);
+              }
+            });
+            panel.appendChild(btn);
+            document.body.appendChild(panel);
+            return panel;
+          }
+
+          function summarisePages() {
+            if (!rootRef) {
+              return [];
+            }
+            var pages = Array.from(rootRef.querySelectorAll(".page"));
+            return pages.map(function (page, index) {
+              var body = page.querySelector(".page-body");
+              if (!body) {
+                return { index: index, missingBody: true };
+              }
+              var scroll = Math.ceil(body.scrollHeight);
+              var client = Math.floor(body.clientHeight);
+              var overflow = scroll - client;
+              return {
+                index: index,
+                scrollHeight: scroll,
+                clientHeight: client,
+                overflow: overflow,
+                sections: body.querySelectorAll(".section").length,
+              };
+            });
+          }
+
+          function renderSummary(context) {
+            if (!enabled) {
+              return;
+            }
+            var host = ensurePanel();
+            if (!host) {
+              return;
+            }
+            var container = host.querySelector(".ps-debug-summary");
+            if (!container) {
+              return;
+            }
+            var pages = summarisePages();
+            var lines =
+              "Context: " +
+              context +
+              "\n" +
+              pages
+                .map(function (p) {
+                  return (
+                    "p" +
+                    (p.index + 1) +
+                    ": scroll=" +
+                    p.scrollHeight +
+                    " client=" +
+                    p.clientHeight +
+                    " overflow=" +
+                    p.overflow +
+                    " sections=" +
+                    p.sections
+                  );
+                })
+                .join("\n");
+            container.textContent = lines;
+          }
+
+          function mark(el, label) {
+            if (!enabled || !el) {
+              return;
+            }
+            ensureStyles();
+            try {
+              el.classList.add("ps-debug-outline");
+              el.setAttribute("data-ps-debug-flag", label || "flag");
+            } catch (_) {}
+          }
+
+          function getSnapshot() {
+            return {
+              ts: timestamp(),
+              pages: summarisePages(),
+              log: buffer.slice(-120),
+            };
+          }
+
+          return {
+            enabled: enabled,
+            log: log,
+            warn: warn,
+            mark: mark,
+            renderSummary: renderSummary,
+            setRoot: function (el) {
+              rootRef = el;
+            },
+            getSnapshot: getSnapshot,
+            buffer: buffer,
+          };
+        })();
+
+        window.__PLACEMENT_SLIP_DEBUG__ = debug;
+
+        async function waitForStableLayout(rootEl) {
+          // wait for images
+          const pendingImgs = Array.from(document.images).filter(
+            (img) => !img.complete
+          );
+          if (pendingImgs.length) {
+            await Promise.all(
+              pendingImgs.map(
+                (img) =>
+                  new Promise((res) => {
+                    img.addEventListener("load", res, { once: true });
+                    img.addEventListener("error", res, { once: true });
+                  })
+              )
+            );
+          }
+          // wait for fonts
+          if (document.fonts && document.fonts.ready) {
+            try {
+              await document.fonts.ready;
+            } catch (_) {}
+          }
+          // flush layout
+          await new Promise((r) =>
+            requestAnimationFrame(() => requestAnimationFrame(r))
+          );
+        }
+        // ---- ERROR OVERLAY (diagnostic) ----
+        function showHardError(err) {
+          try {
+            var msg =
+              err && (err.stack || err.message)
+                ? err.stack || err.message
+                : String(err);
+            var banner = document.createElement("pre");
+            banner.style.cssText =
+              "white-space:pre-wrap; font:12px/1.4 monospace; color:#b00020; background:#fff3f4; border:1px solid #b00020; padding:12px; margin:8px 0;";
+            banner.textContent = "Placement Slip: Runtime error\n\n" + msg;
+            var host =
+              document.getElementById("placement-slip-root") || document.body;
+            host.innerHTML = "";
+            host.appendChild(banner);
+          } catch (_) {}
+        }
+        window.addEventListener("error", function (e) {
+          showHardError(e.error || e.message);
+        });
+        window.addEventListener("unhandledrejection", function (e) {
+          showHardError(e.reason || e);
+        });
+        // ------------------------------------
+
+        // Input validation following coding standards
+        const validateData = (data) => {
+          if (!data || typeof data !== "object") {
+            throw new Error("Export data is required and must be an object");
+          }
+        };
+
+        const validatePayload = (payload) => {
+          if (!payload || typeof payload !== "object") {
+            throw new Error("Payload is required and must be an object");
+          }
+        };
+
+        var DEFAULT_LOGO_RELATIVE_PATH = "../jpgs/iirm_india_logo.jpg";
+
+        var root = document.getElementById("placement-slip-root");
+        if (!root) {
+          console.error("placement-slip-root element not found");
+          return;
+        }
+
+        debug.setRoot(root);
+        debug.log("Debugging enabled?", debug.enabled);
+
+        var dataScript = document.getElementById("placement-slip-data");
+        var exportData;
+
+        if (dataScript) {
+          var raw = (dataScript.textContent || "").trim();
+          if (raw && raw.indexOf("{{JSON_SERIALIZED_DATA}}") === -1) {
+            try {
+              exportData = JSON.parse(raw);
+              validateData(exportData);
+            } catch (e) {
+              console.error("Failed to parse placement slip data:", e);
+              exportData = null;
+            }
+          }
+        }
+
+        if (!exportData) {
+          exportData = getSampleExportData();
+          if (dataScript) {
+            dataScript.textContent = JSON.stringify(exportData, null, 2);
+          }
+        }
+
+        // Handle the new data structure from your API response
+        if (exportData.data) {
+          exportData = {
+            payload: buildPayloadFromApiResponse(exportData),
+            assets: exportData.assets || {
+              logo: { path: DEFAULT_LOGO_RELATIVE_PATH },
+            },
+          };
+        } else if (!exportData.payload) {
+          exportData = {
+            payload: buildPayloadFromNewSchema(exportData),
+            assets: exportData.assets || {
+              logo: { path: DEFAULT_LOGO_RELATIVE_PATH },
+            },
+          };
+        }
+
+        var payload = normalizePayload(exportData.payload);
+        validatePayload(payload);
+
+        var printedOnLabel = formatPrintedOnLabel(payload.printedOn);
+        var logoHtml = createLogoHtml(exportData.assets, payload);
+
+        var pagesHtml = payload.pages
+          .map(function (page, index) {
+            return renderPage({
+              page: page,
+              pageIndex: index,
+              totalPages: payload.pages.length,
+              payload: payload,
+              logoHtml: logoHtml,
+              printedOnLabel: printedOnLabel,
+            });
+          })
+          .join("");
+
+        root.innerHTML = pagesHtml;
+
+        function lockPageBodyHeights() {
+          const pages = root.querySelectorAll(".page");
+          const metrics = debug.enabled ? [] : null;
+          pages.forEach((page, pageIndex) => {
+            const title = page.querySelector(".page-title");
+            const header = page.querySelector(".page-header");
+            const body = page.querySelector(".page-body");
+            const sep = page.querySelector(".footer-separator");
+            const footer = page.querySelector(".page-footer");
+            if (!body || !header || !footer) return;
+
+            // Fixed A4 page box height
+            const totalH = Math.round(page.getBoundingClientRect().height);
+
+            // Title box (height + margins)
+            let titleH = 0,
+              titleGapT = 0,
+              titleGapB = 0;
+            if (title) {
+              const tRect = title.getBoundingClientRect();
+              const tCS = getComputedStyle(title);
+              titleH = Math.ceil(tRect.height);
+              titleGapT = parseFloat(tCS.marginTop) || 0;
+              titleGapB = parseFloat(tCS.marginBottom) || 0;
+            }
+
+            // Header / footer
+            const headH = Math.ceil(header.getBoundingClientRect().height);
+            const footH = Math.ceil(footer.getBoundingClientRect().height);
+
+            // Separator height + margins
+            let sepH = 0;
+            if (sep) {
+              const sRect = sep.getBoundingClientRect();
+              const sCS = getComputedStyle(sep);
+              sepH =
+                Math.ceil(sRect.height) +
+                (parseFloat(sCS.marginTop) || 0) +
+                (parseFloat(sCS.marginBottom) || 0);
+            }
+
+            // Header/footer margins relative to body
+            const headerCS = getComputedStyle(header);
+            const footerCS = getComputedStyle(footer);
+            const headGapB = parseFloat(headerCS.marginBottom) || 0;
+            const footGapT = parseFloat(footerCS.marginTop) || 0;
+
+            // Body paddings/borders (content-box math)
+            const cs = getComputedStyle(body);
+            const padTop = parseFloat(cs.paddingTop) || 0;
+            const padBot = parseFloat(cs.paddingBottom) || 0;
+            const borderT = parseFloat(cs.borderTopWidth) || 0;
+            const borderB = parseFloat(cs.borderBottomWidth) || 0;
+
+            // Max box height for .page-body (border-box), subtracting the title too
+            const bodyBoxMax =
+              totalH -
+              (titleH + titleGapT + titleGapB) -
+              headH -
+              headGapB -
+              sepH -
+              footGapT -
+              footH;
+
+            // Convert to content-box (what scrollHeight compares against)
+            const contentBudget =
+              bodyBoxMax - padTop - padBot - borderT - borderB;
+
+            const maxHeight = Math.max(0, Math.floor(contentBudget));
+            body.style.maxHeight = maxHeight + "px";
+
+            if (metrics) {
+              metrics.push({
+                page: pageIndex + 1,
+                totalHeight: totalH,
+                bodyBudget: maxHeight,
+                sections: body.querySelectorAll(".section").length,
+              });
+            }
+          });
+
+          if (metrics) {
+            debug.log("lockPageBodyHeights budgets", metrics);
+            debug.renderSummary("lockPageBodyHeights");
+          }
+        }
+
+        // Use requestAnimationFrame for better timing
+        // Run pagination after layout (images/fonts) are ready
+        (async function runPagination() {
+          try {
+            await waitForStableLayout(root);
+            debug.log("runPagination: layout settled");
+            debug.renderSummary("post-layout");
+
+            // NEW: pin body heights before any pagination pass
+            lockPageBodyHeights();
+            debug.renderSummary("after-initial-lock");
+            const originalContent = root.innerHTML;
+            const originalSectionCount =
+              root.querySelectorAll(".section").length || 0;
+
+            document.body.classList.add("paginating");
+
+            paginateContentImproved();
+            debug.renderSummary("after-paginateContentImproved");
+
+            // After pagination created new pages, re-pin heights once (new pages need sizing too)
+            lockPageBodyHeights();
+            debug.renderSummary("after-second-lock");
+
+            if (typeof finalSettle === "function") {
+              finalSettle();
+            }
+
+            debug.renderSummary("after-finalSettle");
+
+            const finalSectionCount =
+              root.querySelectorAll(".section").length || 0;
+            if (finalSectionCount < originalSectionCount) {
+              root.innerHTML = originalContent;
+              // Ensure heights are pinned for fallback too
+              lockPageBodyHeights();
+              paginateSimple();
+            }
+
+            updatePageNumbers();
+            debug.renderSummary("after-updatePageNumbers");
+            document.body.setAttribute("data-render-complete", "true");
+          } catch (error) {
+            showHardError(error);
+            document.body.setAttribute("data-render-complete", "true");
+          } finally {
+            document.body.classList.remove("paginating");
+          }
+        })();
+
+        // Fallback simple pagination that only moves complete sections
+        function paginateSimple() {
+          var pages = root.querySelectorAll(".page");
+          if (debug.enabled) {
+            debug.log("paginateSimple invoked", { pageCount: pages.length });
+          }
+
+          for (var i = 0; i < pages.length; i++) {
+            var currentPage = pages[i];
+            var pageBody = currentPage.querySelector(".page-body");
+            if (!pageBody) continue;
+
+            var attempts = 0;
+            while (isPageOverflowing(pageBody) && attempts < 5) {
+              var sections = pageBody.querySelectorAll(".section");
+              if (sections.length <= 1) break;
+
+              var lastSection = sections[sections.length - 1];
+              var nextPage = getOrCreateNextPage(currentPage);
+              if (!nextPage) {
+                if (debug.enabled) {
+                  debug.warn("paginateSimple: unable to create next page", {
+                    page: i + 1,
+                  });
+                }
+                break;
+              }
+
+              var nextPageBody = nextPage.querySelector(".page-body");
+              if (!nextPageBody) {
+                if (debug.enabled) {
+                  debug.warn("paginateSimple: next page missing body", {
+                    page: i + 1,
+                  });
+                }
+                break;
+              }
+
+              nextPageBody.appendChild(lastSection);
+              if (debug.enabled) {
+                var idx = Array.prototype.indexOf.call(pages, nextPage);
+                debug.log("paginateSimple: moved section", {
+                  fromPage: i + 1,
+                  toPage: idx >= 0 ? idx + 1 : "?",
+                  sectionId:
+                    lastSection.getAttribute("data-section-key") || null,
+                });
+              }
+              attempts++;
+              pages = Array.from(root.querySelectorAll(".page"));
+            }
+          }
+
+          pruneEmptyPages();
+          updatePageNumbers();
+          if (debug.enabled) {
+            debug.renderSummary("after-paginateSimple");
+          }
+          document.body.setAttribute("data-render-complete", "true");
+        }
+
+        /* ====================== API Response Handler ====================== */
+        function buildPayloadFromApiResponse(apiData) {
+          if (!apiData?.data) {
+            throw new Error("API data is required");
+          }
+
+          var data = apiData.data;
+          var fileName = apiData.fileName || "placement-slip";
+
+          var companyName = "";
+          if (
+            data.CompanyPolicyDetails &&
+            data.CompanyPolicyDetails.sectionData &&
+            data.CompanyPolicyDetails.sectionData[0]
+          ) {
+            companyName =
+              data.CompanyPolicyDetails.sectionData[0]["Company Name"] || "";
+          }
+
+          var pages = [{ kind: "a4" }];
+          if (Object.keys(data).some(isCompanyKey)) {
+            pages.push({ kind: "company" });
+          }
+
+          return {
+            title: "PLACEMENT SLIP",
+            organization: {
+              name: "INDIA INSURE RISK MANAGEMENT AND INSURANCE BROKING SERVICES PVT LTD",
+              addressLines: [
+                "Ashoka My Home Chambers, 5th Floor, #1-8-301-306, Sindhi Colony, Sardar Patel Road, Begumpet, Secunderabad, Hyderabad - 500003 PH: 040-27822990 FAX: 040-27822991",
+              ],
+            },
+            blocks: data,
+            pages: pages,
+            printedOn: getKolkataTimeIntl(),
+            companyName: companyName,
+            fileName: fileName,
+          };
+        }
+
+        /* ====================== FIXED Company Pages Renderer ====================== */
+        function renderCompanyPages(blocksRaw) {
+          if (!blocksRaw || typeof blocksRaw !== "object") {
+            return "<p>No company data available</p>";
+          }
+
+          var blocks = blocksRaw;
+          var html = "";
+
+          // Render main title if present
+          if (
+            blocks.CompanyPolicyDetails &&
+            (blocks.CompanyPolicyDetails.heading ||
+              blocks.CompanyPolicyDetails.Heading)
+          ) {
+            var title =
+              blocks.CompanyPolicyDetails.heading ||
+              blocks.CompanyPolicyDetails.Heading;
+            html +=
+              '<div class="section"><div class="company-main-title">' +
+              escapeHtml(title) +
+              "</div></div>";
+          }
+
+          // Get only company-* blocks and sort in our explicit order
+          var orderedKeys = Object.keys(blocks).filter(isCompanyKey);
+
+          var labelIndex = 0;
+          orderedKeys.forEach(function (key) {
+            var raw = blocks[key];
+            if (!raw) return;
+            html += renderCompanySection(raw, labelIndex++, key, blocks);
+          });
+
+          return html;
+        }
+
+        /* ====================== NEW: Render Complete Company Section ====================== */
+        function renderCompanySection(raw, labelIndex, key, allBlocks) {
+          var b = normalizeBlock(raw);
+          var html = "";
+
+          // styling flags
+          var titleStyle =
+            (b.bold ? "font-weight:700;" : "") +
+            (b.underline ? "text-decoration:underline;" : "");
+
+          // Decide what to show as the main title
+          var fallbackTitle = key
+            .replace(/^Company/, "")
+            .replace(/([A-Z])/g, " $1")
+            .trim();
+          var hasHeading = !!(b.heading && String(b.heading).trim());
+          var hasSub = !!(b.subHeading && String(b.subHeading).trim());
+          var subHeadingText = hasSub ? String(b.subHeading).trim() : "";
+
+          // Special-case Section A so we don't repeat the big page title:
+          // Use subHeading ("POLICY DETAILS") as the section title if present.
+          var mainTitle;
+          if (key === "CompanyPolicyDetails") {
+            mainTitle = hasSub
+              ? subHeadingText
+              : hasHeading
+              ? String(b.heading).trim()
+              : fallbackTitle;
+            // if we used subHeading as mainTitle, suppress printing it again below
+            if (hasSub && sameText(mainTitle, b.subHeading)) hasSub = false;
+          } else {
+            // normal sections: heading if present, otherwise fallback
+            if (hasHeading) {
+              mainTitle = String(b.heading).trim();
+            } else if (hasSub) {
+              mainTitle = subHeadingText;
+              hasSub = false;
+            } else {
+              mainTitle = fallbackTitle;
+            }
+          }
+
+          html +=
+            '<div class="section" data-section-key="' + escapeHtml(key) + '">';
+
+          // Main heading line
+          if (mainTitle) {
+            html +=
+              '<h2 class="section-heading company-subheading" style="' +
+              titleStyle +
+              '">' +
+              alphaLabel(labelIndex) +
+              " " +
+              escapeHtml(mainTitle) +
+              (/:$/.test(mainTitle) ? "" : ":") +
+              "</h2>";
+          }
+
+          // (Removed) subheading rendering to avoid duplicates
+          // if (hasSub && !sameText(b.subHeading, mainTitle)) { ... }
+
+          // Warranties preface (unchanged)
+          if (key === "CompanyWarranties") {
+            html += renderWarrantyNote(allBlocks);
+          }
+
+          // Body
+          html +=
+            '<div class="company-block">' + renderSectionContent(b) + "</div>";
+
+          // Close
+          html += "</div>";
+          return html;
+        }
+
+        /* ====================== FIXED Section Content Renderer ====================== */
+        function renderSectionContent(block) {
+          if (!block || !block.rows || !block.rows.length) {
+            return "<p>No data available</p>";
+          }
+
+          if (block.type === "table") {
+            if (block.tableType === "up-down") {
+              return renderHorizontalTable(block.rows);
+            } else {
+              return renderKeyValueTable(block.rows);
+            }
+          }
+
+          return renderTextContent(block);
+        }
+
+        /* ====================== FIXED Key-Value Table Renderer ====================== */
+        function renderKeyValueTable(rows) {
+          if (!Array.isArray(rows) || !rows.length) {
+            return '<div class="kv-table"><table><tbody><tr><th>No Data</th><td>No Data Available</td></tr></tbody></table></div>';
+          }
+
+          // Separate payment details from regular rows during rendering
+          var regularRows = [];
+          var paymentDetailsRows = [];
+
+          rows.forEach(function(row, rowIndex) {
+            if (!row || typeof row !== "object") {
+              regularRows.push({ rowIndex, data: row });
+              return;
+            }
+
+            var keys = Object.keys(row || {});
+            if (!keys.length) {
+              return;
+            }
+
+            var hasPaymentDetails = false;
+            var regularRowData = {};
+            var paymentRowData = {};
+
+            keys.forEach(function(key) {
+              var value = row[key];
+              if (isPaymentDetailsKey(key)) {
+                paymentRowData[key] = value;
+                hasPaymentDetails = true;
+              } else {
+                regularRowData[key] = value;
+              }
+            });
+
+            // Add regular data if it exists
+            if (Object.keys(regularRowData).length > 0) {
+              regularRows.push({ rowIndex, data: regularRowData });
+            }
+
+            // Add payment details if they exist
+            if (hasPaymentDetails && Object.keys(paymentRowData).length > 0) {
+              paymentDetailsRows.push({ rowIndex, data: paymentRowData });
+            }
+          });
+
+          // Render regular table
+          var regularTableRows = regularRows
+            .map(function (rowInfo) {
+              var row = rowInfo.data;
+              var rowIndex = rowInfo.rowIndex;
+
+              if (!row || typeof row !== "object") {
+                return renderKeyValueRow("Value", row);
+              }
+
+              var keys = Object.keys(row || {});
+              if (!keys.length) {
+                return "";
+              }
+
+              var groupRows = keys
+                .map(function (key) {
+                  var value = row[key];
+                  return renderKeyValueRow(key, value);
+                })
+                .join("");
+
+              if (!groupRows) {
+                return "";
+              }
+
+              if (rowIndex > 0) {
+                groupRows =
+                  '<tr class="kv-group-divider" aria-hidden="true"><td colspan="2"></td></tr>' +
+                  groupRows;
+              }
+
+              return groupRows;
+            })
+            .filter(Boolean)
+            .join("");
+
+          var regularTableHtml = regularTableRows ? 
+            '<div class="kv-table"><table><tbody>' + regularTableRows + "</tbody></table></div>" :
+            '<div class="kv-table"><table><tbody><tr><th>No Data</th><td>No Data Available</td></tr></tbody></table></div>';
+
+          // If payment details exist, render them as a separate section
+          if (paymentDetailsRows.length > 0) {
+            var paymentTableRows = paymentDetailsRows
+              .map(function (rowInfo) {
+                var row = rowInfo.data;
+                var rowIndex = rowInfo.rowIndex;
+
+                if (!row || typeof row !== "object") {
+                  return renderKeyValueRow("Value", row);
+                }
+
+                var keys = Object.keys(row || {});
+                if (!keys.length) {
+                  return "";
+                }
+
+                var groupRows = keys
+                  .map(function (key) {
+                    var value = row[key];
+                    return renderKeyValueRow(key, value);
+                  })
+                  .join("");
+
+                if (!groupRows) {
+                  return "";
+                }
+
+                return groupRows;
+              })
+              .filter(Boolean)
+              .join("");
+
+            var paymentSectionHtml = paymentTableRows ? 
+              '</div><div class="section payment-details-section" data-section-key="PaymentDetails">' +
+              '<div class="section-heading">PAYMENT DETAILS</div>' +
+              '<div class="kv-table"><table><tbody>' + paymentTableRows + "</tbody></table></div>" :
+              "";
+
+            return regularTableHtml + paymentSectionHtml;
+          }
+
+          return regularTableHtml;
+        }
+
+        /* ====================== FIXED Key-Value Row Renderer ====================== */
+        function renderKeyValueRow(key, value) {
+          if (!key?.trim()) {
+            return "";
+          }
+
+          var cellContent = "";
+
+          if (value === null || value === undefined) {
+            cellContent = "NA";
+          } else if (isNestedTableData(value)) {
+            // Check if this is a payment details row that should be separated
+            if (isPaymentDetailsKey(key)) {
+              cellContent =
+                '<div class="kv-subtable payment-details-table" data-payment-details="true">' + 
+                renderNestedTable(value) + "</div>";
+            } else {
+              cellContent =
+                '<div class="kv-subtable">' + renderNestedTable(value) + "</div>";
+            }
+          } else if (typeof value === "object") {
+            // Handle object values that aren't tables - convert to readable format
+            try {
+              cellContent = Object.keys(value)
+                .map(function (k) {
+                  return escapeHtml(k) + ": " + escapeHtml(String(value[k]));
+                })
+                .join("<br>");
+            } catch (e) {
+              cellContent = escapeHtml(JSON.stringify(value));
+            }
+          } else {
+            cellContent = escapeHtml(String(value));
+          }
+
+          // Mark payment details rows for special handling
+          var rowClass = isPaymentDetailsKey(key) ? ' class="payment-details-row"' : '';
+          var dataAttr = isPaymentDetailsKey(key) ? ' data-payment-details="true"' : '';
+
+          return (
+            "<tr" + rowClass + dataAttr + "><th>" +
+            escapeHtml(key) +
+            "</th><td>" +
+            cellContent +
+            "</td></tr>"
+          );
+        }
+
+        /* ====================== Payment Details Key Identification ====================== */
+        function isPaymentDetailsKey(key) {
+          if (!key || typeof key !== 'string') return false;
+          
+          var paymentKeywords = [
+            'payment details',
+            'payment',
+            'cheque',
+            'bank',
+            'cd details',
+            'payment method',
+            'transaction',
+            'receipt'
+          ];
+
+          var normalizedKey = key.toLowerCase().trim();
+          return paymentKeywords.some(function(keyword) {
+            return normalizedKey.includes(keyword);
+          });
+        }
+
+        /* ====================== FIXED Nested Table Detection ====================== */
+        function isNestedTableData(value) {
+          if (!value || typeof value !== "object") {
+            return false;
+          }
+
+          return (
+            value.dataType === "table" ||
+            value.Type === "table" ||
+            (value.sectionData && Array.isArray(value.sectionData))
+          );
+        }
+
+        /* ====================== FIXED Nested Table Renderer ====================== */
+        function renderNestedTable(tableData) {
+          if (!tableData) {
+            return '<table class="nested-table"><tbody><tr><td>No data</td></tr></tbody></table>';
+          }
+
+          var normalizedData = normalizeBlock(tableData);
+
+          if (normalizedData.type === "table") {
+            if (normalizedData.tableType === "up-down") {
+              return renderHorizontalTable(normalizedData.rows);
+            } else {
+              return renderSimpleNestedTable(normalizedData.rows);
+            }
+          }
+
+          return renderTextContent(normalizedData);
+        }
+
+        /* ====================== FIXED Simple Nested Table Renderer ====================== */
+        function renderSimpleNestedTable(rows) {
+          if (!Array.isArray(rows) || !rows.length) {
+            return '<table class="nested-table"><tbody><tr><td colspan="2">No data</td></tr></tbody></table>';
+          }
+
+          var obj = rows[0] || {};
+          var keys = Object.keys(obj);
+
+          if (!keys.length) {
+            return '<table class="nested-table"><tbody><tr><td colspan="2">No data</td></tr></tbody></table>';
+          }
+
+          var tableRows = keys
+            .map(function (key) {
+              var value = obj[key];
+              var displayValue =
+                value === null || value === undefined ? "NA" : String(value);
+              return (
+                "<tr><th>" +
+                escapeHtml(key) +
+                "</th><td>" +
+                escapeHtml(displayValue) +
+                "</td></tr>"
+              );
+            })
+            .join("");
+
+          return (
+            '<table class="nested-table"><tbody>' +
+            tableRows +
+            "</tbody></table>"
+          );
+        }
+
+        /* ====================== FIXED Horizontal Table Renderer ====================== */
+        function renderHorizontalTable(rows, preferredOrder) {
+          if (!Array.isArray(rows) || !rows.length) {
+            return '<div class="table-horizontal"><table><thead><tr><th>Description</th><th>Remarks</th></tr></thead><tbody><tr><td>No data</td><td>No data</td></tr></tbody></table></div>';
+          }
+
+          var first = rows[0] || {};
+          var headers =
+            Array.isArray(preferredOrder) && preferredOrder.length
+              ? preferredOrder
+              : Object.keys(first);
+
+          if (!headers.length) {
+            headers = ["Description", "Remarks"];
+          }
+
+          var thead =
+            "<thead><tr>" +
+            headers
+              .map(function (h) {
+                return "<th>" + escapeHtml(h) + "</th>";
+              })
+              .join("") +
+            "</tr></thead>";
+
+          var tbody =
+            "<tbody>" +
+            rows
+              .map(function (row) {
+                return (
+                  "<tr>" +
+                  headers
+                    .map(function (header) {
+                      var cellValue = row[header];
+                      var displayValue =
+                        cellValue === null || cellValue === undefined
+                          ? ""
+                          : String(cellValue);
+                      return "<td>" + escapeHtml(displayValue) + "</td>";
+                    })
+                    .join("") +
+                  "</tr>"
+                );
+              })
+              .join("") +
+            "</tbody>";
+
+          return (
+            '<div class="table-horizontal"><table>' +
+            thead +
+            tbody +
+            "</table></div>"
+          );
+        }
+
+        /* ====================== FIXED Text Content Renderer ====================== */
+        function renderTextContent(block) {
+          if (!block || !block.rows || !block.rows.length) {
+            return "<p>No content available</p>";
+          }
+
+          var baseStyle =
+            (block.bold ? "font-weight:700;" : "") +
+            (block.underline ? "text-decoration:underline;" : "");
+
+          return block.rows
+            .map(function (row) {
+              var keys = Object.keys(row);
+              if (!keys.length) {
+                return '<p style="' + baseStyle + '">&nbsp;</p>';
+              }
+
+              return keys
+                .map(function (key) {
+                  var value = row[key];
+                  var displayValue =
+                    value === null || value === undefined ? "" : String(value);
+                  return (
+                    '<p style="' +
+                    baseStyle +
+                    '">' +
+                    '<span style="font-weight:700">' +
+                    escapeHtml(key) +
+                    ":</span> " +
+                    escapeHtml(displayValue) +
+                    "</p>"
+                  );
+                })
+                .join("");
+            })
+            .join("");
+        }
+
+        function ensureKvContinuationShell(currentPage, section, sourceTable) {
+          const kvSubtable = sourceTable.closest(".kv-subtable");
+          if (!kvSubtable) return null;
+
+          const mode = sourceTable.classList.contains("nested-table")
+            ? "nested"
+            : sourceTable.closest(".table-horizontal")
+            ? "horizontal"
+            : null;
+          if (!mode) {
+            return null;
+          }
+
+          const nextPage = getOrCreateNextPage(currentPage);
+          if (!nextPage) return null;
+
+          const nextPageBody = nextPage.querySelector(".page-body");
+          if (!nextPageBody) return null;
+
+          const kvRow = sourceTable.closest("tr");
+          const kvTh = kvRow ? kvRow.querySelector("th") : null;
+          const kvLabel = kvTh ? kvTh.textContent.trim() : "";
+          const continuationLabel = kvLabel
+            ? /\bcont\.?/i.test(kvLabel)
+              ? kvLabel
+              : kvLabel + " (Contd.)"
+            : "";
+          const labelText = continuationLabel || kvLabel || "";
+
+          const expectedSelector =
+            mode === "nested"
+              ? ".kv-subtable .nested-table tbody"
+              : ".kv-subtable .table-horizontal table tbody";
+
+          const existing = Array.from(
+            nextPageBody.querySelectorAll(
+              '.section[data-is-continuation="true"]'
+            )
+          ).find(function (sec) {
+            if (sec.getAttribute("data-cont-label") !== labelText) {
+              return false;
+            }
+            return !!sec.querySelector(expectedSelector);
+          });
+
+          if (existing) {
+            const contBody = existing.querySelector(expectedSelector);
+            const contTable = contBody ? contBody.closest("table") : null;
+            if (contBody && contTable) {
+              return {
+                nextPageBody,
+                contSection: existing,
+                contBody,
+                contTable,
+                mode,
+              };
+            }
+          }
+
+          const contSection = document.createElement("div");
+          contSection.className = "section";
+          contSection.setAttribute("data-is-continuation", "true");
+          contSection.setAttribute("data-cont-label", labelText);
+
+          const kvTableWrap = document.createElement("div");
+          kvTableWrap.className = "kv-table";
+
+          const outerTable = document.createElement("table");
+          const outerBody = document.createElement("tbody");
+          const row = document.createElement("tr");
+
+          const th = document.createElement("th");
+          th.textContent = labelText;
+
+          const td = document.createElement("td");
+
+          const kvSubClone = document.createElement("div");
+          kvSubClone.className = kvSubtable.className || "kv-subtable";
+
+          let contBody = null;
+          let contTable = null;
+
+          if (mode === "nested") {
+            contTable = sourceTable.cloneNode(false);
+            contTable.className = sourceTable.className;
+            const thead = sourceTable.querySelector("thead");
+            if (thead) {
+              contTable.appendChild(thead.cloneNode(true));
+            }
+            contBody = document.createElement("tbody");
+            contTable.appendChild(contBody);
+            kvSubClone.appendChild(contTable);
+          } else {
+            const originalWrapper = sourceTable.closest(".table-horizontal");
+            if (!originalWrapper) {
+              return null;
+            }
+            const wrapperClone = originalWrapper.cloneNode(false);
+            contTable = sourceTable.cloneNode(false);
+            const thead = sourceTable.querySelector("thead");
+            if (thead) {
+              contTable.appendChild(thead.cloneNode(true));
+            }
+            contBody = document.createElement("tbody");
+            contTable.appendChild(contBody);
+            wrapperClone.appendChild(contTable);
+            kvSubClone.appendChild(wrapperClone);
+          }
+
+          td.appendChild(kvSubClone);
+
+          row.appendChild(th);
+          row.appendChild(td);
+          outerBody.appendChild(row);
+          outerTable.appendChild(outerBody);
+          kvTableWrap.appendChild(outerTable);
+
+          const hasCompanyBlock = !!section.querySelector(".company-block");
+          if (hasCompanyBlock) {
+            const newCompanyBlock = document.createElement("div");
+            newCompanyBlock.className = "company-block";
+            newCompanyBlock.appendChild(kvTableWrap);
+            contSection.appendChild(newCompanyBlock);
+          } else {
+            contSection.appendChild(kvTableWrap);
+          }
+
+          nextPageBody.insertBefore(
+            contSection,
+            nextPageBody.firstChild || null
+          );
+
+          return {
+            nextPageBody,
+            contSection,
+            contBody,
+            contTable,
+            mode,
+          };
+        }
+
+        /* ====================== IMPROVED Pagination ====================== */
+        function paginateContentImproved() {
+          if (debug.enabled) {
+            debug.log("paginateContentImproved:start", {
+              pages: root.querySelectorAll(".page").length,
+            });
+          }
+          var globalMoves = 0;
+          var progress = true;
+          var maxGlobalMoves = 2400; // generous guard so very long slips can settle
+
+          while (progress && globalMoves < maxGlobalMoves) {
+            progress = false;
+            var pages = Array.from(root.querySelectorAll(".page"));
+            if (!pages.length) {
+              break;
+            }
+
+            for (
+              var i = 0;
+              i < pages.length && globalMoves < maxGlobalMoves;
+              i++
+            ) {
+              var currentPage = pages[i];
+              if (!currentPage) continue;
+
+              var pageBody = currentPage.querySelector(".page-body");
+              if (!pageBody) continue;
+
+              var pageMoves = 0;
+              var maxPageMoves = Math.max(60, pages.length * 18);
+
+              while (
+                isPageOverflowing(pageBody) &&
+                globalMoves < maxGlobalMoves &&
+                pageMoves < maxPageMoves
+              ) {
+                if (debug.enabled && pageMoves === 0) {
+                  debug.log("paginateContentImproved:overflow", {
+                    page: i + 1,
+                    scroll: Math.ceil(pageBody.scrollHeight),
+                    client: Math.floor(pageBody.clientHeight),
+                    maxPageMoves: maxPageMoves,
+                  });
+                }
+                var didMove = moveContentToNextPage(currentPage);
+                if (!didMove) {
+                  if (debug.enabled) {
+                    debug.warn("paginateContentImproved: move failed", {
+                      page: i + 1,
+                      pageMoves: pageMoves,
+                      globalMoves: globalMoves,
+                    });
+                  }
+                  break;
+                }
+
+                progress = true;
+                globalMoves++;
+                pageMoves++;
+
+                lockPageBodyHeights();
+
+                pages = Array.from(root.querySelectorAll(".page"));
+                pageBody = currentPage.querySelector(".page-body") || pageBody;
+              }
+
+              if (debug.enabled && pageMoves > 0) {
+                debug.log("paginateContentImproved:page settled", {
+                  page: i + 1,
+                  pageMoves: pageMoves,
+                  globalMoves: globalMoves,
+                });
+              }
+            }
+          }
+
+          if (globalMoves >= maxGlobalMoves) {
+            console.warn(
+              "paginateContentImproved bailed after hitting global move cap",
+              maxGlobalMoves
+            );
+            if (debug.enabled) {
+              debug.warn("paginateContentImproved:reached global cap", {
+                globalMoves: globalMoves,
+                maxGlobalMoves: maxGlobalMoves,
+              });
+            }
+          }
+
+          pruneEmptyPages();
+          lockPageBodyHeights();
+          updatePageNumbers();
+          verifyContentIntegrity();
+          if (debug.enabled) {
+            debug.renderSummary("paginateContentImproved:complete");
+          }
+        }
+        function pruneEmptyPages() {
+          var removed = false;
+          var outers = Array.from(root.querySelectorAll(".page-outer"));
+          var removedPages = debug.enabled ? [] : null;
+
+          outers.forEach(function (outer) {
+            var page = outer.querySelector(".page");
+            if (!page) return;
+
+            var body = page.querySelector(".page-body");
+            if (!body) return;
+
+            var hasSections = body.querySelector(".section");
+            var text = body.textContent ? body.textContent.trim() : "";
+
+            if (!hasSections && text === "") {
+              outer.remove();
+              removed = true;
+              if (removedPages) {
+                removedPages.push(
+                  Array.prototype.indexOf.call(outers, outer) + 1
+                );
+              }
+            }
+          });
+
+          if (removed) {
+            lockPageBodyHeights();
+            if (removedPages && removedPages.length) {
+              debug.log("pruneEmptyPages removed", removedPages);
+            }
+            if (debug.enabled) {
+              debug.renderSummary("after-pruneEmptyPages");
+            }
+          }
+
+          return removed;
+        }
+        function sameText(a, b) {
+          if (!a || !b) return false;
+          const norm = (s) =>
+            String(s)
+              .replace(/\s+/g, " ")
+              .replace(/[:.]+$/, "")
+              .trim()
+              .toLowerCase();
+          return norm(a) === norm(b);
+        }
+        function verifyContentIntegrity() {
+          var allPages = root.querySelectorAll(".page");
+          var totalSections = 0;
+          var emptyPages = 0;
+
+          allPages.forEach(function (page, index) {
+            var pageBody = page.querySelector(".page-body");
+            var sections = pageBody
+              ? pageBody.querySelectorAll(".section")
+              : [];
+            totalSections += sections.length;
+
+            if (sections.length === 0) {
+              emptyPages++;
+              console.warn("Page", index + 1, "is empty!");
+            } else {
+              console.log(
+                "Page",
+                index + 1,
+                "has",
+                sections.length,
+                "sections"
+              );
+            }
+          });
+
+          if (emptyPages > 0) {
+            console.warn(
+              "Found",
+              emptyPages,
+              "empty pages - this may indicate content loss"
+            );
+          }
+
+          if (debug.enabled) {
+            debug.log("verifyContentIntegrity", {
+              pages: allPages.length,
+              totalSections: totalSections,
+              emptyPages: emptyPages,
+            });
+            debug.renderSummary("verifyContentIntegrity");
+          }
+        }
+
+        function isPageOverflowing(pageBody) {
+          if (!pageBody) return false;
+          // Force a layout flush
+          pageBody.getBoundingClientRect();
+          // Be strict: any positive delta means overflow
+          const scroll = Math.ceil(pageBody.scrollHeight);
+          const client = Math.floor(pageBody.clientHeight);
+          const overflow = scroll - client;
+
+          if (debug.enabled) {
+            var page = pageBody.closest(".page");
+            var pageIndex = -1;
+            if (page) {
+              var pages = Array.from(root.querySelectorAll(".page"));
+              pageIndex = pages.indexOf(page);
+            }
+            debug.log("isPageOverflowing", {
+              page: pageIndex >= 0 ? pageIndex + 1 : null,
+              scroll: scroll,
+              client: client,
+              overflow: overflow,
+            });
+            if (overflow > 0) {
+              debug.mark(pageBody, overflow + "px");
+            }
+          }
+
+          return overflow > 0;
+        }
+
+        function moveContentToNextPage(currentPage) {
+          var pageBody = currentPage.querySelector(".page-body");
+          var sections = pageBody.querySelectorAll(".section");
+
+          if (sections.length === 0) {
+            return false;
+          }
+
+          if (debug.enabled) {
+            var pages = Array.from(root.querySelectorAll(".page"));
+            debug.log("moveContentToNextPage", {
+              page: pages.indexOf(currentPage) + 1,
+              sections: sections.length,
+            });
+          }
+
+          // First, try to move complete sections if there are multiple
+          if (sections.length > 1) {
+            var lastSection = sections[sections.length - 1];
+
+            // Always try to move the last section first for simplicity
+            try {
+              var nextPage = getOrCreateNextPage(currentPage);
+              if (!nextPage) {
+                if (debug.enabled) {
+                  debug.warn("moveContentToNextPage: no next page", {
+                    sectionId:
+                      lastSection.getAttribute("data-section-key") || null,
+                  });
+                }
+                return false;
+              }
+
+              var nextPageBody = nextPage.querySelector(".page-body");
+              if (!nextPageBody) {
+                if (debug.enabled) {
+                  debug.warn("moveContentToNextPage: next page missing body");
+                }
+                return false;
+              }
+
+              nextPageBody.insertBefore(
+                lastSection,
+                nextPageBody.firstChild || null
+              );
+              if (debug.enabled) {
+                var allPages = Array.from(root.querySelectorAll(".page"));
+                debug.log("moveContentToNextPage: moved section", {
+                  toPage: allPages.indexOf(nextPage) + 1,
+                  sectionId:
+                    lastSection.getAttribute("data-section-key") || null,
+                });
+              }
+              return true;
+            } catch (error) {
+              console.error("Error moving section:", error);
+              return false;
+            }
+          }
+
+          // If only one section, try to split it only if it's very large
+          var singleSection = sections[0];
+          if (isPageOverflowing(pageBody)) {
+            if (debug.enabled) {
+              debug.log("moveContentToNextPage: splitting section", {
+                sectionId:
+                  singleSection.getAttribute("data-section-key") || null,
+              });
+            }
+            return splitSectionContent(singleSection, currentPage);
+          }
+
+          return false;
+        }
+
+        function pickOverflowingTable(section, pageBody) {
+          const bodyRect = pageBody.getBoundingClientRect();
+
+          // deepest → shallowest, bottom-most first
+          const candidates = Array.from(
+            section.querySelectorAll(
+              ".kv-subtable .table-horizontal table," + // nested up-down inside KV cell
+                ".kv-subtable .nested-table," + // nested 2-col KV subtable
+                ".table-horizontal table," + // normal up-down
+                ".kv-table > table" // top-level KV table (KV rows)
+            )
+          ).reverse();
+
+          for (const tbl of candidates) {
+            const r = tbl.getBoundingClientRect();
+            if (r.bottom > bodyRect.bottom - 1) return tbl;
+          }
+          return candidates[0] || null;
+        }
+
+        function resolveSplitTables(pickedTable) {
+          if (!pickedTable) {
+            return { primary: null, fallback: null };
+          }
+
+          const owningKvTable = pickedTable.closest(".kv-table > table");
+          const isNestedValue = !!pickedTable.closest(".kv-subtable");
+
+          if (
+            !owningKvTable ||
+            owningKvTable === pickedTable ||
+            !isNestedValue
+          ) {
+            return { primary: pickedTable, fallback: null };
+          }
+
+          const nestedRows = pickedTable.querySelectorAll("tbody tr");
+          const canSplitNested = nestedRows.length > 1;
+
+          const kvRows = owningKvTable.querySelectorAll("tbody > tr");
+          const canMoveWholeKvRow = kvRows.length > 1;
+
+          if (canSplitNested) {
+            return {
+              primary: pickedTable,
+              fallback: canMoveWholeKvRow ? owningKvTable : null,
+            };
+          }
+
+          if (canMoveWholeKvRow) {
+            return { primary: owningKvTable, fallback: null };
+          }
+
+          return { primary: pickedTable, fallback: null };
+        }
+
+        /* ====================== Payment Details Separation Function ====================== */
+        function separatePaymentDetailsFromSection(section, currentPage) {
+          // Look for payment details rows in the current section
+          var paymentDetailsRows = section.querySelectorAll('tr[data-payment-details="true"]');
+          
+          if (paymentDetailsRows.length === 0) {
+            return false;
+          }
+
+          var nextPage = getOrCreateNextPage(currentPage);
+          if (!nextPage) {
+            return false;
+          }
+
+          var nextPageBody = nextPage.querySelector(".page-body");
+          if (!nextPageBody) {
+            return false;
+          }
+
+          // Create a new section for payment details
+          var paymentSection = document.createElement("div");
+          paymentSection.className = "section";
+          paymentSection.setAttribute("data-section-key", "PaymentDetails");
+          paymentSection.setAttribute("data-is-continuation", "true");
+
+          // Add section heading
+          var sectionHeading = document.createElement("div");
+          sectionHeading.className = "section-heading";
+          sectionHeading.textContent = "PAYMENT DETAILS";
+          paymentSection.appendChild(sectionHeading);
+
+          // Create a new table structure for payment details
+          var paymentTableWrapper = document.createElement("div");
+          paymentTableWrapper.className = "kv-table";
+          
+          var paymentTable = document.createElement("table");
+          var paymentTbody = document.createElement("tbody");
+          paymentTable.appendChild(paymentTbody);
+          paymentTableWrapper.appendChild(paymentTable);
+
+          // Move payment details rows to the new table
+          var moved = 0;
+          paymentDetailsRows.forEach(function(row) {
+            paymentTbody.appendChild(row.cloneNode(true));
+            row.remove();
+            moved++;
+          });
+
+          if (moved > 0) {
+            paymentSection.appendChild(paymentTableWrapper);
+            nextPageBody.insertBefore(paymentSection, nextPageBody.firstChild || null);
+            
+            if (debug.enabled) {
+              debug.log("separatePaymentDetailsFromSection: moved payment details", {
+                movedRows: moved,
+              });
+            }
+            
+            return true;
+          }
+
+          return false;
+        }
+
+        // Replace your splitSectionContent with this:
+        function splitSectionContent(section, currentPage) {
+          var nextPage = getOrCreateNextPage(currentPage);
+          if (!nextPage) {
+            return false;
+          }
+          var nextPageBody = nextPage.querySelector(".page-body");
+          if (!nextPageBody) {
+            return false;
+          }
+
+          // First, try to separate payment details if they exist
+          if (separatePaymentDetailsFromSection(section, currentPage)) {
+            return true;
+          }
+
+          var splitCount = parseInt(
+            section.getAttribute("data-split-count") || "0",
+            10
+          );
+          if (!Number.isFinite(splitCount) || splitCount < 0) {
+            splitCount = 0;
+          }
+          var maxSplitsPerSection = 48;
+          if (splitCount >= maxSplitsPerSection) {
+            console.warn(
+              "Reached max split attempts for section, skipping further splits"
+            );
+            return false;
+          }
+
+          function registerSplit() {
+            var current = parseInt(
+              section.getAttribute("data-split-count") || "0",
+              10
+            );
+            if (!Number.isFinite(current) || current < 0) {
+              current = 0;
+            }
+            section.setAttribute(
+              "data-split-count",
+              String(Math.min(current + 1, maxSplitsPerSection))
+            );
+          }
+
+          const pageBody = currentPage.querySelector(".page-body");
+          let pickedTable = pickOverflowingTable(section, pageBody);
+          const { primary: table, fallback } = resolveSplitTables(pickedTable);
+
+          function attemptTableSplit(targetTable) {
+            if (!targetTable) return false;
+
+            const tbody = targetTable.querySelector("tbody");
+            const rows = tbody ? tbody.querySelectorAll("tr") : [];
+            if (rows.length < 2) return false;
+
+            if (targetTable.classList.contains("nested-table")) {
+              return splitNestedKvSubtable(targetTable, section, currentPage);
+            }
+
+            if (targetTable.closest(".kv-subtable")) {
+              return splitKvHorizontalSubtable(
+                targetTable,
+                section,
+                currentPage
+              );
+            }
+
+            return splitTableContent(targetTable, section, currentPage);
+          }
+
+          if (table) {
+            const didSplitPrimary = attemptTableSplit(table);
+            if (didSplitPrimary) {
+              registerSplit();
+              return true;
+            }
+
+            if (fallback) {
+              const didSplitFallback = attemptTableSplit(fallback);
+              if (didSplitFallback) {
+                registerSplit();
+                return true;
+              }
+            }
+          }
+
+          // Fallback: split paragraphs if there are many
+          var paragraphs = section.querySelectorAll("p");
+          if (paragraphs.length >= 3) {
+            const didSplit = splitParagraphContent(
+              paragraphs,
+              section,
+              nextPage
+            );
+            if (didSplit) registerSplit();
+            return didSplit;
+          }
+
+          return false;
+        }
+
+        function lockColumnWidths(srcTable, dstTable) {
+          try {
+            // Prefer the first TBODY row; fall back to THEAD if needed
+            var probeRow =
+              srcTable.querySelector("tbody tr") ||
+              srcTable.querySelector("thead tr");
+            if (!probeRow) return;
+
+            // Build matching COLGROUPs with computed pixel widths
+            var srcColgroup = document.createElement("colgroup");
+            var dstColgroup = document.createElement("colgroup");
+
+            Array.prototype.forEach.call(probeRow.children, function (cell) {
+              var w = Math.ceil(cell.getBoundingClientRect().width) + "px";
+              var c1 = document.createElement("col");
+              var c2 = document.createElement("col");
+              c1.style.width = w;
+              c2.style.width = w;
+              srcColgroup.appendChild(c1);
+              dstColgroup.appendChild(c2);
+            });
+
+            // Remove pre-existing colgroups, then pin widths on both halves
+            Array.from(srcTable.querySelectorAll("colgroup")).forEach(function (
+              cg
+            ) {
+              cg.remove();
+            });
+            Array.from(dstTable.querySelectorAll("colgroup")).forEach(function (
+              cg
+            ) {
+              cg.remove();
+            });
+            srcTable.insertBefore(srcColgroup, srcTable.firstChild);
+            dstTable.insertBefore(dstColgroup, dstTable.firstChild);
+          } catch (e) {
+            console.warn("lockColumnWidths failed:", e);
+          }
+        }
+
+        function ensureContinuationShell(currentPage, section, table) {
+          const nextPage = getOrCreateNextPage(currentPage);
+          if (!nextPage) return null;
+
+          const nextPageBody = nextPage.querySelector(".page-body");
+          if (!nextPageBody) return null;
+
+          // If the next page already starts with a continuation for this section, reuse it.
+          const existing = nextPageBody.firstElementChild;
+          if (
+            existing &&
+            existing.matches('.section[data-is-continuation="true"]')
+          ) {
+            const container = existing.querySelector(
+              ".kv-table, .table-horizontal"
+            );
+            const tbl = container && container.querySelector("table");
+            const tb = tbl && tbl.querySelector("tbody");
+            if (tb) {
+              return {
+                nextPageBody,
+                contSection: existing,
+                contTable: tbl,
+                contTbody: tb,
+              };
+            }
+          }
+
+          // Build a fresh continuation section (no heading duplication)
+          const contSection = document.createElement("div");
+          contSection.className = "section";
+          contSection.setAttribute("data-is-continuation", "true");
+
+          // Clone the same table wrapper (.kv-table or .table-horizontal) without children
+          const srcContainer = table.closest(".kv-table, .table-horizontal");
+          const contContainer = srcContainer
+            ? srcContainer.cloneNode(false)
+            : document.createElement("div");
+
+          // Shallow-clone the <table>, keep classes/attrs; add cloned THEAD + empty TBODY
+          const contTable = table.cloneNode(false);
+          const thead = table.querySelector("thead");
+          const contTbody = document.createElement("tbody");
+          if (thead) contTable.appendChild(thead.cloneNode(true));
+          contTable.appendChild(contTbody);
+          contContainer.appendChild(contTable);
+
+          // Respect .company-block wrapper if present
+          const companyBlock = section.querySelector(".company-block");
+          if (companyBlock) {
+            const newCompanyBlock = document.createElement("div");
+            newCompanyBlock.className = "company-block";
+            newCompanyBlock.appendChild(contContainer);
+            contSection.appendChild(newCompanyBlock);
+          } else {
+            contSection.appendChild(contContainer);
+          }
+
+          // Insert at the very top of the next page body (after its header area)
+          nextPageBody.insertBefore(
+            contSection,
+            nextPageBody.firstChild || null
+          );
+
+          // Match column widths now to avoid jitter as rows move
+          try {
+            lockColumnWidths(table, contTable);
+          } catch (_) {}
+
+          return { nextPageBody, contSection, contTable, contTbody };
+        }
+
+        // --- REPLACE your splitTableContent with this version ---
+        function splitTableContent(table, section, currentPage) {
+          const pageBody = currentPage.querySelector(".page-body");
+          if (!pageBody) return false;
+
+          const tbody = table.querySelector("tbody");
+          if (!tbody) return false;
+
+          const rows = Array.from(tbody.querySelectorAll("tr"));
+          if (rows.length <= 1) return false; // nothing to split
+
+          // If it already fits, don't split
+          if (!isPageOverflowing(pageBody)) return false;
+
+          // Prepare a continuation shell on the next page (top of page body)
+          const cont = ensureContinuationShell(currentPage, section, table);
+          if (!cont) return false;
+
+          const { contTbody, contTable } = cont;
+
+          // Move rows from the BOTTOM of the current table to the TOP of the continuation
+          // until the current page no longer overflows.
+          // Prepending into contTbody preserves overall display order.
+          let moved = 0;
+          let guard = 0;
+
+          // Keep widths pinned while we transfer rows
+          try {
+            lockColumnWidths(table, contTable);
+          } catch (_) {}
+
+          while (
+            isPageOverflowing(pageBody) &&
+            tbody.rows.length > 1 &&
+            guard < 1000
+          ) {
+            guard++;
+            const last = tbody.lastElementChild;
+            if (!last) break;
+            contTbody.insertBefore(last, contTbody.firstChild);
+            moved++;
+
+            // NEW: re-pin height and flush layout so overflow test stays accurate
+            lockPageBodyHeights();
+            pageBody.getBoundingClientRect();
+          }
+
+          // If nothing moved (e.g., a single row taller than the available body),
+          // we can't split that row—bail gracefully.
+          if (moved === 0) {
+            // Optional: try to move the whole row to the next page if that helps
+            if (tbody.rows.length > 1) {
+              contTbody.insertBefore(
+                tbody.lastElementChild,
+                contTbody.firstChild
+              );
+              moved++;
+            }
+            if (moved === 0) return false;
+          }
+
+          // Keep columns visually aligned after the move
+          try {
+            lockColumnWidths(table, contTable);
+          } catch (_) {}
+
+          return true;
+        }
+
+        function splitNestedKvSubtable(nestedTable, section, currentPage) {
+          const pageBody = currentPage.querySelector(".page-body");
+          if (!pageBody) return false;
+
+          const tbody = nestedTable.querySelector("tbody");
+          if (!tbody) return false;
+
+          const rows = Array.from(tbody.querySelectorAll("tr"));
+          if (rows.length <= 1) return false;
+
+          // If it already fits, don’t split
+          if (!isPageOverflowing(pageBody)) return false;
+
+          // Prepare a continuation shell on the next page
+          const cont = ensureKvContinuationShell(
+            currentPage,
+            section,
+            nestedTable
+          );
+          if (!cont || cont.mode !== "nested") return false;
+
+          const contNestedTbody = cont.contBody;
+
+          let moved = 0;
+          let guard = 0;
+
+          // Move rows from the BOTTOM of current nested table
+          // to the TOP of the continuation until the page fits
+          while (
+            isPageOverflowing(pageBody) &&
+            tbody.rows.length > 1 &&
+            guard < 1000
+          ) {
+            guard++;
+            const last = tbody.lastElementChild;
+            if (!last) break;
+            contNestedTbody.insertBefore(last, contNestedTbody.firstChild);
+            moved++;
+
+            // NEW
+            lockPageBodyHeights();
+            pageBody.getBoundingClientRect();
+          }
+
+          if (moved === 0) {
+            // As a last resort, move one row to avoid hard overlap
+            if (tbody.rows.length > 1) {
+              contNestedTbody.insertBefore(
+                tbody.lastElementChild,
+                contNestedTbody.firstChild
+              );
+              moved++;
+            }
+            if (moved === 0) return false;
+          }
+
+          return true;
+        }
+
+        function splitKvHorizontalSubtable(table, section, currentPage) {
+          const pageBody = currentPage.querySelector(".page-body");
+          if (!pageBody) return false;
+
+          const tbody = table.querySelector("tbody");
+          if (!tbody) return false;
+
+          const rows = Array.from(tbody.querySelectorAll("tr"));
+          if (rows.length <= 1) return false;
+
+          if (!isPageOverflowing(pageBody)) return false;
+
+          const cont = ensureKvContinuationShell(currentPage, section, table);
+          if (!cont || cont.mode !== "horizontal") return false;
+
+          const contTbody = cont.contBody;
+          const contTable = cont.contTable;
+
+          let moved = 0;
+          let guard = 0;
+
+          try {
+            lockColumnWidths(table, contTable);
+          } catch (_) {}
+
+          while (
+            isPageOverflowing(pageBody) &&
+            tbody.rows.length > 1 &&
+            guard < 1000
+          ) {
+            guard++;
+            const last = tbody.lastElementChild;
+            if (!last) break;
+            contTbody.insertBefore(last, contTbody.firstChild);
+            moved++;
+
+            lockPageBodyHeights();
+            pageBody.getBoundingClientRect();
+          }
+
+          if (moved === 0) {
+            if (tbody.rows.length > 1) {
+              contTbody.insertBefore(
+                tbody.lastElementChild,
+                contTbody.firstChild
+              );
+              moved++;
+            }
+            if (moved === 0) return false;
+          }
+
+          try {
+            lockColumnWidths(table, contTable);
+          } catch (_) {}
+
+          return true;
+        }
+
+        function splitParagraphContent(paragraphs, section, nextPage) {
+          if (paragraphs.length <= 1) return false;
+
+          // Be more conservative with paragraph splitting - move fewer paragraphs
+          var totalParagraphs = paragraphs.length;
+          var numToMove = Math.max(1, Math.floor(totalParagraphs / 3)); // Move about 1/3
+          var splitPoint = totalParagraphs - numToMove;
+          var paragraphsToMove = Array.prototype.slice.call(
+            paragraphs,
+            splitPoint
+          );
+
+          if (paragraphsToMove.length === 0) return false;
+
+          // Create a new section for the next page WITHOUT duplicating the heading
+          var newSection = document.createElement("div");
+          newSection.className = "section";
+          newSection.setAttribute("data-is-continuation", "true");
+
+          // Check if this is inside a company-block
+          var companyBlock = section.querySelector(".company-block");
+          if (companyBlock) {
+            var newCompanyBlock = document.createElement("div");
+            newCompanyBlock.className = "company-block";
+
+            // Move paragraphs to new company block
+            paragraphsToMove.forEach(function (p) {
+              newCompanyBlock.appendChild(p.cloneNode(true));
+              p.remove();
+            });
+
+            newSection.appendChild(newCompanyBlock);
+          } else {
+            // Move paragraphs directly to new section
+            paragraphsToMove.forEach(function (p) {
+              newSection.appendChild(p.cloneNode(true));
+              p.remove();
+            });
+          }
+
+          // Add the new section to the next page
+          var nextPageBody = nextPage.querySelector(".page-body");
+          nextPageBody.insertBefore(
+            newSection,
+            nextPageBody.firstChild || null
+          );
+
+          return true;
+        }
+
+        function getOrCreateNextPage(currentPage) {
+          var currentOuter = currentPage.closest(".page-outer");
+          if (!currentOuter) return null;
+
+          var nextOuter = currentOuter.nextElementSibling;
+          if (nextOuter && nextOuter.classList.contains("page-outer")) {
+            return nextOuter.querySelector(".page");
+          }
+
+          var created = createNewPage(currentPage);
+          if (debug.enabled && created) {
+            debug.log("getOrCreateNextPage: created", {
+              totalPages: root.querySelectorAll(".page").length,
+            });
+          }
+          return created;
+        }
+
+        function createNewPage(templatePage) {
+          try {
+            var newPageOuter = document.createElement("section");
+            newPageOuter.className = "page-outer";
+
+            var newPage = templatePage.cloneNode(true);
+            var newPageBody = newPage.querySelector(".page-body");
+            if (newPageBody) {
+              newPageBody.innerHTML = "";
+            } else {
+              console.error("New page has no page body!");
+              return null;
+            }
+
+            newPageOuter.appendChild(newPage);
+            root.appendChild(newPageOuter);
+            lockPageBodyHeights();
+            updatePageNumbers();
+
+            var pageIndex = root.querySelectorAll(".page").length - 1;
+            newPage.setAttribute(
+              "data-placement-slip-page",
+              String(Math.max(0, pageIndex))
+            );
+
+            if (debug.enabled) {
+              debug.log("createNewPage", {
+                pageIndex: pageIndex + 1,
+                dataIndex: newPage.getAttribute("data-placement-slip-page"),
+              });
+            }
+
+            return newPage;
+          } catch (error) {
+            console.error("Failed to create new page:", error);
+            if (debug.enabled) {
+              debug.warn("createNewPage failed", error);
+            }
+            return null;
+          }
+        }
+        function finalSettle() {
+          var pass = 0;
+          var moved = false;
+          var totalMoves = 0;
+          var maxTotalMoves = 2400;
+          var maxPasses = 10;
+
+          if (debug.enabled) {
+            debug.log("finalSettle:start", {
+              pages: root.querySelectorAll(".page").length,
+            });
+          }
+
+          do {
+            moved = false;
+            var pages = Array.from(root.querySelectorAll(".page"));
+
+            for (var i = 0; i < pages.length; i++) {
+              var currentPage = pages[i];
+              var body = currentPage.querySelector(".page-body");
+              if (!body) continue;
+
+              var guard = 0;
+              var guardLimit = Math.max(60, pages.length * 18);
+
+              while (
+                isPageOverflowing(body) &&
+                guard < guardLimit &&
+                totalMoves < maxTotalMoves
+              ) {
+                guard++;
+                totalMoves++;
+
+                if (!moveContentToNextPage(currentPage)) {
+                  if (debug.enabled) {
+                    debug.warn("finalSettle: move failed", {
+                      page: i + 1,
+                      pass: pass,
+                      guard: guard,
+                    });
+                  }
+                  break;
+                }
+
+                moved = true;
+                lockPageBodyHeights();
+                pages = Array.from(root.querySelectorAll(".page"));
+                body = currentPage.querySelector(".page-body") || body;
+              }
+
+              if (debug.enabled && guard > 0) {
+                debug.log("finalSettle: page processed", {
+                  page: i + 1,
+                  guard: guard,
+                  totalMoves: totalMoves,
+                });
+              }
+            }
+
+            pass++;
+          } while (moved && pass < maxPasses && totalMoves < maxTotalMoves);
+
+          if (totalMoves >= maxTotalMoves) {
+            console.warn(
+              "finalSettle bailed after reaching move cap",
+              maxTotalMoves
+            );
+            if (debug.enabled) {
+              debug.warn("finalSettle: move cap", {
+                totalMoves: totalMoves,
+                maxTotalMoves: maxTotalMoves,
+              });
+            }
+          }
+
+          pruneEmptyPages();
+          if (debug.enabled) {
+            debug.renderSummary("finalSettle:complete");
+          }
+        }
+        finalSettle();
+        function updatePageNumbers() {
+          var pages = root.querySelectorAll(".page");
+          var total = pages.length;
+
+          pages.forEach(function (page, index) {
+            var pageNum = page.querySelector(".footer-meta .page-num");
+            if (pageNum) {
+              pageNum.textContent = "Page " + (index + 1) + " of " + total;
+            }
+          });
+        }
+
+        function resolveFooterContent(payload) {
+          var org = payload.organization || {};
+          var defaultHeading = org.name || "";
+          var defaultLines = Array.isArray(org.addressLines)
+            ? org.addressLines.slice()
+            : [];
+
+          if (!payload.blocks || !payload.blocks.FooterSection) {
+            return { heading: defaultHeading, lines: defaultLines };
+          }
+
+          var footerBlock = normalizeBlock(payload.blocks.FooterSection);
+          var heading =
+            footerBlock.heading && String(footerBlock.heading).trim()
+              ? String(footerBlock.heading).trim()
+              : defaultHeading;
+
+          var lines = [];
+          var appendLines = function (value) {
+            if (!value || !String(value).trim()) {
+              return;
+            }
+
+            String(value)
+              .split(/\r?\n/)
+              .map(function (line) {
+                return line.trim();
+              })
+              .filter(Boolean)
+              .forEach(function (line) {
+                lines.push(line);
+              });
+          };
+
+          appendLines(footerBlock.subHeading);
+          appendLines(footerBlock.subHeading2);
+
+          if (!lines.length && Array.isArray(footerBlock.rows)) {
+            footerBlock.rows.forEach(function (row) {
+              if (!row) return;
+              var parts = Object.keys(row)
+                .map(function (key) {
+                  var value = row[key];
+                  return value === null || value === undefined
+                    ? ""
+                    : String(value).trim();
+                })
+                .filter(Boolean);
+              if (parts.length) {
+                lines.push(parts.join(" "));
+              }
+            });
+          }
+
+          if (!lines.length) {
+            lines = defaultLines;
+          }
+
+          return { heading: heading, lines: lines };
+        }
+
+        /* ====================== Core Functions ====================== */
+        function renderPage(options) {
+          if (!options || !options.payload) {
+            throw new Error("Page options and payload are required");
+          }
+
+          var page = options.page;
+          var pageIndex = options.pageIndex;
+          var totalPages = options.totalPages;
+          var normalizedPayload = options.payload;
+          var logoMarkup = options.logoHtml;
+          var printedLabel = options.printedOnLabel;
+
+          var policySection = normalizedPayload.blocks.PolicySection;
+          var insurerTableRows = renderHeaderTableRows(policySection);
+
+          var sectionsHtml = "";
+          if (page.kind === "company") {
+            sectionsHtml += renderCompanyPages(normalizedPayload.blocks);
+          } else {
+            // Letter page content
+            var blocks = normalizedPayload.blocks;
+            if (blocks.InsurerDetails) {
+              sectionsHtml += renderLetterBlock(
+                "InsurerDetails",
+                normalizeBlock(blocks.InsurerDetails)
+              );
+            }
+            if (blocks.PolicyDetails) {
+              sectionsHtml += renderIntroHeader(
+                normalizedPayload,
+                normalizedPayload.blocks
+              );
+              sectionsHtml += renderIntroNote();
+              sectionsHtml += renderLetterBlock(
+                "PolicyDetails",
+                normalizeBlock(blocks.PolicyDetails)
+              );
+              sectionsHtml += renderClosingSection(
+                { IsgDetails: normalizeBlock(blocks.IsgDetails || {}) },
+                normalizedPayload
+              );
+            }
+          }
+
+          var footerContent = resolveFooterContent(normalizedPayload);
+
+          var addressHtml = footerContent.lines
+            .map(function (line) {
+              return "<div>" + escapeHtml(line) + "</div>";
+            })
+            .join("");
+
+          var printedOnHtml = printedLabel
+            ? "<div>Printed On: " + escapeHtml(printedLabel) + "</div>"
+            : "";
+
+          return (
+            '<section class="page-outer">' +
+            '<section class="page" data-kind="' +
+            (page.kind || "a4") +
+            '" data-placement-slip-page="' +
+            pageIndex +
+            '">' +
+            '<div class="page-frame">' +
+            renderPageTitle(normalizedPayload.title) +
+            '<header class="page-header">' +
+            '<div class="insurer-table"><table><tbody>' +
+            insurerTableRows +
+            "</tbody></table></div>" +
+            '<div class="logo-container">' +
+            logoMarkup +
+            "</div>" +
+            "</header>" +
+            '<div class="page-body">' +
+            sectionsHtml +
+            "</div>" +
+            '<div class="footer-separator"></div>' +
+            '<footer class="page-footer">' +
+            '<div class="footer-info">' +
+            '<div class="footer-organization">' +
+            escapeHtml(footerContent.heading || "") +
+            "</div>" +
+            addressHtml +
+            "</div>" +
+            '<div class="footer-meta">' +
+            '<div class="page-num">Page ' +
+            (pageIndex + 1) +
+            " of " +
+            totalPages +
+            "</div>" +
+            printedOnHtml +
+            "</div>" +
+            "</footer>" +
+            "</div>" +
+            "</section>" +
+            "</section>"
+          );
+        }
+
+        function renderLetterBlock(title, block) {
+          if (!block) {
+            return '<div class="section"><p>No data available</p></div>';
+          }
+
+          var headingHtml = "";
+          var headingText = block.heading ? String(block.heading) : "";
+
+          if (headingText?.trim()) {
+            var style =
+              (block.bold ? "font-weight:700;" : "") +
+              (block.underline ? "text-decoration:underline;" : "");
+            headingHtml =
+              '<h2 class="section-heading" style="' +
+              style +
+              '">' +
+              escapeHtml(headingText) +
+              (block.subHeading
+                ? '<div style="font-size:11px;font-weight:400;margin-top:2px;' +
+                  (block.underline ? "text-decoration:underline;" : "") +
+                  '">' +
+                  escapeHtml(block.subHeading) +
+                  "</div>"
+                : "") +
+              "</h2>";
+          }
+
+          var contentHtml = "";
+          if (block.type === "table") {
+            if (title === "PolicyDetails") {
+              contentHtml = renderHorizontalTable(block.rows, [
+                "Policy Name",
+                "Risk Inception Date",
+                "Sum Insured",
+                "Premium",
+              ]);
+            } else {
+              contentHtml =
+                block.tableType === "up-down"
+                  ? renderHorizontalTable(block.rows)
+                  : renderKeyValueTable(block.rows);
+            }
+          } else {
+            contentHtml = renderLetterTextRows(block, {
+              onlyValues: title === "InsurerDetails",
+            });
+          }
+
+          return '<div class="section">' + headingHtml + contentHtml + "</div>";
+        }
+
+        function renderLetterTextRows(block, opts) {
+          opts = opts || {};
+          var onlyValues = !!opts.onlyValues;
+          var baseStyle =
+            (block.bold ? "font-weight:700;" : "") +
+            (block.underline ? "text-decoration:underline;" : "");
+
+          var html = "";
+          (block.rows || []).forEach(function (row) {
+            var keys = Object.keys(row);
+            if (!keys.length) {
+              html += '<p style="' + baseStyle + '">&nbsp;</p>';
+              return;
+            }
+
+            if (onlyValues) {
+              var preferred = ["Insurer Name", "Address", "City"];
+              preferred.forEach(function (k) {
+                if (row.hasOwnProperty(k)) {
+                  html +=
+                    '<p style="' +
+                    baseStyle +
+                    '">' +
+                    escapeHtml(row[k]) +
+                    "</p>";
+                }
+              });
+              keys.forEach(function (k) {
+                if (preferred.indexOf(k) === -1) {
+                  html +=
+                    '<p style="' +
+                    baseStyle +
+                    '">' +
+                    escapeHtml(row[k]) +
+                    "</p>";
+                }
+              });
+            } else {
+              keys.forEach(function (key) {
+                html +=
+                  '<p style="' +
+                  baseStyle +
+                  '"><span style="font-weight:700">' +
+                  escapeHtml(key) +
+                  ":</span> " +
+                  escapeHtml(row[key]) +
+                  "</p>";
+              });
+            }
+          });
+          return html;
+        }
+
+        // Helper functions remain the same...
+        function renderPageTitle(title) {
+          if (!title || String(title).trim() === "") return "";
+          return '<div class="page-title">' + escapeHtml(title) + "</div>";
+        }
+
+        function renderHeaderTableRows(blockRaw) {
+          var b = normalizeBlock(blockRaw);
+          if (!b || b.type !== "table" || !b.rows.length) return "";
+          var obj = b.rows[0] || {};
+          return Object.keys(obj)
+            .map(function (key) {
+              return (
+                "<tr><th>" +
+                escapeHtml(key.toUpperCase()) +
+                "</th><td>" +
+                escapeHtml(obj[key]) +
+                "</td></tr>"
+              );
+            })
+            .join("");
+        }
+
+        function renderIntroHeader(payload, blocks) {
+          var policyBlock = normalizeBlock((blocks && blocks.IsgDetails) || {});
+          var policyName = getPolicyName(policyBlock);
+          var companyName =
+            getCompanyName(blocks) ||
+            payload.companyName ||
+            payload.CompanyName ||
+            "";
+          var subject =
+            "Re: Placement of " +
+            (policyName ? policyName + " Policy" : "Policy") +
+            (companyName ? " of M/s " + companyName : "");
+          return (
+            '<div class="section"><p class="intro-greeting">Dear Sirs,</p><p class="intro-subject">' +
+            escapeHtml(subject) +
+            "</p></div>"
+          );
+        }
+
+        function renderIntroNote() {
+          var note =
+            "On the advice of our Customer, we are pleased to confirm the placement of the above mentioned Risk with you " +
+            "based on the Terms and condition mentioned in the annexed Placement Slip. The information carried in the " +
+            "Placement Slip is as received from the Client. The covering letter addressed by the customer in your favor with the " +
+            "Premium payment is also annexed with this letter. The brief details of the Risk being placed with you are as follows:";
+          return '<div class="section"><p>' + escapeHtml(note) + "</p></div>";
+        }
+
+        function renderClosingSection(blocks, payload) {
+          var orgName =
+            (payload.organization && payload.organization.name) ||
+            "INDIA INSURE RISK MANAGEMENT AND INSURANCE BROKING SERVICES PVT LTD";
+
+          var contacts = [];
+          var b = blocks && blocks.IsgDetails;
+          if (b && b.rows && b.rows.length) {
+            var row = b.rows[0] || {};
+            contacts.push({
+              name: row.IsgManagerName,
+              email: row.IsgManagerEmail,
+              landline: row.IsgManagerContactNo,
+              mobile: row.IsgManagerPhoneNo,
+            });
+            contacts.push({
+              name: row.IsgExecutiveName,
+              email: row.IsgExecutiveEmail,
+              landline: row.IsgExecutiveContactNo,
+              mobile: row.IsgExecutivePhoneNo,
+            });
+          }
+
+          var contactItems = contacts
+            .filter(function (c) {
+              // Only render if name exists and is not null/empty
+              return c && c.name && c.name.trim();
+            })
+            .map(function (c) {
+              var parts = [];
+              if (c.email) parts.push(" ✉ " + escapeHtml(c.email));
+              if (c.landline) parts.push(" ☎ " + escapeHtml(c.landline));
+              if (c.mobile) parts.push(" ☎ " + escapeHtml(c.mobile));
+              return (
+                "<li>" +
+                escapeHtml(c.name) +
+                (parts.length ? ", " + parts.join(", ") : "") +
+                ".</li>"
+              );
+            })
+            .join("");
+
+          return (
+            '<div class="section closing-section">' +
+            "<p>We request you to return the Placement Slip duly acknowledged by signing and stamping all the pages. Kindly arrange to have the held cover letter issued immediately to ensure that the customer is on cover from the Risk inception.</p>" +
+            "<p>For any further information you can contact:</p>" +
+            (contactItems
+              ? '<ol class="contact-list">' + contactItems + "</ol>"
+              : "") +
+            "<p>We shall be glad to provide any clarification in this regard.</p>" +
+            "<p>Thanking you,</p>" +
+            '<div class="signature-block"><div class="signature-org">For ' +
+            escapeHtml(orgName) +
+            "</div>" +
+            '<div class="signature-authority">AUTHORIZED SIGNATORY.</div></div>' +
+            "</div>"
+          );
+        }
+
+        function renderWarrantyNote(blocks) {
+          var documentDate = "01/Apr/2025";
+          var discussionDate = "01/Apr/2025";
+
+          if (
+            blocks.IsgDetails &&
+            blocks.IsgDetails.sectionData &&
+            blocks.IsgDetails.sectionData[0]
+          ) {
+            var isgData = blocks.IsgDetails.sectionData[0];
+            documentDate = isgData.DocumentDated || documentDate;
+            discussionDate = isgData.DiscussionDated || discussionDate;
+          }
+
+          var paragraphs = [
+            "The placement slip has been prepared by us on the basis of information furnished to us by the Company.",
+            "We at India Insure do not certify the accuracy of the same. The data furnished by the customer in the signed proposal form is the final information.",
+            "This placement slip has been prepared on the basis of the quote submitted by you vide your document dated " +
+              documentDate +
+              " and the discussions you had with the Customer and us on " +
+              discussionDate +
+              " at Client Place. It is also expressly understood that the commitments made by you in the quote and during the discussions have the approval of the competent authorities.",
+            "The following issues will be incorporated in the revised quote which you shall issue prior to the policy inception:",
+          ];
+
+          return (
+            '<div class="company-warranty-note">' +
+            paragraphs
+              .map(function (p) {
+                return "<p>" + escapeHtml(p) + "</p>";
+              })
+              .join("") +
+            "</div>"
+          );
+        }
+
+        // Utility functions
+        function getPolicyName(policyBlock) {
+          var row =
+            (policyBlock && policyBlock.rows && policyBlock.rows[0]) || {};
+          return row["Policy Name"] || row["Policy"] || row["PolicyType"] || "";
+        }
+
+        function getCompanyName(blocks) {
+          if (!blocks) return "";
+          var preferred = [
+            "Company Name",
+            "CompanyName",
+            "Insured Name",
+            "Insured",
+            "Client Name",
+          ];
+          for (var key in blocks) {
+            var b = normalizeBlock(blocks[key]);
+            if (!b || !b.rows || !b.rows.length) continue;
+            var row = b.rows[0] || {};
+            for (var i = 0; i < preferred.length; i++) {
+              var k = preferred[i];
+              if (row.hasOwnProperty(k) && row[k]) return String(row[k]);
+            }
+          }
+          return "";
+        }
+
+        function normalizeBlock(b) {
+          if (!b) {
+            return { type: "text", bold: false, underline: false, rows: [] };
+          }
+
+          var type = (b.dataType || b.Type || "text").toString().toLowerCase();
+          var rawRows = Array.isArray(b.sectionData)
+            ? b.sectionData
+            : Array.isArray(b.data)
+            ? b.data
+            : [];
+
+          var rows =
+            Array.isArray(rawRows) && rawRows.length
+              ? rawRows.slice()
+              : type === "table"
+              ? [{}]
+              : [];
+
+          var heading = b.heading != null ? b.heading : b.Heading;
+          var subHeading =
+            b.subHeading != null ? b.subHeading : b["Sub-heading"];
+          var subHeading2 =
+            b.subHeading2 != null ? b.subHeading2 : b["Sub-heading2"];
+          var bold = (b.bold || b.Bold) === "Yes";
+          var underline = (b.underline || b.Underline) === "Yes";
+          var tableType =
+            b.tableType ||
+            b.TableType ||
+            (type === "table" ? "left-right" : null);
+
+          return {
+            type: type,
+            rows: rows,
+            heading: heading,
+            subHeading: subHeading,
+            subHeading2: subHeading2,
+            bold: bold,
+            underline: underline,
+            tableType: tableType,
+          };
+        }
+
+        function isCompanyKey(k) {
+          return /^Company/.test(k);
+        }
+
+        function alphaLabel(i) {
+          return String.fromCharCode("A".charCodeAt(0) + i) + ".";
+        }
+
+        function getKolkataTimeIntl() {
+          const formatter = new Intl.DateTimeFormat("en-CA", {
+            timeZone: "Asia/Kolkata",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+          });
+
+          const parts = formatter.formatToParts(new Date());
+          const formatted = `${parts[0].value}-${parts[2].value}-${parts[4].value}T${parts[6].value}:${parts[8].value}:${parts[10].value}+05:30`;
+          return formatted;
+        }
+
+        function buildPayloadFromNewSchema(schema) {
+          if (!schema) {
+            throw new Error("Schema is required");
+          }
+
+          var pages = [{ kind: "a4" }];
+          if (Object.keys(schema).some(isCompanyKey)) {
+            pages.push({ kind: "company" });
+          }
+
+          return {
+            title: schema.title || schema.Title || "PLACEMENT SLIP",
+            organization: {
+              name: "INDIA INSURE RISK MANAGEMENT AND INSURANCE BROKING SERVICES PVT LTD",
+              addressLines: [
+                "Ashoka My Home Chambers, 5th Floor, #1-8-301-306, Sindhi Colony, Sardar Patel Road, Begumpet, Secunderabad, Hyderabad - 500003 PH: 040-27822990 FAX: 040-27822991",
+              ],
+            },
+            blocks: schema,
+            pages: pages,
+            printedOn: getKolkataTimeIntl(),
+          };
+        }
+
+        function normalizePayload(source) {
+          if (!source) {
+            throw new Error("Source payload is required");
+          }
+
+          var organization = source.organization || {};
+          var pages =
+            Array.isArray(source.pages) && source.pages.length
+              ? source.pages
+              : [{ kind: "a4" }, { kind: "company" }];
+          var blocks = source.blocks || source || {};
+          var footerSection =
+            blocks && blocks.FooterSection ? blocks.FooterSection : undefined;
+
+          return {
+            title: source.title || source.Title || "PLACEMENT SLIP",
+            organization: {
+              name: organization.name || "",
+              addressLines: Array.isArray(organization.addressLines)
+                ? organization.addressLines.slice()
+                : [],
+              logo: organization.logo
+                ? {
+                    path: organization.logo.path || "",
+                    width: organization.logo.width,
+                    height: organization.logo.height,
+                  }
+                : undefined,
+            },
+            blocks: blocks,
+            pages: pages,
+            printedOn:
+              (footerSection && footerSection.printedOn) ||
+              getKolkataTimeIntl(),
+            companyName: source.companyName,
+            fileName: source.fileName,
+          };
+        }
+
+        function createLogoHtml(assets, normalizedPayload) {
+          var assetLogo = assets && assets.logo ? assets.logo : undefined;
+          var payloadLogo =
+            normalizedPayload.organization &&
+            normalizedPayload.organization.logo
+              ? normalizedPayload.organization.logo
+              : undefined;
+
+          var pathSource =
+            (assetLogo && assetLogo.path) || (payloadLogo && payloadLogo.path);
+          var base64 =
+            assetLogo && assetLogo.base64
+              ? "data:" +
+                (assetLogo.mimeType || "image/jpeg") +
+                ";base64," +
+                assetLogo.base64
+              : null;
+
+          var width =
+            (assetLogo && (assetLogo.placementWidth || assetLogo.width)) ||
+            (payloadLogo && payloadLogo.width);
+          var height =
+            (assetLogo && (assetLogo.placementHeight || assetLogo.height)) ||
+            (payloadLogo && payloadLogo.height);
+
+          if (pathSource || base64) {
+            var src = pathSource || base64;
+            return (
+              '<img src="' +
+              escapeHtml(src) +
+              '" alt="Organization logo" ' +
+              'style="max-width:' +
+              width +
+              "px; max-height:" +
+              height +
+              'px;" ' +
+              "onerror=\"this.outerHTML='<div class=&quot;logo-placeholder&quot;>LOGO</div>'\" />"
+            );
+          }
+          return '<div class="logo-placeholder">LOGO</div>';
+        }
+
+        function escapeHtml(value) {
+          if (value === null || value === undefined) return "";
+          return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+        }
+
+        function formatPrintedOnLabel(printedOn) {
+          if (!printedOn) {
+            return new Date().toISOString().slice(0, 16).replace("T", " ");
+          }
+          var date = new Date(printedOn);
+          if (isNaN(date.getTime())) return printedOn;
+          var pad = function (v) {
+            return String(v).padStart(2, "0");
+          };
+          return (
+            pad(date.getDate()) +
+            "-" +
+            pad(date.getMonth() + 1) +
+            "-" +
+            date.getFullYear() +
+            " " +
+            pad(date.getHours()) +
+            ":" +
+            pad(date.getMinutes())
+          );
+        }
+
+        function getSampleExportData() {
+          return {
+            assets: { logo: { path: DEFAULT_LOGO_RELATIVE_PATH } },
+            title: "PLACEMENT SLIP",
+            PolicySection: {
+              heading: null,
+              subHeading: null,
+              dataType: "table",
+              underline: "No",
+              bold: "No",
+              tableType: "left-right",
+              sectionData: [
+                {
+                  "OUR REF NO": "1018676",
+                  DATED: "03/Nov/2025",
+                  "REFERED BY": "INDIA INSURE - Colombo",
+                  CONTACT: "Asitha Kumara",
+                },
+              ],
+            },
+            InsurerDetails: {
+              heading: null,
+              subHeading: null,
+              dataType: "text",
+              underline: "Yes",
+              bold: "No",
+              tableType: null,
+              sectionData: [
+                {
+                  "Insurer Name": "M/s. AIA Insurance Lanka PLC",
+                  Address: "Colombo",
+                  "City with Pincode": "Colombo",
+                },
+              ],
+            },
+            PolicyDetails: {
+              heading: null,
+              subHeading: null,
+              dataType: "table",
+              underline: "No",
+              bold: "No",
+              tableType: "up-down",
+              sectionData: [
+                {
+                  "Policy Name": "All Risk Policy",
+                  "Risk Inception Date": "01/Nov/2025",
+                  "Sum Insured": "LKR. 1,212",
+                  Premium: "LKR. 238",
+                },
+              ],
+            },
+            IsgDetails: {
+              heading: null,
+              subHeading: null,
+              dataType: "text",
+              underline: "No",
+              bold: "No",
+              tableType: null,
+              sectionData: [
+                {
+                  IsgManagerName: "Asitha Kumara",
+                  IsgManagerEmail: "donotuse@iworkedge.com2022",
+                  IsgManagerContactNo: "040-27822991",
+                  IsgManagerPhoneNo: "0000000000",
+                  IsgExecutiveName: null,
+                  IsgExecutiveEmail: null,
+                  IsgExecutiveContactNo: "040-27822991",
+                  IsgExecutivePhoneNo: null,
+                  PolicyType: "All Risk",
+                  PolicyName: "All Risk",
+                  DocumentDated: "01/Nov/2025",
+                  DiscussionDated: "02/Nov/2025",
+                  PolicyTypeId: 3203,
+                },
+              ],
+            },
+            CompanyPolicyDetails: {
+              heading:
+                "PLACEMENT SLIP FOR Localization test (All Risk) POLICY.",
+              subHeading: "POLICY DETAILS",
+              dataType: "table",
+              underline: "Yes",
+              bold: "Yes",
+              tableType: "left-right",
+              sectionData: [
+                {
+                  "Company Name": "Localization test",
+                  "Nature of Business": null,
+                  "Policy Inception": "Date : 01/Nov/2025",
+                  "Policy Expiry": "Date : 25/Nov/2025",
+                  "Ins Co ": "AIA Insurance Lanka PLC\nColombo\nColombo",
+                  "Sum Insured": "LKR. 1,212",
+                  Premium: {
+                    dataType: "table",
+                    tableType: "left-right",
+                    sectionData: [
+                      {
+                        "Basic Premium": "LKR. 499",
+                        "SRCC premium amount": "LKR. 238",
+                        "TC premium amount": "LKR. 238",
+                        "Net premium": "LKR. 975",
+                        "Admin Charges": "LKR. 23",
+                        "Stamp duty": "LKR. 23",
+                        Cess: "LKR. 23",
+                        "VAT %": "23 %",
+                        VAT: "LKR. 23",
+                        "Policy Fee": "LKR. 23",
+                        "Gross premium": "LKR. 1,090",
+                        "Basic brokerage percentage": "23 %",
+                        "SRCC brokerage percentage": "23 %",
+                        "TC brokerage percentage": "23 %",
+                        "Basic brokerage amount": "LKR. 5.29",
+                        "SRCC brokerage amount": "LKR. 5.29",
+                        "TC brokerage amount": "LKR. 5.29",
+                        "Total Brokerage": "LKR. 15.87",
+                      },
+                    ],
+                  },
+                  "Payment Details": {
+                    dataType: "table",
+                    tableType: "left-right",
+                    sectionData: [
+                      {
+                        "Cheque No ": "87654",
+                        "Bank Name ": "kkjhgf",
+                        "Cheque Dated ": "14/Nov/2025",
+                        "Cheque Amount ": "LKR. 1,234",
+                        "CD Details ": "LKR. 2,345",
+                      },
+                    ],
+                  },
+                  "Co Insurance": {
+                    dataType: "table",
+                    tableType: "up-down",
+                    sectionData: [
+                      {
+                        INSURER: "AIA Insurance Lanka PLC, Colombo (Lead)",
+                        "PREMIUM SHARE": "100 %",
+                        PREMIUM: "LKR. 499",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            CompanyRiskDetails: {
+              heading: null,
+              subHeading: "RISK DETAILS",
+              dataType: "table",
+              underline: "Yes",
+              bold: "Yes",
+              tableType: "left-right",
+              sectionData: [
+                {
+                  "RISK DETAILS": {
+                    dataType: "table",
+                    tableType: "up-down",
+                    sectionData: [
+                      {
+                        Description: "NA",
+                        Remarks: "NA",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            CompanyScopeCoverDesired: {
+              heading: null,
+              subHeading: "SCOPE OF COVER DESIRED",
+              dataType: "table",
+              underline: "Yes",
+              bold: "Yes",
+              tableType: "left-right",
+              sectionData: [
+                {
+                  "Basic Details": {
+                    dataType: "table",
+                    tableType: "up-down",
+                    sectionData: [
+                      {
+                        Description: "Nature of property to be covered",
+                        Remarks: "p",
+                      },
+                      {
+                        Description: "Total Sum Insured",
+                        Remarks: "p",
+                      },
+                      {
+                        Description:
+                          "Fire & Allied Perils, Inclusive of Earthquake",
+                        Remarks: "Yes",
+                      },
+                      {
+                        Description: "Burglary with Theft extension",
+                        Remarks: "Yes",
+                      },
+                      {
+                        Description: "Electrical & Mechanical Breakdown",
+                        Remarks: "p",
+                      },
+                      {
+                        Description: "Accidental Damage",
+                        Remarks: "No",
+                      },
+                      {
+                        Description: "RSMD",
+                        Remarks: "Yes",
+                      },
+                      {
+                        Description: "Terrorism",
+                        Remarks: "p",
+                      },
+                      {
+                        Description:
+                          "Coverage whilst in transit as accompanied baggage",
+                        Remarks: "No",
+                      },
+                      {
+                        Description: "Basis of valuation",
+                        Remarks: "Reinstatement",
+                      },
+                      {
+                        Description: "Geographical Limit",
+                        Remarks: "Worldwide",
+                      },
+                      {
+                        Description: "Excess/Deductible",
+                        Remarks: "p",
+                      },
+                      {
+                        Description: "Claim Status incl Nature of claims",
+                        Remarks: "p",
+                      },
+                      {
+                        Description: "Waiver of Under Insurance",
+                        Remarks: "p",
+                      },
+                      {
+                        Description: "Terms & Conditions",
+                        Remarks: "p",
+                      },
+                    ],
+                  },
+                  WORDINGS: "NA",
+                  "ANY OTHER COVERS": {
+                    dataType: "table",
+                    tableType: "up-down",
+                    sectionData: [
+                      {
+                        Description: "Terms and Conditions",
+                        Remarks: "p",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            CompanyOtherDetails: {
+              heading: null,
+              subHeading: "OTHER DETAILS",
+              dataType: "table",
+              underline: "Yes",
+              bold: "Yes",
+              tableType: "left-right",
+              sectionData: [
+                {
+                  DEDUCTIBLES: "NA",
+                  "BASIS OF SUM INSURED": "NA",
+                  "PANEL OF SURVEYORS": "NA",
+                  "S L A": "NA",
+                  "OTHER COMMITMENTS BY INS CO": "NA",
+                },
+              ],
+            },
+            CompanyPremiumAndBrokerage: {
+              heading: null,
+              subHeading: "PREMIUM AND BROKERAGE",
+              dataType: "table",
+              underline: "Yes",
+              bold: "Yes",
+              tableType: "up-down",
+              sectionData: [
+                {
+                  Policy: "All Risk Policy",
+                  Premium: "LKR. 737",
+                  Brokerage: "0 %",
+                  Remarks: "NA",
+                },
+              ],
+            },
+            CompanyWarranties: {
+              heading: null,
+              subHeading: "WARRANTIES",
+              dataType: "table",
+              underline: "Yes",
+              bold: "Yes",
+              tableType: "up-down",
+              sectionData: [
+                {
+                  "Sl No": "",
+                  Issue: "",
+                  Remarks: "",
+                },
+                {
+                  "Sl No": "",
+                  Issue: "",
+                  Remarks: "",
+                },
+              ],
+            },
+            CompanyIndiaIsure: {
+              heading: null,
+              subHeading: "INDIA INSURE",
+              dataType: "table",
+              underline: "No",
+              bold: "Yes",
+              tableType: "up-down",
+              sectionData: [
+                {
+                  "": "Prepared By",
+                  Name: "Asitha Kumara",
+                  Signature: "",
+                },
+                {
+                  "": "Approved By",
+                  Name: "Koshila Amarathunga",
+                  Signature: "",
+                },
+              ],
+            },
+            CompanyInsuranceCompany: {
+              heading: null,
+              subHeading: "INSURANCE COMPANY",
+              dataType: "table",
+              underline: "No",
+              bold: "Yes",
+              tableType: "up-down",
+              sectionData: [
+                {
+                  Name: "AIA Insurance Lanka PLC",
+                  Signature: "",
+                  Date: "",
+                  Remarks: "",
+                },
+              ],
+            },
+            FooterSection: {
+              heading: "IIRM Lanka Insurance Brokers Private Limited",
+              subHeading:
+                "3rd Floor, No. 131, W.A.D. Ramanayake Mawatha, Colombo 02. General Line: +94117589600",
+              subHeading2: "Fax: +94112540396",
+              printedOn: "2025-11-03T16:31:50+05:30",
+              logoUrl: "../jpgs/iirm_sriLanka_logo.jpg",
+              organisationName: "IIRM Sri Lanka",
+            },
+          };
+        }
+        document.body.setAttribute("data-render-complete", "true");
+      })();
+    </script>
+  </body>
+</html>

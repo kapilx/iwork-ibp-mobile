@@ -1,0 +1,24 @@
+FROM iirm-node_modules
+
+WORKDIR /app 
+
+COPY --chown=app_user:app_group . .
+
+ARG SERVICE_NAME
+
+ARG STRAPI_PUBLIC_URL
+
+ENV SERVICE=$SERVICE_NAME
+
+ENV STRAPI_PUBLIC_URL=$STRAPI_PUBLIC_URL
+
+RUN mkdir -p /app/apps/services/$SERVICE/public/uploads
+
+# # RUN nx test $SERVICE --testPathPattern=src/app || true
+
+RUN nx sync 
+
+RUN STRAPI_PROXY_ENABLED=true STRAPI_PUBLIC_URL=$STRAPI_PUBLIC_URL npx nx build $SERVICE --configuration=production
+
+
+CMD ["pm2", "start", "nx serve $SERVICE --configuration=production", "--name", "$SERVICE", "--no-daemon"]

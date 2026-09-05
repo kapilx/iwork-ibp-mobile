@@ -1,0 +1,15 @@
+{
+    "collectionName": "components_policy_template_info_points_sections",
+    "info": {
+        "displayName": "Info Points Section",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "infoPoints": {
+            "type": "component",
+            "repeatable": true,
+            "component": "policy-template.info-point"
+        }
+    }
+}

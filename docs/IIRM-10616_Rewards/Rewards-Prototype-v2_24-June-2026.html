@@ -1,0 +1,410 @@
+R<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Insurer Rewards — iWork Prototype (IIRM-10616, Phase 1)</title>
+<style>
+  :root {
+    --primary:#333333; --accent:#FFBF00; --accent-border:#FFCA60; --accent-soft:#FFF3CC;
+    --bg:#fff9e5; --paper:#fff; --text:#111; --muted:#6b7280; --line:#e6e6e6; --link:#0A73E9; --danger:#d23b3b;
+    --kpi-purple-bg:#E0DBFF; --kpi-purple-text:#6105B1; --kpi-yellow-bg:#FFE7B7; --kpi-yellow-text:#825905;
+    --kpi-teal-bg:#BFF2EE; --kpi-teal-text:#04544D; --kpi-orange-bg:#FFE6CF; --kpi-orange-text:#964408;
+    --radius-s:4px; --radius-m:8px; --radius-l:12px; --font:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:var(--font); color:var(--text); background:var(--bg); font-size:14px; }
+  .topbar { height:56px; background:var(--paper); border-bottom:1px solid var(--line); display:flex; align-items:center; padding:0 20px; gap:24px; position:sticky; top:0; z-index:40; }
+  .logo { font-weight:800; font-size:18px; color:#e23744; } .logo span { color:var(--primary); }
+  .logo small { display:block; font-size:8px; color:var(--muted); font-weight:600; letter-spacing:2px; }
+  .topnav { margin-left:auto; display:flex; gap:20px; align-items:center; }
+  .topnav a { color:var(--primary); text-decoration:none; font-size:13px; font-weight:600; cursor:pointer; }
+  .topuser { display:flex; align-items:center; gap:10px; padding-left:16px; border-left:1px solid var(--line); }
+  .avatar { width:34px; height:34px; border-radius:50%; background:var(--primary); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }
+  .bell { width:22px; height:22px; color:var(--muted); }
+  .shell { display:flex; min-height:calc(100vh - 56px); }
+  .sidebar { width:232px; background:var(--bg); border-right:1px solid #f0e6c0; padding:14px 10px; flex-shrink:0; }
+  .nav-item { display:flex; align-items:center; gap:12px; padding:9px 12px; border-radius:var(--radius-m); color:#4a4a4a; cursor:pointer; font-weight:600; font-size:13px; margin-bottom:2px; }
+  .nav-item:hover { background:#fdeec0; } .nav-item.active { background:var(--accent); color:var(--primary); }
+  .nav-item svg { width:18px; height:18px; flex-shrink:0; }
+  .nav-child { display:flex; align-items:center; gap:10px; padding:8px 12px 8px 40px; border-radius:var(--radius-m); cursor:pointer; font-weight:700; font-size:13px; color:#c2410c; }
+  .nav-child .dot { width:6px; height:6px; border-radius:50%; background:#c2410c; }
+  .main { flex:1; padding:22px 26px; overflow-x:hidden; }
+  .page-head { display:flex; align-items:center; margin-bottom:16px; }
+  .page-title { font-size:22px; font-weight:700; } .crumb { font-size:12px; color:var(--muted); margin-bottom:4px; }
+  .mode-switch { margin-left:auto; display:flex; align-items:center; gap:10px; }
+  .mode-switch label { font-size:12px; color:var(--muted); font-weight:600; }
+  .seg { display:inline-flex; border:1px solid var(--line); border-radius:var(--radius-m); overflow:hidden; background:#fff; }
+  .seg button { border:0; background:#fff; padding:7px 14px; cursor:pointer; font-size:12px; font-weight:600; color:var(--primary); }
+  .seg button.on { background:var(--primary); color:#fff; }
+  .card { background:var(--paper); border-radius:var(--radius-l); box-shadow:0 1px 3px rgba(0,0,0,.06); padding:20px; margin-bottom:18px; }
+  .card-title { font-weight:700; font-size:15px; margin-bottom:14px; display:flex; align-items:center; }
+  .filter-icon { margin-left:auto; width:34px; height:34px; border-radius:var(--radius-m); background:var(--primary); display:flex; align-items:center; justify-content:center; color:#fff; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px 16px; } .grid-4 { grid-template-columns:repeat(4,1fr); }
+  .field { display:flex; flex-direction:column; gap:6px; }
+  .field label { font-size:12px; color:#51607a; font-weight:600; } .field label .req { color:var(--danger); }
+  .field .cond { font-size:10px; color:#9aa5ba; font-weight:600; }
+  .control { height:40px; border:1px solid #d7dae0; border-radius:var(--radius-m); padding:0 12px; font-size:13px; background:#fff; width:100%; font-family:var(--font); color:var(--text); }
+  select.control { appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 12px center; padding-right:30px; cursor:pointer; }
+  .control:focus { outline:none; border-color:var(--accent-border); box-shadow:0 0 0 2px var(--accent-soft); }
+  .control[readonly], .control:disabled { background:#f4f5f7; color:#5b6472; cursor:not-allowed; }
+  .radio-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .radio-pill { display:flex; align-items:center; gap:7px; border:1px solid #d7dae0; border-radius:30px; padding:8px 14px; cursor:pointer; font-size:13px; font-weight:600; background:#fff; }
+  .radio-pill input { accent-color:var(--primary); } .radio-pill.sel { border-color:var(--primary); background:#f4f5f7; }
+  .btn { border:0; border-radius:var(--radius-m); padding:10px 18px; font-size:13px; font-weight:700; cursor:pointer; font-family:var(--font); }
+  .btn-primary { background:var(--primary); color:#fff; } .btn-primary:hover { background:#1f1f1f; }
+  .btn-secondary { background:#fff; color:var(--link); border:1px solid #cfd6e4; }
+  .btn-ghost { background:#fff; color:var(--primary); border:1px solid var(--line); }
+  .btn-danger { background:var(--danger); color:#fff; } .btn[disabled] { opacity:.45; cursor:not-allowed; }
+  .kpis { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:18px; }
+  .kpi { border-radius:var(--radius-l); padding:20px; min-height:104px; }
+  .kpi .val { font-size:26px; font-weight:800; } .kpi .lbl { font-size:13px; font-weight:600; margin-top:6px; opacity:.9; }
+  .kpi.yellow { background:var(--kpi-yellow-bg); color:var(--kpi-yellow-text); }
+  .kpi.teal { background:var(--kpi-teal-bg); color:var(--kpi-teal-text); }
+  .kpi.orange { background:var(--kpi-orange-bg); color:var(--kpi-orange-text); }
+  .list-head { display:flex; align-items:center; margin-bottom:14px; }
+  .list-head .ttl { font-weight:700; font-size:15px; } .list-head .actions { margin-left:auto; display:flex; gap:10px; }
+  .table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius-m); }
+  table { border-collapse:collapse; width:100%; min-width:1080px; }
+  th { background:#f7f8fa; text-align:left; padding:12px 14px; font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:#51607a; border-bottom:1px solid var(--line); white-space:nowrap; }
+  td { padding:12px 14px; border-bottom:1px solid #f0f1f3; font-size:13px; white-space:nowrap; } tr:last-child td { border-bottom:0; }
+  tr.clickable:hover td { background:#fffdf5; cursor:pointer; }
+  .tag { display:inline-block; padding:3px 9px; border-radius:20px; font-size:11px; font-weight:700; }
+  .tag.generic { background:var(--kpi-purple-bg); color:var(--kpi-purple-text); }
+  .tag.specific { background:var(--kpi-orange-bg); color:var(--kpi-orange-text); }
+  .row-act { display:flex; gap:8px; }
+  .icon-btn { width:30px; height:30px; border-radius:var(--radius-s); border:1px solid var(--line); background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); }
+  .icon-btn:hover { border-color:var(--accent-border); color:var(--primary); background:#fffdf5; } .icon-btn.del:hover { color:var(--danger); border-color:#f5c2c2; }
+  .icon-btn svg { width:15px; height:15px; }
+  .docchip { color:var(--link); text-decoration:none; font-weight:600; font-size:12px; cursor:pointer; } .muted { color:var(--muted); }
+  .form-head { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+  .form-head h2 { margin:0; font-size:20px; } .form-head .pill { font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; background:var(--accent-soft); color:#825905; }
+  .back { display:inline-flex; align-items:center; gap:7px; cursor:pointer; font-weight:700; color:var(--primary); border:1px solid var(--line); background:#fff; border-radius:var(--radius-m); padding:8px 14px; font-size:13px; }
+  .back:hover { background:#fffdf5; border-color:var(--accent-border); }
+  .section-label { font-size:11px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; color:#9aa5ba; margin:22px 0 12px; border-bottom:1px dashed var(--line); padding-bottom:6px; }
+  .section-label:first-child { margin-top:4px; }
+  .hidden { display:none !important; } .hint { font-size:11px; color:var(--muted); margin-top:4px; }
+  .form-foot { display:flex; justify-content:flex-end; gap:12px; margin-top:8px; }
+  .doc-list { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+  .doc-item { display:flex; align-items:center; gap:10px; background:#f7f8fa; border:1px solid var(--line); border-radius:var(--radius-m); padding:7px 12px; font-size:12px; }
+  .doc-item .dname { font-weight:600; }
+  .doc-actions { margin-left:auto; display:flex; gap:14px; }
+  .dact { display:inline-flex; align-items:center; gap:5px; cursor:pointer; font-weight:700; font-size:12px; }
+  .dact svg { width:14px; height:14px; }
+  .dact.preview { color:var(--link); }
+  .dact.del { color:var(--danger); }
+  .modal { position:fixed; inset:0; background:rgba(0,0,0,.4); display:none; align-items:center; justify-content:center; z-index:70; }
+  .modal.open { display:flex; }
+  .modal-box { background:#fff; border-radius:var(--radius-l); width:440px; max-width:92vw; padding:24px; box-shadow:0 12px 40px rgba(0,0,0,.25); }
+  .modal-box h3 { margin:0 0 8px; font-size:17px; } .modal-box p { color:var(--muted); margin:0 0 20px; line-height:1.5; }
+  .modal-foot { display:flex; justify-content:flex-end; gap:12px; }
+  .banner { padding:10px 14px; border-radius:var(--radius-m); font-size:12px; margin-bottom:16px; display:flex; gap:8px; align-items:center; }
+  .banner.blue { background:#eff6ff; border:1px solid #bfdbfe; color:#1e40af; }
+  .banner.amber { background:#fff7e6; border:1px solid #ffe0a3; color:#825905; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">india<span>insure</span><small>THE RISK MANAGERS</small></div>
+  <nav class="topnav"><a>iTicket</a><a>Feedback</a><a>Poppins</a><a>iLearn</a><a>Knowledge Central</a><a>Manthan</a><a>My Mails</a></nav>
+  <div class="topuser"><svg class="bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span style="font-weight:600;font-size:13px;">System, Admin</span><div class="avatar">SA</div></div>
+</div>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>My Dashboard</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg>My Companies</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>My Contacts</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>My Approvals</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 12.6A2 2 0 0 0 21 11l-1-7-7-1a2 2 0 0 0-1.6.6L3 11l7 7z"/><circle cx="7.5" cy="7.5" r="1"/></svg>My Sales Portfolio</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.6 5.6l-6 6 2 2 6-6a4 4 0 0 0 5.6-5.6l-2.5 2.5-2-2z"/></svg>Manage Placements</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 0 1-4 0v-.1A1.6 1.6 0 0 0 6.6 19l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 4 13.6H4a2 2 0 0 1 0-4h.1A1.6 1.6 0 0 0 5 6.6l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 11 4.1V4a2 2 0 0 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7H21a2 2 0 0 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>My Service Portfolio</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>My Calendar</div>
+    <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4.9v10.2L12 22l-9-4.9V6.9z"/><path d="M3.3 7L12 12l8.7-5M12 12v10"/></svg>My Client Portfolio</div>
+    <div class="nav-child"><span class="dot"></span>Insurer Rewards</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Reports</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Admin Module</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Fin Ops</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>iConnect</div>
+    <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg>RW</div>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div><div class="crumb" id="crumb">My Client Portfolio / Insurer Rewards</div><div class="page-title" id="pageTitle">Insurer Rewards</div></div>
+      <div class="mode-switch"><label>Privilege simulation</label>
+        <div class="seg" id="privSeg"><button class="on" data-priv="full">Add / Edit / Delete</button><button data-priv="view">View Only</button></div>
+      </div>
+    </div>
+
+    <!-- LIST -->
+    <div id="listScreen">
+      <div class="banner blue" id="viewBanner" style="display:none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        View Only privilege — Add, Edit and Delete are disabled. Click a row to view details (read-only).
+      </div>
+
+      <div class="card">
+        <div class="card-title">Smart search <div class="filter-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.5V19l4 2v-8.5z"/></svg></div></div>
+        <div class="section-label" style="margin-top:0">Reward</div>
+        <div class="grid grid-4">
+          <div class="field"><label>Reward Category</label><select class="control" id="fCat"><option value="">All</option><option>Generic</option><option>Specific</option></select></div>
+          <div class="field"><label>Insurer</label><select class="control"><option value="">All insurers</option><option>National Insurance</option><option>United India</option><option>ICICI Lombard</option><option>Bajaj Allianz</option></select></div>
+        </div>
+        <div class="section-label">Period</div>
+        <div class="grid grid-4">
+          <div class="field"><label>Financial Year</label><select class="control"><option>2026-2027</option><option>2025-2026</option></select></div>
+          <div class="field"><label>Income Month</label><input class="control" placeholder="e.g. May 2026" /></div>
+          <div class="field"><label>From Date (Date of Income)</label><input class="control" type="date" /></div>
+          <div class="field"><label>To Date (Date of Income)</label><input class="control" type="date" /></div>
+        </div>
+        <div class="form-foot" style="justify-content:space-between;align-items:center;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;">
+          <div class="muted" style="font-size:12px;">Organisation: <b>IIRM India</b> · FY: <b>2026-2027</b></div>
+          <div style="display:flex;gap:14px;align-items:center;"><span class="docchip">Reset</span><button class="btn btn-primary">Run</button></div>
+        </div>
+      </div>
+
+      <div class="kpis" id="kpis"></div>
+
+      <div class="card">
+        <div class="list-head">
+          <div class="ttl">List of records (<span id="rowCount">0</span>)</div>
+          <div class="actions">
+            <button class="btn btn-ghost">Save view</button>
+            <button class="btn btn-ghost">Table settings</button>
+            <button class="btn btn-ghost" id="exportBtn">Export</button>
+            <button class="btn btn-primary" id="addBtn" onclick="openForm('add')">Add New Reward</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Reward Category</th><th>Insurer</th><th>Income Month</th><th>Date of Income</th>
+              <th>Reward Start</th><th>Reward End</th><th>Reward Type</th><th>Reward Amount</th>
+              <th>Documents</th><th>Created</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <div id="formScreen" class="hidden">
+      <div class="form-head">
+        <button class="back" onclick="closeForm()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Back to list</button>
+        <h2 id="formTitle">Add New Reward</h2><span class="pill" id="formPill">ADD</span>
+      </div>
+
+      <div class="card">
+        <div class="section-label" style="margin-top:0">Reward Category</div>
+        <div class="radio-row" id="catRadios">
+          <label class="radio-pill sel"><input type="radio" name="cat" value="Generic" checked onchange="onCatChange()"> Generic</label>
+          <label class="radio-pill"><input type="radio" name="cat" value="Specific" onchange="onCatChange()"> Specific</label>
+        </div>
+
+        <div class="banner amber specific-only hidden" id="specPending" style="margin-top:16px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+          Specific reward design is <b>pending client feedback</b> — fields below are a preview and subject to change.
+        </div>
+
+        <div class="section-label">Insurer & Scope</div>
+        <div class="grid grid-4">
+          <div class="field"><label>Insurer <span class="req">*</span></label>
+            <select class="control" id="inInsurer" onchange="renderRewardsList()"><option value="">Select insurer</option><option>National Insurance</option><option>United India</option><option>ICICI Lombard</option><option>Bajaj Allianz</option></select></div>
+          <div class="field specific-only hidden"><label>Company <span class="req">*</span></label><select class="control" id="inCompany"><option value="">Select company</option><option>Tata Motors Ltd</option><option>Reliance Industries</option><option>Adani Group</option></select></div>
+          <div class="field specific-only hidden"><label>Policy Type <span class="req">*</span></label><select class="control" id="inPolicyType"><option value="">Select</option><option>Fire</option><option>Marine</option><option>Engineering</option></select></div>
+          <div class="field specific-only hidden"><label>Policy <span class="req">*</span></label><select class="control" id="inPolicy" multiple size="1"><option>POL-2026-0098</option><option>POL-2026-0142</option></select></div>
+        </div>
+
+        <div class="section-label">Dates</div>
+        <div class="grid grid-4">
+          <div class="field"><label>Income Month <span class="req">*</span></label><input class="control" id="inIncMonth" placeholder="May 2026"></div>
+          <div class="field"><label>Date of Income <span class="req">*</span></label><input class="control" type="date" id="inIncDate"></div>
+          <div class="field"><label>Reward Start Date <span class="cond">(optional)</span></label><input class="control" type="date" id="inStart"></div>
+          <div class="field"><label>Reward End Date <span class="cond">(optional)</span></label><input class="control" type="date" id="inEnd"></div>
+        </div>
+
+        <div class="section-label">Reward</div>
+        <div class="grid grid-4">
+          <div class="field"><label>Reward Type <span class="req">*</span></label>
+            <div class="radio-row" id="rtRadios">
+              <label class="radio-pill sel"><input type="radio" name="rt" value="Fixed" checked onchange="onRtChange()"> Fixed Amount</label>
+              <label class="radio-pill pct-only hidden"><input type="radio" name="rt" value="pct" onchange="onRtChange()"> % </label>
+            </div>
+          </div>
+          <div class="field"><label>Reward Amount <span class="req">*</span></label><input class="control" type="number" id="inAmount" placeholder="0"></div>
+        </div>
+
+        <div class="section-label">Documents</div>
+        <div class="grid grid-4">
+          <div class="field"><label>Upload documents <span class="cond">(optional, multiple)</span></label><input class="control" type="file" id="inDocs" multiple style="padding-top:8px;" onchange="addDocs(this)"></div>
+        </div>
+        <div class="doc-list" id="docList"></div>
+      </div>
+
+      <!-- Rewards list (Generic, replaces Policies Considered) -->
+      <div class="card generic-only" id="rewardsListCard">
+        <div class="card-title">Rewards <span class="muted" style="font-weight:500;margin-left:8px;font-size:12px;">(existing rewards for the selected insurer — content pending client clarification, Open Q3)</span></div>
+        <div class="table-wrap">
+          <table style="min-width:700px;">
+            <thead><tr><th>Income Month</th><th>Date of Income</th><th>Reward Type</th><th>Reward Amount</th><th>Documents</th></tr></thead>
+            <tbody id="rlBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="form-foot" id="formFoot">
+        <button class="btn btn-secondary" onclick="closeForm()">Cancel</button>
+        <button class="btn btn-primary" id="saveBtn" onclick="saveForm()">Save Reward</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal" id="delModal">
+  <div class="modal-box"><h3>Delete reward?</h3><p id="delText"></p>
+    <div class="modal-foot"><button class="btn btn-secondary" onclick="closeDel()">Cancel</button><button class="btn btn-danger" id="delConfirm">Delete</button></div>
+  </div>
+</div>
+
+<script>
+  let rewards = [
+    { id:1, cat:'Generic',  insurer:'National Insurance', incMonth:'May 2026', incDate:'2026-06-12', start:'2026-05-01', end:'2026-05-31', rtype:'Fixed Amount', amount:1000000, docs:['NIC_commission_May2026.pdf'] },
+    { id:2, cat:'Generic',  insurer:'Bajaj Allianz',      incMonth:'Jun 2026', incDate:'2026-06-15', start:'2026-06-01', end:'2026-06-30', rtype:'Fixed Amount', amount:1600000, docs:['BA_statement.pdf','BA_email.msg'] },
+    { id:3, cat:'Generic',  insurer:'United India',       incMonth:'Apr 2026', incDate:'2026-05-05', start:'', end:'', rtype:'Fixed Amount', amount:500000, docs:[] },
+    { id:4, cat:'Specific', insurer:'ICICI Lombard',      incMonth:'Mar 2026', incDate:'2026-04-20', start:'', end:'', rtype:'Fixed Amount', amount:250000, docs:['ICICI_policy_reward.pdf'] },
+  ];
+  let privilege='full', formMode='add', editingId=null, docBuffer=[];
+  const inr = n => (n==null||n==='—')?'—':new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(n);
+  const fmtDate = d => (!d||d==='—')?'—':new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+
+  function renderKPIs(){
+    const total=rewards.reduce((s,r)=>s+(+r.amount||0),0);
+    const gen=rewards.filter(r=>r.cat==='Generic').reduce((s,r)=>s+(+r.amount||0),0);
+    const spec=rewards.filter(r=>r.cat==='Specific').reduce((s,r)=>s+(+r.amount||0),0);
+    document.getElementById('kpis').innerHTML=`
+      <div class="kpi yellow"><div class="val">${inr(total)}</div><div class="lbl">Total Reward Amount</div></div>
+      <div class="kpi teal"><div class="val">${inr(gen)}</div><div class="lbl">Generic Reward Amount</div></div>
+      <div class="kpi orange"><div class="val">${inr(spec)}</div><div class="lbl">Specific Reward Amount</div></div>`;
+  }
+  function renderTable(){
+    document.getElementById('tbody').innerHTML=rewards.map(r=>`
+      <tr class="${privilege==='view'?'clickable':''}" ${privilege==='view'?`onclick="openForm('view',${r.id})"`:''}>
+        <td><span class="tag ${r.cat.toLowerCase()}">${r.cat}</span></td>
+        <td>${r.insurer}</td><td>${r.incMonth}</td><td>${fmtDate(r.incDate)}</td>
+        <td>${fmtDate(r.start)}</td><td>${fmtDate(r.end)}</td><td>${r.rtype}</td><td><b>${inr(r.amount)}</b></td>
+        <td>${r.docs.length?`<a class="docchip" onclick="event.stopPropagation()">${r.docs.length} file(s)</a>`:'<span class="muted">—</span>'}</td>
+        <td>${fmtDate('2026-06-16')}</td>
+        <td><div class="row-act">
+          <button class="icon-btn" title="Edit" ${privilege==='view'?'disabled':''} onclick="event.stopPropagation();openForm('edit',${r.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+          <button class="icon-btn del" title="Delete" ${privilege==='view'?'disabled':''} onclick="event.stopPropagation();openDel(${r.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
+        </div></td>
+      </tr>`).join('');
+    document.getElementById('rowCount').textContent=rewards.length;
+  }
+
+  document.getElementById('privSeg').addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    privilege=b.dataset.priv;
+    [...e.currentTarget.children].forEach(c=>c.classList.toggle('on',c===b));
+    document.getElementById('addBtn').disabled=privilege==='view';
+    document.getElementById('viewBanner').style.display=privilege==='view'?'flex':'none';
+    renderTable();
+  });
+
+  function showList(){ document.getElementById('listScreen').classList.remove('hidden'); document.getElementById('formScreen').classList.add('hidden');
+    document.getElementById('pageTitle').textContent='Insurer Rewards'; document.getElementById('crumb').textContent='My Client Portfolio / Insurer Rewards'; }
+  function showForm(){ document.getElementById('listScreen').classList.add('hidden'); document.getElementById('formScreen').classList.remove('hidden'); window.scrollTo(0,0); }
+
+  function openForm(mode,id){
+    formMode=mode; editingId=id??null; docBuffer=[];
+    const t={add:'Add New Reward',edit:'Edit Reward',view:'View Reward'},p={add:'ADD',edit:'EDIT',view:'VIEW ONLY'};
+    document.getElementById('formTitle').textContent=t[mode]; document.getElementById('formPill').textContent=p[mode];
+    document.getElementById('pageTitle').textContent=t[mode]; document.getElementById('crumb').textContent='My Client Portfolio / Insurer Rewards / '+t[mode];
+    if(mode==='add') resetForm(); else loadForm(rewards.find(r=>r.id===id));
+    const ro=mode==='view';
+    document.querySelectorAll('#formScreen .control, #formScreen input[type=radio]').forEach(el=>{
+      if(el.tagName==='SELECT') el.disabled=ro; else el.readOnly=ro;
+      if(el.type==='radio'||el.type==='file') el.disabled=ro;
+    });
+    document.getElementById('formFoot').style.display=ro?'none':'flex';
+    showForm();
+  }
+  function closeForm(){ showList(); }
+
+  function resetForm(){
+    setRadio('cat','Generic'); setRadio('rt','Fixed');
+    ['inInsurer','inCompany','inPolicyType','inIncMonth','inIncDate','inStart','inEnd','inAmount'].forEach(i=>document.getElementById(i).value='');
+    docBuffer=[]; renderDocs(); onCatChange(); onRtChange(); renderRewardsList();
+  }
+  function loadForm(r){
+    setRadio('cat',r.cat); document.getElementById('inInsurer').value=r.insurer;
+    document.getElementById('inIncMonth').value=r.incMonth; document.getElementById('inIncDate').value=r.incDate||'';
+    document.getElementById('inStart').value=r.start||''; document.getElementById('inEnd').value=r.end||'';
+    setRadio('rt','Fixed'); document.getElementById('inAmount').value=r.amount;
+    docBuffer=[...r.docs]; renderDocs(); onCatChange(); onRtChange(); renderRewardsList();
+  }
+  function setRadio(name,val){ document.querySelectorAll(`input[name=${name}]`).forEach(el=>{ el.checked=el.value===val; el.closest('.radio-pill').classList.toggle('sel',el.checked); }); }
+
+  function onCatChange(){
+    const cat=document.querySelector('input[name=cat]:checked').value;
+    document.querySelectorAll('input[name=cat]').forEach(el=>el.closest('.radio-pill').classList.toggle('sel',el.checked));
+    document.querySelectorAll('.specific-only').forEach(el=>el.classList.toggle('hidden',cat!=='Specific'));
+    document.querySelectorAll('.generic-only').forEach(el=>el.classList.toggle('hidden',cat!=='Generic'));
+    // % option only appears for Specific (pending); hidden for Generic per client
+    document.querySelectorAll('.pct-only').forEach(el=>el.classList.toggle('hidden',cat!=='Specific'));
+    if(cat==='Generic'){ setRadio('rt','Fixed'); onRtChange(); }
+  }
+  function onRtChange(){ document.querySelectorAll('input[name=rt]').forEach(el=>el.closest('.radio-pill').classList.toggle('sel',el.checked)); }
+
+  function addDocs(input){ for(const f of input.files) docBuffer.push(f.name); input.value=''; renderDocs(); }
+  function renderDocs(){
+    document.getElementById('docList').innerHTML=docBuffer.map((d,i)=>`
+      <div class="doc-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <span class="dname">${d}</span>
+        <span class="doc-actions">
+          <span class="dact preview" title="Preview" onclick="alert('Preview document: ${d}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Preview</span>
+          <span class="dact del" title="Delete" onclick="docBuffer.splice(${i},1);renderDocs()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>Delete</span>
+        </span>
+      </div>`).join('');
+  }
+  function renderRewardsList(){
+    const ins=document.getElementById('inInsurer').value;
+    const rows=rewards.filter(r=>r.cat==='Generic' && (!ins||r.insurer===ins) && r.id!==editingId);
+    document.getElementById('rlBody').innerHTML=rows.length?rows.map(r=>`
+      <tr><td>${r.incMonth}</td><td>${fmtDate(r.incDate)}</td><td>${r.rtype}</td><td><b>${inr(r.amount)}</b></td><td>${r.docs.length?r.docs.length+' file(s)':'—'}</td></tr>`).join('')
+      : `<tr><td colspan="5" class="muted" style="text-align:center;padding:20px;">No existing rewards${ins?' for '+ins:''}.</td></tr>`;
+  }
+
+  function saveForm(){
+    const cat=document.querySelector('input[name=cat]:checked').value;
+    const insurer=document.getElementById('inInsurer').value;
+    if(!insurer){ alert('Insurer is mandatory.'); return; }
+    if(!document.getElementById('inIncMonth').value){ alert('Income Month is mandatory.'); return; }
+    if(!document.getElementById('inAmount').value){ alert('Reward Amount is mandatory.'); return; }
+    const rec={ cat, insurer,
+      incMonth:document.getElementById('inIncMonth').value,
+      incDate:document.getElementById('inIncDate').value||'',
+      start:document.getElementById('inStart').value||'',
+      end:document.getElementById('inEnd').value||'',
+      rtype:'Fixed Amount', amount:parseFloat(document.getElementById('inAmount').value)||0, docs:[...docBuffer] };
+    if(formMode==='edit') Object.assign(rewards.find(r=>r.id===editingId),rec);
+    else { rec.id=Math.max(0,...rewards.map(r=>r.id))+1; rewards.push(rec); }
+    renderKPIs(); renderTable(); closeForm();
+  }
+
+  let delId=null;
+  function openDel(id){ delId=id; const r=rewards.find(x=>x.id===id);
+    document.getElementById('delText').textContent=`Soft-delete the ${r.cat} reward for ${r.insurer} (${r.incMonth})? This requires the Delete privilege.`;
+    document.getElementById('delModal').classList.add('open'); }
+  function closeDel(){ document.getElementById('delModal').classList.remove('open'); }
+  document.getElementById('delConfirm').onclick=()=>{ rewards=rewards.filter(r=>r.id!==delId); renderKPIs(); renderTable(); closeDel(); };
+  document.getElementById('exportBtn').onclick=()=>alert('Export to Excel (privilege-gated) — exports the current filtered list.');
+
+  renderKPIs(); renderTable(); onCatChange(); onRtChange();
+</script>
+</body>
+</html>

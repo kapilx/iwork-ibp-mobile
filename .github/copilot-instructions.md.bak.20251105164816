@@ -1,0 +1,38 @@
+Refer to the following details while code generation
+
+## 1. Tech stacks details
+
+- **Repository**: Monorepo using nx
+- **Frontend**: React with vite config
+- **Backend**: nestjs with webpack
+- **Database**: PostgreSQL
+- **DevOps**: Docker, Kubernetes, AWS, CI/CD
+- **Testing**: Jest
+
+## 2. Validations for Required Fields
+
+Ensure that all required fields have proper validation checks.
+
+### Example (TypeScript Validation):
+
+```ts
+const validateInput = (inputField?: string): void => {
+  if (!inputField?.trim()) {
+    throw new Error("Input field is required.");
+  }
+};
+```
+
+### Example (React Form Validation with Yup & TypeScript):
+
+```ts
+import * as Yup from "yup";
+
+export const validationSchema = Yup.object({
+  name: Yup.string().trim().required("Name is required"),
+  email: Yup.string()
+    .trim()
+    .email("Invalid email")
+    .required("Email is required"),
+});
+```

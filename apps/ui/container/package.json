@@ -1,0 +1,53 @@
+{
+  "name": "@insurance-wellness-hub/container",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "nx": {
+    "targets": {
+      "serve": {
+        "executor": "@nx/vite:dev-server",
+        "options": {
+          "buildTarget": "@insurance-wellness-hub/container:build",
+          "viteConfig": "apps/ui/container/vite.config.ts"
+        },
+        "configurations": {
+          "development": {
+            "viteConfig": "apps/ui/container/vite.config.ts",
+            "mode": "development"
+          },
+          "production": {
+            "viteConfig": "apps/ui/container/vite.config.ts",
+            "mode": "production"
+          }
+        }
+      },
+      "build": {
+        "executor": "@nx/vite:build",
+        "outputs": [
+          "{workspaceRoot}/dist/apps/ui/container"
+        ],
+        "options": {
+          "outputPath": "dist/apps/ui/container",
+          "viteConfig": "apps/ui/container/vite.config.ts"
+        },
+        "configurations": {
+          "development": {
+            "viteConfig": "apps/ui/container/vite.config.ts"
+          },
+          "production": {
+            "viteConfig": "apps/ui/container/vite.config.ts"
+          }
+        }
+      },
+      "lint": {
+        "executor": "@nx/eslint:lint",
+        "options": {
+          "lintFilePatterns": [
+            "apps/ui/container/**/*.{ts,tsx}"
+          ]
+        }
+      }
+    }
+  }
+}

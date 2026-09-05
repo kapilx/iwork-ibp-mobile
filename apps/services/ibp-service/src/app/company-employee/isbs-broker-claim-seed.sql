@@ -1,0 +1,68 @@
+-- ISBS Broker Claim Creation — external API config
+-- auth_type = DIRECT: credentials embedded in payload, no auth step.
+-- Field names match the confirmed working camelCase payload.
+-- Dynamic fields ({{placeholder}}) are resolved at call time via document-service.
+
+INSERT INTO public.mstr_ext_application_ref (
+    id,
+    label,
+    description,
+    auth_type,
+    verification_token_api_url,
+    verification_token_api_method,
+    verification_token_api_payload,
+    step1_response_token_key,
+    magic_url_api_url,
+    magic_url_api_method,
+    magic_url_api_payload,
+    step2_response_data_key,
+    container_category,
+    is_active,
+    iss,
+    expires_in,
+    created_by,
+    updated_by
+) VALUES (
+    NEXTVAL('mstr_ext_application_ref_id_seq'),
+    'isbs-broker-claim',
+    'ISBS Broker Claim Creation — called after claim submission to register claim in ISBS system',
+    'DIRECT',
+    '',
+    '',
+    NULL,
+    '',
+    'https://dev.isbsindia.in/WebServ/api/Intermediary/BrokerClaimCreation',
+    'POST',
+    '{
+        "brokerUsername":          "IIRMHO",
+        "brokerPassword":          "IIRMHO",
+        "brokerAPIKey":            "2sNt9WUV/FnDsHxVPZRVU9Vc2F7erhqXDzz6ViN30ldYrpa1XFhVfymy3pZHVkjwAY6xJ9eg3GuDYOX8n+42RumUQrt1c+rXejEBvFDzMCo=",
+        "ptGhCardId":              "{{ptGhCardId}}",
+        "policyNo":                "{{policyNo}}",
+        "clmPatientName":          "{{clmPatientName}}",
+        "ptMobileNo":              "{{ptMobileNo}}",
+        "ptEmail":                 "{{ptEmail}}",
+        "ghHospitalId":            "{{ghHospitalId}}",
+        "clmRequestedAmt":         "{{clmRequestedAmt}}",
+        "clmHospFrom":             "{{clmHospFrom}}",
+        "clmHospTo":               "{{clmHospTo}}",
+        "clmHospName":             "{{clmHospName}}",
+        "clmCity":                 "{{clmCity}}",
+        "clmState":                "{{clmState}}",
+        "clmHospAddress":          "{{clmHospAddress}}",
+        "clmPincode":              "{{clmPincode}}",
+        "clmReasonAdmission":      "{{clmReasonAdmission}}",
+        "clmNatureOfLossCode":     "Illness",
+        "clmCommunicationRemarks": "{{clmCommunicationRemarks}}",
+        "clmSubtype":              "{{clmSubtype}}",
+        "clmTypeOfAdmission":      "Emergency",
+        "moduleId":                "1"
+    }'::jsonb,
+    'data',
+    'claims',
+    true,
+    '',
+    '10m',
+    1,
+    1
+);

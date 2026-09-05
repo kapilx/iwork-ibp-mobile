@@ -1,0 +1,11 @@
+{
+  "module": "inception-endorsement",
+  "epic": "Member Data Upload — IBP HR Portal",
+  "jira": "IIRM-10101",
+  "order": [
+    "hr-portal-inception-endorsement-prd.md",
+    "hr-portal-inception-endorsement-trd.md",
+    "hr-portal-inception-endorsement-sds.md",
+    "tasks.md"
+  ]
+}

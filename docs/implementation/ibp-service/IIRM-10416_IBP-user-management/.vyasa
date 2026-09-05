@@ -1,0 +1,6 @@
+order = [
+  "hr-portal-user-management-PRD.md",
+  "hr-portal-user-management-SDS.md",
+  "hr-portal-user-management-TRD.md",
+]
+folders_first = false

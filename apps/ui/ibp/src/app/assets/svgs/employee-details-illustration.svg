@@ -1,0 +1,11 @@
+<svg width="320" height="180" viewBox="0 0 320 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="320" height="180" rx="16" fill="#4DA3FF" fill-opacity="0.12"/>
+  <circle cx="250" cy="78" r="44" stroke="#FFFFFF" stroke-width="3"/>
+  <circle cx="250" cy="78" r="38" stroke="#1F6FDB" stroke-width="2" stroke-dasharray="6 6"/>
+  <text x="250" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" fill="#1F6FDB">00</text>
+  <text x="250" y="100" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#1F6FDB">Days left</text>
+  <path d="M64 115C74 103 88 96 104 96C120 96 134 103 144 115" stroke="#1F6FDB" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="104" cy="78" r="14" stroke="#1F6FDB" stroke-width="3"/>
+  <path d="M166 126H200" stroke="#1F6FDB" stroke-width="3" stroke-linecap="round"/>
+  <path d="M178 114V138" stroke="#1F6FDB" stroke-width="3" stroke-linecap="round"/>
+</svg>

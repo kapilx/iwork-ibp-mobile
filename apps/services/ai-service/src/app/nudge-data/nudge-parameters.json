@@ -1,0 +1,27 @@
+{
+  "Nudge_1_Response": {
+    "data": {
+      "unqualified_no": "229",
+      "pending_proposals": "5",
+      "approved_count": "10"
+    }
+  },
+  "Nudge_2_Response": {
+    "data": {
+      "pending_proposals": "2",
+      "rejected_count": "1"
+    }
+  },
+  "Nudge_3_Response": {
+    "data": {
+      "active_users": "15",
+      "inactive_users": "3"
+    }
+  },
+  "Nudge_4_Response": {
+    "data": {
+      "stalled_negotiations": "1000",
+      "monthly_growth": "8%"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+Topic: Claims Corner
+
+Date: 4-Junu-2026
+
+Location: IIRM - Office
+
+Participants: 
+1. Nithin Krishna Sirigiri
+2. Surya Mohan
+3. Kapil Dikshit
+4. Neeraj Joshi
+
+Requirements:
+------------
+1. Claim Process is a 2 step process - Claim Intimation & Claim Submission
+2. Claim Intimation: Before admitting into any hospital, employee can fill the details and submit the request. It should be shared to TPA.
+3. Claim Submission (reimbursement): 
+    3.1. If the claim intimation is there then employee should select the intimation request and continue the submission.
+    3.2. Direct claim submission, employee will fill the details, attach the document, AI should read the documents, show the details by reading Claim form, Discharge summary & other documents using AI, and employee will submit the request. On submission using TPA API, send this request and get the claim details back and show in Claims Corner.
+4. When the employee, click on Claim number or Status or TPA Portal then SSO and launch TPA Portal.
+5. This claim corner page should be very interactive or conversation UX by showing the Purpose of this menu (Claim Corner), what they can do here and how they can do it.
+6. Provide a QR code so that employee can scan and launches WhatsApp support for any quieres related to Claim or any questions to TPA. When we show QR, there also we should write steps like an interactive flow what is this QR, steps to use it, what they will get it.
+7. All the claims must be loaded into Database over night for the previous day and get it sync. No real-time data. Live status should be retrieved only when user click on refresh claim status.
+8. Instead of showing TPA Portal, show the TPA Name so that user will understand better.
+9. In the claim corner or any where in the application, we shouldn't show the Insurer Policy number.
+10. When we launch TPA portal, there should be message that, user is moving to different website and then perform the transition.
+11. In Dashboard there should be a banner, there should be banner to saying about claim corner and on click navigate to Claim submission.
+
+
+
+Phase-2 Scope:
+1. Claim Intelligence: When we read the Claim form, Discharge summary & other documents using AI, then system should validate the list of diagonis and service performed vs covered based on the policy, Claimed vs accepted amount based on the policy.
+2. Submit these details to TPA with the full details for creating a claim.
+

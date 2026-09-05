@@ -1,0 +1,19 @@
+FROM iirm-node_modules
+
+WORKDIR /app 
+
+COPY --chown=app_user:app_group . .
+
+ENV NODE_ENV=dev
+
+RUN cd apps/services/ai-utility-service \
+    && python3 -m venv .venv \
+    && source .venv/bin/activate \
+    && pip install -r requirements.txt
+
+RUN nx sync \
+    && nx build ai-utility-service
+
+EXPOSE 3026
+
+CMD ["/bin/sh", "-c", "cd apps/services/ai-utility-service && python3 -m venv .venv && source .venv/bin/activate && pm2 start 'python dist/main.py' --name ai-utility-service --no-daemon"]

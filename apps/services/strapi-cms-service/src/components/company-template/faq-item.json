@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_company_template_faq_items",
+  "info": {
+    "displayName": "FAQ Item",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "text"
+    },
+    "answer": {
+      "type": "customField",
+      "customField": "plugin::jodit-editor.jodit"
+    },
+    "category": {
+      "type": "string"
+    },
+    "sequencenumber": {
+      "type": "biginteger"
+    }
+  }
+}

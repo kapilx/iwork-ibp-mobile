@@ -1,0 +1,18 @@
+FROM iirm-node_modules
+
+WORKDIR /app 
+
+COPY --chown=app_user:app_group . .
+
+ENV NODE_ENV=dev
+
+ARG SERVICE_NAME
+
+ENV SERVICE=$SERVICE_NAME
+
+# # RUN nx test $SERVICE --testPathPattern=src/app || true
+
+RUN nx sync \
+    && nx build $SERVICE
+
+CMD ["pm2", "start" ,"node ./apps/services/$SERVICE/dist/main.js","--name","$SERVICE","--no-daemon"]

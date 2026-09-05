@@ -1,0 +1,70 @@
+Input object :
+
+{
+  "UserName": "iirmhclwebservice",
+  "Password": "iirmhcl$123",
+  "Flag_operationType": "NA",
+  "Del_hcldepid": "0",
+  "wef": "2021-08-01",
+  "Del_deletionremarks": "testing",
+  "prom_ctc": 0,
+
+  "prom_grade": "",
+  "prom_companyid": 0,
+  "prom_basesi": 0,
+  "SelfCount": 0,
+  "objEMPLOYEE_DATA": [
+    {
+      "E_EMP_HCL": {
+        "ENCRYPT_EIN": "",
+        "EIN": "90089",
+        "CTC": 0,
+        "NO_OF_DEPENDENTS": 0,
+        "IS_ESI": 0,
+        "INSUREDNAME": "",
+        "HCL_ENTITY": "",
+        "TRIGGER_FLAG": 0,
+        "IS_SEZ": 0,
+        "IS_EMCP": 0,
+        "EMAIL": "",
+        "MOBILE": "",
+        "GRADE": "",
+        "DOB": "",
+        "DOJ": "",
+        "INDIANADDRESS": "",
+        "MARITAL_STATUS": "", 
+        "DOM":"2017-05-15",    
+        "GENDER": "",
+        "OLDEMPID": 0,
+        "LOCATION": "",
+        "CHECK_SUM": "",
+        "BLOOD_GROUP": 0
+      },
+      "E_DEP_HCL": [
+        {
+          "HCL_DEPID": 485079,
+          "DEP_NAME": "Ramesh",
+          "HCL_DEPADDON": "",
+          "HCL_DEPREL": 4,
+          "DEP_DOB": "1978-09-21",
+          "DEP_GENDER": "F",
+          "MARITAL_STATUS": "M",
+          "TRIGGER_FLAG": 0,
+          "CHECK_SUM": "4a330a105c8e2aeda4d113343b796ac9484da8cf",
+          "BLOOD_GROUP": 0
+        }
+      ]
+    }
+  ]
+}
+
+Json output :
+{
+    "GetEmpStatus": null,
+    "GetStatus": {
+        "callStatus": true,
+        "procedureStatus": true,
+        "returnMessage": "Natural addition added successfully.",
+        "returnValue": 1
+    }
+}

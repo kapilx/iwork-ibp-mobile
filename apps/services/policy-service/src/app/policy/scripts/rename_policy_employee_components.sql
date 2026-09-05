@@ -1,0 +1,4 @@
+ALTER TABLE policy_employee_components RENAME TO policy_employee_enrollment_choice;
+
+ALTER TABLE policy_employee_enrollment_choice
+    ADD COLUMN parent_policy_component_action_type_id INT

@@ -1,0 +1,103 @@
+Input Object 
+{
+   "UserName": "iirmhclwebservice",
+   "Password": "iirmhcl$123",
+   "Flag_operationType": "SI",
+   "Del_hcldepid": 0,  
+   "wef": "",
+   "Del_deletionremarks": "",
+   "prom_ctc": 0,
+   "Prom_grade": "",
+   "prom_companyid": 0,
+   "prom_basesi": 0,
+   "SelfCount": 0,
+   "objEMPLOYEE_DATA": [{
+      "E_EMP_HCL": {
+         "ENCRYPT_EIN": "H84W8p+rJtNQPl4kZNGxFQ==",
+         "EIN": "51854879",
+         "CTC": 0,
+         "NO_OF_DEPENDENTS": 3,
+         "IS_ESI": 0,
+         "INSUREDNAME": "Gulam Mazhar",
+         "HCL_ENTITY": "1280",
+         "TRIGGER_FLAG": 2,
+         "IS_SEZ": 1,
+         "IS_EMCP": 0,
+         "EMAIL": "GULAM.MAZHAR@HCL.COM",
+         "MOBILE": "7682964667",
+         "GRADE": "E1",
+         "DOB": "1996-02-15",
+         "DOJ": "2019-10-11",
+         "INDIANADDRESS": "opposite Veterinary Hospital,Pugmil Road,Hazaribagh,Hazaribagh,825301",
+         "MARITAL_STATUS": "N",
+         "GENDER": "M",
+         "OLDEMPID": 0,
+         "IS_Contract":1,
+         "LOCATION": "",
+         "CHECK_SUM": 
+
+"90c1046151cf8b85ce515faa4b934f0b7c354232",
+         "BLOOD_GROUP": 0
+      },
+      "E_DEP_HCL": [
+         {
+            "HCL_DEPID": 298285,
+            "DEP_NAME": "Md Umar",
+            "HCL_DEPADDON": "2021-04-08 02:39:32",
+            "HCL_DEPREL": 1,
+            "DEP_DOB": "1964-01-15",
+            "DEP_GENDER": "M",
+            "MARITAL_STATUS": "M",
+            "TRIGGER_FLAG": 1,
+            "CHECK_SUM": 
+
+"ffc734dc1771aa8b37ed2e516300ef7c9bd15959",
+            "BLOOD_GROUP": 0
+         },
+         {
+            "HCL_DEPID": 298286,
+            "DEP_NAME": "Tasadduque Jahan",
+            "HCL_DEPADDON": "2021-04-08 02:39:32",
+            "HCL_DEPREL": 10,
+            "DEP_DOB": "1970-01-14",
+            "DEP_GENDER": "F",
+            "MARITAL_STATUS": "M",
+            "TRIGGER_FLAG": 1,
+            "CHECK_SUM": 
+
+"9dfbeb9a694ead7bc1a20bdfb96ff354dee47240",
+            "BLOOD_GROUP": 0
+         },
+         {
+            "HCL_DEPID": 298287,
+            "DEP_NAME": "Nazan Talat",
+            "HCL_DEPADDON": "2021-04-08 02:39:33",
+            "HCL_DEPREL": 6,
+            "DEP_DOB": "1994-07-15",
+            "DEP_GENDER": "F",
+            "MARITAL_STATUS": "N",
+            "TRIGGER_FLAG": 1,
+            "CHECK_SUM": 
+
+"41091376259d80a3e133196298d672cfab4e6d6a",
+            "BLOOD_GROUP": 0
+         }
+      ]
+   }]
+}
+---------------------------------------------------------
+
+Output object 
+
+{
+    "GetEmpStatus": [
+        {
+            "callStatus": true,
+            "ein": "51854879",
+            "procedureStatus": true,
+            "returnMessage": "Employee updated.",
+            "returnValue": 1
+        }
+    ],
+    "GetStatus": null
+}

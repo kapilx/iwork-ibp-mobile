@@ -1,0 +1,33 @@
+{
+    "kind": "collectionType",
+    "collectionName": "hello_worlds",
+    "info": {
+        "singularName": "hello-world",
+        "pluralName": "hello-worlds",
+        "displayName": "Hello World",
+        "description": "A simple Hello World content type"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "title": {
+            "type": "string",
+            "required": true,
+            "maxLength": 255,
+            "minLength": 1
+        },
+        "message": {
+            "type": "text",
+            "required": true
+        },
+        "isActive": {
+            "type": "boolean",
+            "default": true
+        },
+        "createdBy": {
+            "type": "string"
+        }
+    }
+}

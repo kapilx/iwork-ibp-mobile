@@ -1,0 +1,7 @@
+arrange:
+    - index.md
+    - product-spec-analysis.md
+    - phase-1-product-spec.md
+    - phase-1-technical-spec.md
+    - phase-1-development-tasks.md
+    - integration-guide.md

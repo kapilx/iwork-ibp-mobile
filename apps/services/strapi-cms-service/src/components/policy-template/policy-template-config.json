@@ -1,0 +1,56 @@
+{
+    "collectionName": "components_policy_template_policy_template_configs",
+    "info": {
+        "displayName": "Policy Template Config",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "compulsory": {
+            "type": "component",
+            "repeatable": true,
+            "component": "policy-template.component-info-points"
+        },
+        "optional": {
+            "type": "component",
+            "repeatable": true,
+            "component": "policy-template.component-info-points"
+        },
+        "flex": {
+            "type": "component",
+            "repeatable": true,
+            "component": "policy-template.component-info-points"
+        },
+        "policyFeaturesDoc": {
+            "type": "customField",
+            "customField": "plugin::jodit-editor.jodit"
+        },
+        "showCompanyContribution": {
+            "type": "boolean",
+            "default": false
+        },
+        "autoLockEnrollmentAfterConfirm": {
+            "type": "boolean",
+            "default": false
+        },
+        "requireConfirmationBeforeSubmit": {
+            "type": "boolean",
+            "default": false
+        },
+        "disclaimerNotes": {
+            "type": "component",
+            "repeatable": true,
+            "component": "policy-template.disclaimer-note"
+        },
+        "policyNotes": {
+            "type": "component",
+            "repeatable": true,
+            "component": "policy-template.policy-note"
+        },
+        "faqs": {
+            "type": "component",
+            "repeatable": true,
+            "component": "policy-template.faq-item"
+        }
+    }
+}

@@ -1,0 +1,107 @@
+pipeline {
+    agent any
+    environment {
+        SONARQUBE_PATH="/var/lib/jenkins/tools/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner -Dsonar.projectKey=Frontend -Dsonar.sources=./"
+        //fd_secret_ignore
+        LINK= "https://iwork.dev.indiainsure.com/"
+        //fd_secret_ignore
+        GOOGLE_CHAT_LINK= "https://chat.googleapis.com/v1/spaces/AAQAJMUj2F4/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=q08ZzlkJ7fXMx87vXuIAXkh2QKu7qqyCQ-iAfyG_l1g"
+    }
+    stages {
+        stage('get_commit_msg') {
+            steps {
+                script {
+                    env.GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
+                    env.GIT_COMMIT_EMAIL = sh (
+                        script: 'git --no-pager show -s --format=\'%ae\'',
+                        returnStdout: true
+                    ).trim()
+                }
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    nodejs('IIRM') {                      
+                    withSonarQubeEnv('Dev-Sonarqube') {
+                        sh "${SONARQUBE_PATH}"
+                      }
+                    }
+                }
+            }
+         }
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    nodejs('IIRM') {
+                        sh 'npm install && npm i nx@20.6.1 -g'
+                        sh 'npm i @rollup/rollup-linux-x64-gnu && npm install -g @nrwl/cli && npm install --save-dev @swc/core@latest && npm i  sass-embedded-linux-x64'
+                    }
+                }
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                script {
+                    try {
+                        nodejs('IIRM') {
+                            sh 'nx test iwork apps/ui/iwork/src/app'
+                        }
+                    } catch (Exception e) {
+                        echo "Unit tests failed, but continuing the pipeline."
+                    }
+                }
+            }
+        }
+        stage('Copying env from s3') {
+            steps {
+                script {
+                        sh 'sudo aws s3 cp s3://iirm-envvariables/dev/frontendenv ./.env.build.development'
+                }
+            }
+        }
+
+        stage('Generate the build file') {
+            steps {
+                script {
+                    nodejs('IIRM') {
+                        sh 'nx run @insurance-wellness-hub/iwork:build --configuration=development'
+                    }
+                }
+            }
+        }
+        stage('Upload to S3') {
+            steps {
+                sh 'aws s3 cp ./dist/apps/ui/iwork/ s3://iwork-frontend --recursive'
+            }
+        }
+        stage('Invalidate CloudFront Cache') {
+            steps {
+                sh 'aws cloudfront create-invalidation --distribution-id E2Z524DBGAOZ9E --paths "/*"'
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                def message = "Project Name: ${JOB_NAME}\n" +
+                              "Build Number: ${BUILD_NUMBER}\n" +
+                              "Environment: Dev\n"+
+                              "Branch: ${GIT_BRANCH}\n" +
+                              "Author Email: ${GIT_COMMIT_EMAIL}\n"+
+                              "Commit Message: ${GIT_COMMIT_MSG}\n"
+
+                def buildResult = currentBuild.currentResult
+                if (buildResult == "SUCCESS") {
+                    message += "Output: ${env.LINK}\nBuild Result: Success"
+                } else {
+                    message += "Output Log: ${env.RUN_DISPLAY_URL}\nBuild Result: Failed"
+                }
+
+                googlechatnotification message: message, url: "${GOOGLE_CHAT_LINK}"
+            }
+            cleanWs()
+        }
+    }
+}

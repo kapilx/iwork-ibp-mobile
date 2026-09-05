@@ -1,0 +1,25 @@
+{
+  "name": "@insurance-wellness-hub/connector-service-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@insurance-wellness-hub/connector-service"
+    ],
+    "targets": {
+      "e2e": {
+        "executor": "@nx/jest:jest",
+        "outputs": [
+          "{projectRoot}/test-output/jest/coverage"
+        ],
+        "options": {
+          "jestConfig": "apps/services/connector-service-e2e/jest.config.ts",
+          "passWithNoTests": true
+        },
+        "dependsOn": [
+          "@insurance-wellness-hub/connector-service:build"
+        ]
+      }
+    }
+  }
+}

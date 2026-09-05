@@ -1,0 +1,41 @@
+export class ContactResponseDto {
+  id!: number;
+  salutationLid!: number;
+  firstName!: string;
+  lastName!: string;
+  middleName?: string;
+  displayName!: string;
+  companyId!: number;
+  companyLocationId!: number;
+  companyBranchId!: number;
+  tagLid!: number;
+  contactTypeLid!: number;
+  department!: string;
+  designation!: string;
+  // commented out the below code due to the requirement change - veda - 09/05/2025
+  // departmentId!: number;
+  // designationId!: number;
+  statusLid!: number;
+  reportingToId?: number;
+  relationshipTypeLid?: number;
+  emailId?: string;
+  phone?: string;
+  remarks?: string;
+  createdBy?: number;
+  updatedBy?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+  address?: any[];
+  contactDetails?: any[];
+  professionalExperiences?: any[];
+  qualificationExperiences?: any[];
+  contactAddresses?: any[];
+  tpaContacts?: any[];
+  insurerContacts?: any[];
+  contactDocMaps?: any[];
+  communicationDetails?: any[];
+  company?: any;
+  contactRecordType?: any;
+  relationshipType?: any;
+}

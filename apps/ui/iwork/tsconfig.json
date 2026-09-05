@@ -1,0 +1,19 @@
+{
+  "files": [],
+  "include": ["src", "../ui-lib/src/lib/utils/formFieldsConditions.ts"],
+  "references": [
+    {
+      "path": "../../services/knowledge-service"
+    },
+    {
+      "path": "../ui-lib"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "extends": "../../../tsconfig.base.json"
+}

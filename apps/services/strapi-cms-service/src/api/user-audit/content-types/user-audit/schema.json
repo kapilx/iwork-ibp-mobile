@@ -1,0 +1,65 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_audits",
+  "info": {
+    "singularName": "user-audit",
+    "pluralName": "user-audits",
+    "displayName": "User Audit",
+    "description": "Track all user login/logout activities and important actions for audit trail"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user_id": {
+      "type": "string",
+      "required": true
+    },
+    "user_email": {
+      "type": "email",
+      "required": true
+    },
+    "activity": {
+      "type": "enumeration",
+      "enum": [
+        "login",
+        "logout",
+        "session_replaced",
+        "token_generated",
+        "token_expired",
+        "permission_check",
+        "admin_access",
+        "unauthorized_attempt"
+      ],
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "metadata": {
+      "type": "json"
+    },
+    "timestamp": {
+      "type": "datetime",
+      "required": true
+    },
+    "ip_address": {
+      "type": "string"
+    },
+    "user_agent": {
+      "type": "text"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "success": {
+      "type": "boolean",
+      "default": true
+    },
+    "error_message": {
+      "type": "text"
+    }
+  }
+}

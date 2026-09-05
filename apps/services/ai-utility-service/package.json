@@ -1,0 +1,65 @@
+{
+  "name": "@insurance-wellness-hub/ai-utility-service",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "targets": {
+      "install": {
+        "executor": "@nxlv/python:run-commands",
+        "options": {
+          "command": "source .venv/bin/activate && pip install -r requirements.txt",
+          "cwd": "apps/services/ai-utility-service"
+        }
+      },
+      "build": {
+        "executor": "@nxlv/python:run-commands",
+        "outputs": ["{projectRoot}/dist"],
+        "options": {
+          "command": "rm -rf dist && mkdir -p dist && cp -r src/* dist/ && cp requirements.txt dist/ && echo 'Build completed successfully'",
+          "cwd": "apps/services/ai-utility-service"
+        },
+        "configurations": {
+          "development": {
+            "command": "rm -rf dist && mkdir -p dist && cp -r src/* dist/ && cp requirements.txt dist/ && echo 'Development build completed'"
+          },
+          "production": {
+            "command": "rm -rf dist && mkdir -p dist && cp -r src/* dist/ && cp requirements.txt dist/ && echo 'Production build completed'"
+          }
+        }
+      },
+      "serve": {
+        "executor": "@nxlv/python:run-commands",
+        "defaultConfiguration": "development",
+        "options": {
+          "command": "source .venv/bin/activate && python src/main.py",
+          "cwd": "apps/services/ai-utility-service"
+        },
+        "configurations": {
+          "development": {
+            "command": "source .venv/bin/activate && python src/main.py"
+          },
+          "production": {
+            "command": "source .venv/bin/activate && python src/main.py"
+          },
+          "stage": {
+            "command": "source .venv/bin/activate && python src/main.py"
+          }
+        }
+      },
+      "test": {
+        "executor": "@nxlv/python:run-commands",
+        "options": {
+          "command": "source .venv/bin/activate && pytest tests/",
+          "cwd": "apps/services/ai-utility-service"
+        }
+      },
+      "lint": {
+        "executor": "@nxlv/python:run-commands",
+        "options": {
+          "command": "source .venv/bin/activate && flake8 src/",
+          "cwd": "apps/services/ai-utility-service"
+        }
+      }
+    }
+  }
+}

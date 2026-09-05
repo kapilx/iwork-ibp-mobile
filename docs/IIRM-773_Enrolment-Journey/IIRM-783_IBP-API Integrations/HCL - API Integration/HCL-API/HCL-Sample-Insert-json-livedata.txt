@@ -1,0 +1,105 @@
+Input jSON:
+
+{
+   "UserName": "iirmhclwebservice",
+   "Password": "iirmhcl$123",
+   "Flag_operationType": "SI",
+   "Del_hcldepid": 0,  
+   "wef": "",
+   "Del_deletionremarks": "",
+   "prom_ctc": 0,
+   "Prom_grade": "",
+   "prom_companyid": 0,
+   "prom_basesi": 0,
+   "SelfCount": 1,
+   "objEMPLOYEE_DATA": [{
+      "E_EMP_HCL": {
+         "ENCRYPT_EIN": "H84W8p+rJtNQPl4kZNGxFQ==",
+         "EIN": "51854879",
+         "CTC": 0,
+         "NO_OF_DEPENDENTS": 3,
+         "IS_ESI": 0,
+         "INSUREDNAME": "Gulam Mazhar",
+         "HCL_ENTITY": "1280",
+         "TRIGGER_FLAG": 1,
+         "IS_SEZ": 1,
+         "IS_EMCP": 0,
+         "EMAIL": "GULAM.MAZHAR@HCL.COM",
+         "MOBILE": "7682964667",
+         "GRADE": "E1",
+         "DOB": "1996-02-15",
+         "DOJ": "2019-10-11",
+         "INDIANADDRESS": "opposite Veterinary Hospital,Pugmil Road,Hazaribagh,Hazaribagh,825301",
+         "MARITAL_STATUS": "N",
+          "DOM":"", 
+         "GENDER": "M",
+         "OLDEMPID": 0,
+         "LOCATION": "",
+         "CHECK_SUM": 
+
+"90c1046151cf8b85ce515faa4b934f0b7c354232",
+         "BLOOD_GROUP": 0
+      },
+      "E_DEP_HCL": [
+         {
+            "HCL_DEPID": 298355,
+            "DEP_NAME": "testing1",
+            "HCL_DEPADDON": "2021-04-08 02:39:32",
+            "HCL_DEPREL": 1,
+            "DEP_DOB": "1964-01-15",
+            "DEP_GENDER": "M",
+            "MARITAL_STATUS": "M",
+            "TRIGGER_FLAG": 1,
+            "CHECK_SUM": 
+"d01d985567624be4f46188feeb41e290c7652fd1",
+            "BLOOD_GROUP": 0,
+"IS_DEP_EMCP":0
+         },
+         {
+            "HCL_DEPID": 298356,
+            "DEP_NAME": "Testing2",
+            "HCL_DEPADDON": "2021-04-08 02:39:32",
+            "HCL_DEPREL": 10,
+            "DEP_DOB": "1970-01-14",
+            "DEP_GENDER": "F",
+            "MARITAL_STATUS": "M",
+            "TRIGGER_FLAG": 1,
+            "CHECK_SUM":"0e262157c43e6128faeef5e2df166ccf02f0ef1a",
+            "BLOOD_GROUP": 0,
+"IS_DEP_EMCP":1
+         },
+         {
+            "HCL_DEPID": 298357,
+            "DEP_NAME": "testing3",
+            "HCL_DEPADDON": "2021-04-08 02:39:33",
+            "HCL_DEPREL": 6,
+            "DEP_DOB": "1994-07-15",
+            "DEP_GENDER": "F",
+            "MARITAL_STATUS": "N",
+            "TRIGGER_FLAG": 1,
+            "CHECK_SUM": 
+"7a11326aca6842b5a82affb61b6d747ab6ca161f",
+            "BLOOD_GROUP": 0,
+"IS_DEP_EMCP":1
+         }
+      ]
+   }]
+}
+
+
+=====================================================================
+======================================================================
+
+OutPut Json:
+
+
+{
+    "GetEmpStatus": {
+        "callStatus": true,
+        "ein": "51854879",
+        "procedureStatus": true,
+        "returnMessage": "Employee and dependents successfully updated",
+        "returnValue": 1
+    },
+   "GetStatus": null
+}

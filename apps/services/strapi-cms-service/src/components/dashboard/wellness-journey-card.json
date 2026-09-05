@@ -1,0 +1,26 @@
+{
+    "collectionName": "components_dashboard_wellness_journey_cards",
+    "info": {
+        "displayName": "Wellness Journey Card",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "description": {
+            "type": "text",
+            "required": true
+        },
+        "features": {
+            "type": "json",
+            "required": true
+        },
+        "buttonLabel": {
+            "type": "string",
+            "required": true
+        }
+    }
+}

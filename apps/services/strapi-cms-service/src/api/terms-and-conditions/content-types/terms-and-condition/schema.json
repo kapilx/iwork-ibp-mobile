@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "terms_and_conditions",
+  "info": {
+    "singularName": "terms-and-condition",
+    "pluralName": "terms-and-conditions",
+    "displayName": "Terms and Conditions",
+    "description": "Versioned terms and conditions documents with sections"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "version": {
+      "type": "integer",
+      "required": true,
+      "min": 1
+    },
+    "effectiveDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "introductionText": {
+      "type": "customField",
+      "customField": "plugin::jodit-editor.jodit"
+    },
+    "sections": {
+      "type": "component",
+      "repeatable": true,
+      "component": "terms-and-conditions.tc-section"
+    }
+  }
+}

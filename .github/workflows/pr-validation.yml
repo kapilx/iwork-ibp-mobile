@@ -1,0 +1,43 @@
+name: PR Validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
+    branches:
+      - develop
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const allowedPrefixes = [
+              'feat', 'fix', 'build', 'chore', 'ci', 'docs', 'style',
+              'refactor', 'perf', 'test', 'improvement', 'revert'
+            ];
+            const matches = allowedPrefixes.some(prefix => pr.title.toLowerCase().startsWith(prefix + ':'));
+            if (!matches) {
+              core.setFailed('PR title must start with one of: ' + allowedPrefixes.map(p => `'${p}:'`).join(', '));
+            }
+
+      - name: Check PR description
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr.body || pr.body.trim().length === 0) {
+              core.setFailed('PR description must not be empty.');
+            }
+
+      - name: Check PR labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr.labels || pr.labels.length < 1) {
+              core.setFailed('PR must have at least one label.');
+            }

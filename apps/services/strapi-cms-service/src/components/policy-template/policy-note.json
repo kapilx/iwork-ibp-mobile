@@ -1,0 +1,17 @@
+{
+    "collectionName": "components_policy_template_policy_notes",
+    "info": {
+        "displayName": "Policy Note",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "text": {
+            "type": "text"
+        },
+        "showNote": {
+            "type": "boolean",
+            "default": false
+        }
+    }
+}

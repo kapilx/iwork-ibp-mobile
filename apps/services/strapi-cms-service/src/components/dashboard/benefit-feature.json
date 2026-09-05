@@ -1,0 +1,14 @@
+{
+    "collectionName": "components_dashboard_benefit_features",
+    "info": {
+        "displayName": "Benefit Feature",
+        "description": "Individual benefit feature/bullet point"
+    },
+    "options": {},
+    "attributes": {
+        "text": {
+            "type": "string",
+            "required": true
+        }
+    }
+}

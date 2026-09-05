@@ -1,0 +1,25 @@
+{
+  "name": "@insurance-wellness-hub/auth-service-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@insurance-wellness-hub/auth-service"
+    ],
+    "targets": {
+      "e2e": {
+        "executor": "@nx/jest:jest",
+        "outputs": [
+          "{projectRoot}/test-output/jest/coverage"
+        ],
+        "options": {
+          "jestConfig": "apps/services/auth-service-e2e/jest.config.ts",
+          "passWithNoTests": true
+        },
+        "dependsOn": [
+          "@insurance-wellness-hub/auth-service:build"
+        ]
+      }
+    }
+  }
+}

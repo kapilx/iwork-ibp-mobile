@@ -1,0 +1,17 @@
+S. No,Nudge Title,Nudge Description,Prompt (AI/UX Prompt for iWork)
+1,Tasks Due Today,Tasks scheduled for today need user attention.,“You have {{tasks_due_today}} tasks due today. Would you like to prioritize or mark them as completed?”
+2,Overdue Tasks,Tasks that were due earlier remain incomplete.,“{{tasks_overdue}} tasks are overdue. Review pending items to avoid delays?”
+3,High Priority Tasks Pending,Critical tasks with high priority are still open.,“You have {{high_priority_pending}} high-priority tasks pending. Complete them to keep business on track?”
+4,Tasks Pending for More Than 7 Days,Tasks older than 7 days with no update.,“{{tasks_7days}} tasks are pending for more than 7 days. Update status or reassign?”
+5,Tasks Without Due Date,Tasks created without a due date (risk of neglect).,“{{tasks_no_due_date}} tasks don’t have a due date. Add deadlines to avoid slippage?”
+6,Tasks Assigned but Not Started,Tasks are assigned but users haven’t started them.,“{{tasks_not_started}} tasks assigned to you haven’t been started yet. Begin progress?”
+7,Tasks Waiting for Client Inputs,Tasks pending action from clients (documents/approvals).,“{{client_pending_tasks}} tasks are waiting for client inputs. Send reminders?”
+8,Repetitive Tasks Due This Week,Weekly/recurring tasks scheduled.,“Your recurring tasks are due this week. Review and take action?”
+9,Tasks Pending Review/Approval,Tasks require manager review before closure.,“{{tasks_pending_review}} tasks require manager approval. Notify or send reminders?”
+10,Tasks Linked to High-Value Deals,Tasks tied to large opportunities are pending.,“You have {{critical_opportunity_tasks}} tasks linked to high-value opportunities. Complete them to avoid deal delay?”
+11,Cross-Department Tasks Pending,Tasks assigned to other departments stuck without update.,“{{cross_dept_pending}} tasks need follow-up with Ops/Servicing/Finance. Coordinate with teams?”
+12,Tasks With Missing Documentation,Tasks pending due to missing invoice/quote/attachment.,“{{tasks_missing_docs}} tasks are missing documents. Upload or request required files?”
+13,Tasks Related to Renewals Due Soon,Renewal-linked tasks require action before expiry.,“{{renewal_tasks_due}} renewal-related tasks need attention. Complete to avoid renewal slippage?”
+14,Tasks Auto-Created by Workflow,Workflow-generated tasks pending confirmation.,“{{auto_tasks_pending}} auto-created tasks require your confirmation. Review and close?”
+15,Tasks Stuck in Progress,Tasks in-progress but with no update for long.,“{{stuck_tasks}} tasks haven’t been updated in over X days. Add update or escalate?”
+,,,

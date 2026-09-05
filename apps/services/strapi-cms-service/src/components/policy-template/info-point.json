@@ -1,0 +1,13 @@
+{
+    "collectionName": "components_policy_template_info_points",
+    "info": {
+        "displayName": "Info Point",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "text": {
+            "type": "text"
+        }
+    }
+}

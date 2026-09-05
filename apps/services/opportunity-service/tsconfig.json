@@ -1,0 +1,25 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "../policy-service"
+    },
+    {
+      "path": "../org-service"
+    },
+    {
+      "path": "../auth-service"
+    },
+    {
+      "path": "../service-lib"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+    "collectionName": "components_company_template_footers",
+    "info": {
+        "displayName": "Footer",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "companyName": {
+            "type": "string",
+            "default": "India Insure Risk Management & Insurance Broking"
+        },
+        "license": {
+            "type": "string",
+            "default": "Composite Broker IRDA Licence No. 101•Valid till 29.01.2027•CIN No: U67120TG1999PTC031412"
+        },
+        "copyright": {
+            "type": "string",
+            "default": "Copyright © 2026 India Insure Risk Management & Insurance Broking Services Pvt. Ltd."
+        }
+    }
+}

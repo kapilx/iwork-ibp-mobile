@@ -1,0 +1,58 @@
+INPUT JSON:
+
+{
+   "UserName": "iirmhclwebservice",
+   "Password": "iirmhcl$123",
+   "Flag_operationType": "ED",
+   "Del_hcldepid": 0,  
+   "wef": "2021-09-11",
+   "Del_deletionremarks": "testing",
+   "prom_ctc": 0,
+   "Prom_grade": "",
+   "prom_companyid": 0,
+   "prom_basesi": 0,
+   "SelfCount": 0,
+   "objEMPLOYEE_DATA": [{
+      "E_EMP_HCL": {
+         "ENCRYPT_EIN": "H84W8p+rJtNQPl4kZNGxFQ==",
+         "EIN": "51922416",
+         "CTC": 0,
+         "NO_OF_DEPENDENTS": 0,
+         "IS_ESI": 0,
+         "INSUREDNAME": "Devender Paladi",
+         "HCL_ENTITY": "",
+         "TRIGGER_FLAG": 1,
+         "IS_SEZ": 1,
+         "IS_EMCP": 0,
+         "EMAIL": "DEVENDER.PALADI@HCL.COM",
+         "MOBILE": "7682964667",
+         "GRADE": "E1",
+         "DOB": "1996-02-15",
+         "DOJ": "2019-10-11",
+         "INDIANADDRESS": "PDM RESIDENCY, 12 11 1649 AMBERNAGAR,WARASIGUDA,HYDERABAD,HYDERABAD,500044",
+         "MARITAL_STATUS": "N",
+          "DOM":"", 
+         "GENDER": "M",
+         "OLDEMPID": 0,
+         "LOCATION": "",
+         "CHECK_SUM": 
+
+"6c4b626ead1a31f382d762fba9c97e2e41f5616c",
+         "BLOOD_GROUP": 0
+      }
+      
+   }]
+}
+============================================================
+OUTPUT JSON:
+
+{
+    "GetEmpDetails": null,
+    "GetEmpStatus": null,
+    "GetStatus": {
+        "callStatus": true,
+        "procedureStatus": true,
+        "returnMessage": "Employee deleted successfully.",
+        "returnValue": 1
+    }
+}

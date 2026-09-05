@@ -1,0 +1,44 @@
+{
+    "collectionName": "components_company_template_contact_groups",
+    "info": {
+        "displayName": "Contact Group",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "isRequired": {
+            "type": "boolean",
+            "default": true
+        },
+        "primaryEscalation": {
+            "type": "component",
+            "repeatable": false,
+            "component": "company-template.contact-person",
+            "conditions": {
+                "visible": {
+                    "==": [
+                        {
+                            "var": "isRequired"
+                        },
+                        true
+                    ]
+                }
+            }
+        },
+        "secondaryEscalation": {
+            "type": "component",
+            "repeatable": false,
+            "component": "company-template.contact-person",
+            "conditions": {
+                "visible": {
+                    "==": [
+                        {
+                            "var": "isRequired"
+                        },
+                        true
+                    ]
+                }
+            }
+        }
+    }
+}

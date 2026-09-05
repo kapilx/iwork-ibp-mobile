@@ -1,0 +1,11 @@
+S. No,Nudge Title,Nudge Description,Prompt (AI/UX Prompt for iWork)
+1,Meetings Scheduled Today,You have meetings lined up today. Ensure you are prepared.,“You have {{count_today}} meetings scheduled for today. Review agenda and prepare material?”
+2,Meetings Overdue,Past meetings have incomplete minutes or updates.,“You have {{overdue_meetings}} overdue meetings without outcomes recorded. Update minutes now?”
+3,Upcoming Meetings (Next 7 Days),Meetings coming up soon but no prep material or agenda.,“You have {{upcoming_7}} meetings in the next 7 days. Add agenda points or attach documents?”
+4,Client Review Meetings Pending,Clients due for monthly/quarterly review do not have meetings scheduled.,“{{client_reviews}} clients are due for review. Would you like to schedule review meetings?”
+5,KDM Meetings Not Conducted,KDM meetings missing for important accounts (SO/RO).,“KDM meetings for {{missing_kdm}} key opportunities are pending. Schedule them to progress the cycle?”
+6,Negotiation Meetings Delayed,Final negotiation meetings pending for high-value deals.,“{{negotiation_pending}} high-value deals require negotiation meetings. Fix dates with decision-makers?”
+7,Meeting Notes Missing,Meetings conducted but minutes/notes missing.,“{{meetings_without_notes}} meetings don’t have notes recorded. Add outcomes to maintain audit trail?”
+8,Low Meeting Conversion Rate,"Many meetings are done, but opportunities are not moving.",“Meeting-to-opportunity movement is low this week. Review {{stuck_after_meeting}} cases needing escalation?”
+9,Client Not Attended Meetings,Clients have missed scheduled meetings; follow-up required.,“{{client_no_show}} meetings had client no-shows. Send rescheduling request?”
+10,Internal Meetings Pending Approval,Internal review meetings scheduled but not approved by managers.,“{{internal_pending}} internal meetings need managerial approval. Send reminders?”

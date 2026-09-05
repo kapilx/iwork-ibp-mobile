@@ -1,0 +1,3032 @@
+
+
+
+The policy configurator has six stages in it. They are as follows:
+1.  Policy Components
+2. Policy Relationships
+3. Policy Template
+4. Policy Parameters
+5. Policy Choices
+6. Constraints & Final Review
+
+
+Here are the in detailed discussion about the individual stage and it’s features here
+
+1. Policy components
+Here in this section we will have the components that the policy consists. 
+Each policy will have one base policy as default. 
+Each policy also supports one parental component, but if it supported, we will have only one parental policy component.
+Apart from the base and the optional policy components we will have an option to configure multiple optional components. These optional components are like add-on components to the base policy. 
+
+For example, in real world scenario, if we choose a Term life , in the policy description we also have critical illness top-up, which have a special privilege. In our case it is the wave-off of the premium from the moment policy holder identifies with a critical illness, this is similar to that.
+
+
+While coming to the components, we can have the following customisations
+
+a) we can configure the displaying label, to use as alias name
+b) We can configure the sum insured amount. for this component , what is the sum insured options that the policy provides. This we have multiple options like, 10lakhs, 1cr etc.,
+c) Sum insured model. In this we will have 2 types of sum insured models first one is Flat sum insured, where the sum insured numbers are fixed to a certain values. But we also have “MULTIPLE” sum insured model where the sum insured varies based on the the multiple of certain property of the employee.
+We have this multiple because , some policy benefits changes based on the annual salary earned by the employee, if the employee earns 10L annually assume that he has 1cr as sum insured values. But if the employee earns 20L annually he needs other have more sum insured value.  The moment we select the multiple sum insured option, we will display an interface to ask the user to select the property on which the multiple value should be applied on, and we will also have max and min values of the sum insured, so that even if the multiple value satisfies we will not support a value of sum insured that exceeds certain limit.
+
+d) we have an option to show contribution of the employee, this is primary because we will have a client facing portal , where employee can choose some components from the available components. In that case we will hide / show the contribution that he gives apart from the contributions from his respective company.
+
+e) There is one more flag called enable pro-ration. This is used for calculation the values based on the pro-ration flag. 
+Some scenarios related to this flag are mentioned below for quick understanding:   Pro-ration Feature – Logic Overview
+The Pro-ration flag determines how the premium is calculated when an employee is added to or removed from a policy during the policy period.
+
+When Pro-ration is Enabled
+* If an employee is added (inception) from the policy effective date and later deleted at any time during the policy period, the system will:
+    * Calculate the number of days the employee was active in the policy.
+    * Charge the premium only for the active days.
+    * If the employee is removed before the policy ends, a refund will be provided for the unused days.
+
+When Pro-ration is Disabled
+* If an employee is added at policy inception and deleted at any time during the policy period:
+    * No refund will be issued.
+    * The employee will be charged the full premium amount, regardless of the number of days they were active in the policy.
+
+Example Scenario
+Consider a Base Policy with the following details:
+* Sum Insured: ₹500,000
+* Company Contribution: ₹700
+* Employee Contribution: ₹300
+* Total Premium: ₹1000
+* Policy Duration: 100 days
+Assume two employees:
+* Employee 1: Active for the entire 100 days
+* Employee 2: Active for 50 days
+
+Case 1: Pro-ration Enabled at Component Level
+
+Employee	Active Days	Company Contribution	Employee Contribution	Total Premium
+Employee 1	100 days	₹700	₹300	₹1000
+Employee 2	50 days	₹350	₹150	₹500
+Explanation: Since pro-ration is enabled, Employee 2 is charged only for the 50 days they were active, and the premium is calculated proportionally.
+
+Case 2: Pro-ration Disabled at Component Level
+
+Employee	Active Days	Company Contribution	Employee Contribution	Total Premium
+Employee 1	100 days	₹700	₹300	₹1000
+Employee 2	50 days	₹700	₹300	₹1000
+Explanation: Since pro-ration is disabled, Employee 2 must pay the full premium, even though they were active for only 50 days.
+
+Refund Behaviour
+* Pro-ration Enabled: If an employee is deleted during the active policy period, the unused premium amount will be refunded.
+* Pro-ration Disabled: If an employee is deleted during the policy period, no refund will be issued, and the full premium remains payable.
+
+
+f) The last one is a flag to identify if the premium is calculated per family or per   each life enrolled in the policy. 
+
+For example there is a base policy and there is a sum insured value of 10Lakhs, for that if the premium configured to pay is 20000 . Now let’s say an employee is enrolled into that policy by opting that base policy, with his wife as dependent . Then in the scenario where the the base component , if the premium collection flag is enabled for family then he need to pay 20000 or if the premium is collected for life count insured it is 20000*2(employee & his wife) = 40000.     Now let’s discuss on the second section of the policy configuration
+
+2. PolicyRelationships:
+
+Here we will define the types of relationships that are supported / covered under this policy.   we have categories and sub-categories here. They are :
+a) Self: It refers to the employee / main insured person.
+b) Spouse/Partner:  we have husband, wife, spouse, partner, same-sex spouse, same-sex partner as sub categories under this.
+c) Children: we have Son, Daughter and child as sub categories here. 
+d) Parents: under this we have Father, Mother, Mother-in-law, father-in-law, parent as categories.
+e) Siblings: Brother, sister, siblings are the sub-categories under this. 
+
+Now for each main category we have to define MAX count and under each sub-category we have to give max & min age supported as per policy. If the dependent crossed that range or number of dependents in a category exceeds that max count of category we will not completed the employee enrolment.   Now let’s discuss the third section of the policy configuration:
+
+3. Policy Template:
+ In this section we will map the add-on policy components to individual base / parental components. We can also add the eligible relations  under each components from the available relationships. But the parental / adding mapped under parental will only have the parents category relations only.  Additionally , for each component we can give the provisional policy number, insurer policy number and the IIRM policy number also. We can also club the sum insured values of the optional/add-on components mapped with respective base/parental components.   4. Policy Parameters & 5. Policy choices:
+In this section we will defined the parameters of the policy based on which the insured sum changes for the insured person. 
+
+We have following options as the configurable parameters.
+Age, Grade, RelationShip Group, Gender, Marital Status, Designation, Custom-List and Custom-Range.  For example if we select marital status and enter the values as married and un-married, Then based on the sum insured option , even for the same sum insured values , the premium can be configured.   In simple scenario, for 500000 sum insured value an un-married person pays
+
+5000 (where 2000 company contribution and 3000 is his contribution) but the married person pays 6000 (where 3000 company contribution and 3000 is his contribution). In this different ways we can configure the premiums setup for each parameter of the employee.
+
+If you want custom list values you can use custom list , where you can select from wide range of options. Ans if you want range condition of particular property of the employee use the custom range.  The individual premiums for each section of the sum insured based on the insured person parameters can be set in POLICY CHOICES which is the 5th section of the policy configuration.   we can also select  which components  are available for each combination of the employee.    The last section is the constraints section where we have the following properties:  Basically they are the some additional questions before / during the confirmation of the employee /insured person enrollment process.  {
+  "tpaMandatory": {
+    "order": 21,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Is TPA upload mandatory?"
+  },
+  "gstApplicable": {
+    "order": 22,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Is GST applicable?"
+  },
+  "sezApplicable": {
+    "order": 12,
+    "uiType": "boolean",
+    "defaultValue": false,
+    "questionLabel": "Is SEZ based Tax discount applicable?"
+  },
+  "showGstToEmployee": {
+    "order": 23,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Show GST to employee?"
+  },
+  "crossParentsAllowed": {
+    "order": 7,
+    "uiType": "boolean",
+    "defaultValue": false,
+    "questionLabel": "Cross Selection of Parents Allowed?"
+  },
+  "payrollInstallments": {
+    "order": 13,
+    "uiType": "number",
+    "defaultValue": 1,
+    "questionLabel": "Number of payroll installments for premium deduction"
+  },
+  "studyingSonAgeExtension": {
+    "order": 9,
+    "uiType": "number",
+    "defaultValue": 0,
+    "questionLabel": "Studying Son Age Limit Extension (years)"
+  },
+  "twinsSecondChildAllowed": {
+    "order": 8,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Second Child as Twins Allowed?"
+  },
+  "maleEmployeesCoverInLaws": {
+    "order": 2,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Allow male employees to cover their parents-in-law?"
+  },
+  "sameGenderParentsAllowed": {
+    "order": 5,
+    "uiType": "boolean",
+    "defaultValue": false,
+    "questionLabel": "Allow coverage for same-gender parent & parent-in-law?"
+  },
+  "showEmployeeContribution": {
+    "order": 15,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Show Employer Contribution to Employee?"
+  },
+  "lockEnrollmentAfterCutoff": {
+    "order": 18,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Automatically lock enrollment for all employees after the defined cutoff date?"
+  },
+  "maleEmployeesCoverParents": {
+    "order": 1,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Allow male employees to cover their own parents?"
+  },
+  "femaleEmployeesCoverInLaws": {
+    "order": 4,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Allow female employees to cover their parents-in-law?"
+  },
+  "femaleEmployeesCoverParents": {
+    "order": 3,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Allow female employees to cover their own parents?"
+  },
+  "confirmationStatusVisibleToHR": {
+    "order": 17,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Make employee enrollment confirmation status visible to HR/Admins?"
+  },
+  "unmarriedDaughterAgeExtension": {
+    "order": 10,
+    "uiType": "number",
+    "defaultValue": 0,
+    "questionLabel": "Unmarried Daughter Age Limit Extension (years)"
+  },
+  "ageGapBetweenParentAndEmployee": {
+    "order": 6,
+    "uiType": "number",
+    "defaultValue": 18,
+    "questionLabel": "Minimum required age gap between employee and their parent (years, parent older)"
+  },
+  "enrollmentConfirmationRequired": {
+    "order": 14,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Enrollment Confirmation Required?"
+  },
+  "ageGapBetweenChildrenAndEmployee": {
+    "order": 11,
+    "uiType": "number",
+    "defaultValue": 18,
+    "questionLabel": "Minimum required age gap between employee and their child (years)"
+  },
+  "customDisclaimerBeforeSubmission": {
+    "order": 16,
+    "uiType": "text",
+    "defaultValue": "I confirm that the information provided is accurate and complete. I understand the terms and conditions of the selected plans I acknowledge that providing false information may result in claim rejection or policy cancellation.",
+    "questionLabel": "Custom disclaimer text to display to employees before enrollment submission"
+  },
+  "documentUploadForAdditionsRequired": {
+    "order": 19,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Require document upload for natural additions (life events)?"
+  },
+  "documentUploadForDeletionsRequired": {
+    "order": 20,
+    "uiType": "boolean",
+    "defaultValue": true,
+    "questionLabel": "Require document upload for natural deletions (life events)?"
+  }
+}
+
+
+
+
+I will share the sample json based of the policy configuration based on the discussion above in the following section: {
+  {
+  "components": [
+    {
+      "id": "base",
+      "type": "base",
+      "label": "Base Policy",
+      "premiumPerLife": true,
+      "siMultipleLabel": "CTC",
+      "sumInsuredModel": "FLAT",
+      "nextSumInsuredId": 3,
+      "proRationEnabled": true,
+      "sumInsuredOptions": [
+        {
+          "id": 1,
+          "value": "500000"
+        },
+        {
+          "id": 2,
+          "value": "1000000"
+        }
+      ],
+      "showCompanyContribution": true
+    },
+    {
+      "id": "parental",
+      "type": "parental",
+      "label": "Parental Policy",
+      "siMultipleMax": 800000,
+      "siMultipleMin": 200000,
+      "premiumPerLife": false,
+      "siMultipleLabel": "CTC",
+      "sumInsuredModel": "MULTIPLE",
+      "nextSumInsuredId": 3,
+      "proRationEnabled": false,
+      "sumInsuredOptions": [
+        {
+          "id": 1,
+          "value": "2"
+        },
+        {
+          "id": 2,
+          "value": "4"
+        }
+      ],
+      "showCompanyContribution": false
+    },
+    {
+      "id": "optional-1",
+      "type": "optional",
+      "label": "Critical illness",
+      "premiumPerLife": false,
+      "siMultipleLabel": "CTC",
+      "sumInsuredModel": "FLAT",
+      "nextSumInsuredId": 2,
+      "proRationEnabled": true,
+      "sumInsuredOptions": [
+        {
+          "id": 1,
+          "value": "500000"
+        }
+      ],
+      "showCompanyContribution": true
+    }
+  ],
+  "parameters": [
+    {
+      "id": "param-1",
+      "type": "range",
+      "lovDetails": [],
+      "displayName": "Age",
+      "rangeDetails": [
+        {
+          "id": "r-1",
+          "max": "30",
+          "min": "0",
+          "rangeDisplayName": "age band - 1"
+        },
+        {
+          "id": "r-2",
+          "max": "100",
+          "min": "31",
+          "rangeDisplayName": "age band - 2"
+        }
+      ],
+      "nextLovDetailId": 1,
+      "nextRangeDetailId": 3,
+      "parameterMasterName": "Age",
+      "relationGroupDetails": [],
+      "nextRelationGroupDetailId": 1
+    },
+    {
+      "id": "param-2",
+      "type": "list",
+      "lovDetails": [
+        {
+          "id": "lov-1",
+          "value": "Male",
+          "isDefault": true
+        },
+        {
+          "id": "lov-2",
+          "value": "Female",
+          "isDefault": true
+        }
+      ],
+      "displayName": "Gender",
+      "rangeDetails": [],
+      "nextLovDetailId": 3,
+      "nextRangeDetailId": 1,
+      "parameterMasterName": "Gender",
+      "relationGroupDetails": [],
+      "nextRelationGroupDetailId": 1
+    },
+    {
+      "id": "param-3",
+      "type": "list",
+      "lovDetails": [
+        {
+          "id": "lov-1",
+          "value": "Indian citizen",
+          "isDefault": true
+        },
+        {
+          "id": "lov-2",
+          "value": "NRI",
+          "isDefault": true
+        }
+      ],
+      "displayName": "Custom List",
+      "rangeDetails": [],
+      "nextLovDetailId": 3,
+      "nextRangeDetailId": 1,
+      "parameterMasterName": "Custom List",
+      "relationGroupDetails": [],
+      "nextRelationGroupDetailId": 1
+    },
+    {
+      "id": "param-4",
+      "type": "relation",
+      "lovDetails": [],
+      "displayName": "Relationship Group",
+      "rangeDetails": [],
+      "nextLovDetailId": 1,
+      "nextRangeDetailId": 1,
+      "parameterMasterName": "Relationship Group",
+      "relationGroupDetails": [
+        {
+          "id": "rg-1",
+          "familyMaxCount": "1",
+          "groupDisplayName": "Self group",
+          "selectedRelations": [
+            {
+              "name": "Self",
+              "maxCount": "1",
+              "selected": true
+            },
+            {
+              "name": "Spouse/Partner",
+              "maxCount": "",
+              "selected": false
+            },
+            {
+              "name": "Children",
+              "maxCount": "",
+              "selected": false
+            },
+            {
+              "name": "Parents",
+              "maxCount": "",
+              "selected": false
+            },
+            {
+              "name": "Siblings",
+              "maxCount": "",
+              "selected": false
+            }
+          ],
+          "familyMaxManuallySet": false
+        },
+        {
+          "id": "rg-2",
+          "familyMaxCount": "2",
+          "groupDisplayName": "Self+Spouse",
+          "selectedRelations": [
+            {
+              "name": "Self",
+              "maxCount": "1",
+              "selected": true
+            },
+            {
+              "name": "Spouse/Partner",
+              "maxCount": "1",
+              "selected": true
+            },
+            {
+              "name": "Children",
+              "maxCount": "",
+              "selected": false
+            },
+            {
+              "name": "Parents",
+              "maxCount": "",
+              "selected": false
+            },
+            {
+              "name": "Siblings",
+              "maxCount": "",
+              "selected": false
+            }
+          ],
+          "familyMaxManuallySet": false
+        },
+        {
+          "id": "rg-3",
+          "familyMaxCount": "4",
+          "groupDisplayName": "self+spouse+child",
+          "selectedRelations": [
+            {
+              "name": "Self",
+              "maxCount": "1",
+              "selected": true
+            },
+            {
+              "name": "Spouse/Partner",
+              "maxCount": "1",
+              "selected": true
+            },
+            {
+              "name": "Children",
+              "maxCount": "2",
+              "selected": true
+            },
+            {
+              "name": "Parents",
+              "maxCount": "",
+              "selected": false
+            },
+            {
+              "name": "Siblings",
+              "maxCount": "",
+              "selected": false
+            }
+          ],
+          "familyMaxManuallySet": false
+        }
+      ],
+      "nextRelationGroupDetailId": 4
+    }
+  ],
+  "constraints": {
+    "tpaMandatory": true,
+    "gstApplicable": true,
+    "sezApplicable": false,
+    "showGstToEmployee": true,
+    "crossParentsAllowed": false,
+    "payrollInstallments": 1,
+    "studyingSonAgeExtension": 0,
+    "twinsSecondChildAllowed": true,
+    "maleEmployeesCoverInLaws": true,
+    "sameGenderParentsAllowed": false,
+    "showEmployeeContribution": true,
+    "lockEnrollmentAfterCutoff": true,
+    "maleEmployeesCoverParents": true,
+    "femaleEmployeesCoverInLaws": true,
+    "femaleEmployeesCoverParents": true,
+    "confirmationStatusVisibleToHR": true,
+    "unmarriedDaughterAgeExtension": 0,
+    "ageGapBetweenParentAndEmployee": 18,
+    "enrollmentConfirmationRequired": true,
+    "ageGapBetweenChildrenAndEmployee": 18,
+    "customDisclaimerBeforeSubmission": "I confirm that the information provided is accurate and complete. I understand the terms and conditions of the selected plans I acknowledge that providing false information may result in claim rejection or policy cancellation.",
+    "documentUploadForAdditionsRequired": true,
+    "documentUploadForDeletionsRequired": true
+  },
+  "policyOptions": [
+    {
+      "optionId": "opt-1",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-1"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-1"
+        }
+      ],
+      "optionLabel": "Age: age band - 1 | Gender: Male | Custom List: Indian citizen | Relationship Group: Self group",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 100,
+                "employeeContribution": 200
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 100,
+              "employeeContribution": 200
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 50,
+                "employeeContribution": 60
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 0.2,
+              "employeeContribution": 0.5
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-2",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-1"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-2"
+        }
+      ],
+      "optionLabel": "Age: age band - 1 | Gender: Male | Custom List: Indian citizen | Relationship Group: Self+Spouse",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 20,
+                "employeeContribution": 30
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 100,
+              "employeeContribution": 200
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 200,
+                "employeeContribution": 300
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 0.6,
+              "employeeContribution": 0.7
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-3",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-1"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-3"
+        }
+      ],
+      "optionLabel": "Age: age band - 1 | Gender: Male | Custom List: Indian citizen | Relationship Group: self+spouse+child",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 200,
+                "employeeContribution": 300
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 120,
+              "employeeContribution": 130
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 140,
+                "employeeContribution": 50
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 0.5,
+              "employeeContribution": 0.7
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-4",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-1"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-1"
+        }
+      ],
+      "optionLabel": "Age: age band - 1 | Gender: Male | Custom List: NRI | Relationship Group: Self group",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 100,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 2,
+              "companyContribution": 0.9,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-5",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-1"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-2"
+        }
+      ],
+      "optionLabel": "Age: age band - 1 | Gender: Male | Custom List: NRI | Relationship Group: Self+Spouse",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 120,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 120
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-6",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-1"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-3"
+        }
+      ],
+      "optionLabel": "Age: age band - 1 | Gender: Male | Custom List: NRI | Relationship Group: self+spouse+child",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 11,
+                "employeeContribution": 12
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 121,
+              "employeeContribution": 110
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 0.4,
+              "employeeContribution": 0.3
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-7",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-1"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-1"
+        }
+      ],
+      "optionLabel": "Age: age band - 1 | Gender: Female | Custom List: Indian citizen | Relationship Group: Self group",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 120,
+                "employeeContribution": 150
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 2,
+              "companyContribution": 1200,
+              "employeeContribution": 1400
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-8",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-1"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-2"
+        }
+      ],
+      "optionLabel": "Age: age band - 1 | Gender: Female | Custom List: Indian citizen | Relationship Group: Self+Spouse",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 1200,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 130,
+              "employeeContribution": 140
+            },
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 2,
+              "companyContribution": 140,
+              "employeeContribution": 150
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-9",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-1"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-3"
+        }
+      ],
+      "optionLabel": "Age: age band - 1 | Gender: Female | Custom List: Indian citizen | Relationship Group: self+spouse+child",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 120,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 0.5,
+              "employeeContribution": 0.7
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-10",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-1"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-1"
+        }
+      ],
+      "optionLabel": "Age: age band - 1 | Gender: Female | Custom List: NRI | Relationship Group: Self group",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 2,
+              "companyContribution": 3000,
+              "employeeContribution": 4000
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-11",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-1"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-2"
+        }
+      ],
+      "optionLabel": "Age: age band - 1 | Gender: Female | Custom List: NRI | Relationship Group: Self+Spouse",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 1090,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-12",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-1"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-3"
+        }
+      ],
+      "optionLabel": "Age: age band - 1 | Gender: Female | Custom List: NRI | Relationship Group: self+spouse+child",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 2,
+              "companyContribution": 1800,
+              "employeeContribution": 1900
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 0.3,
+              "employeeContribution": 0.5
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-13",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-2"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-1"
+        }
+      ],
+      "optionLabel": "Age: age band - 2 | Gender: Male | Custom List: Indian citizen | Relationship Group: Self group",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 2,
+              "companyContribution": 60,
+              "employeeContribution": 70
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 2,
+              "companyContribution": 0.3,
+              "employeeContribution": 0.4
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-14",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-2"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-2"
+        }
+      ],
+      "optionLabel": "Age: age band - 2 | Gender: Male | Custom List: Indian citizen | Relationship Group: Self+Spouse",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 1200,
+                "employeeContribution": 1200
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 1300,
+              "employeeContribution": 1400
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-15",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-2"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-3"
+        }
+      ],
+      "optionLabel": "Age: age band - 2 | Gender: Male | Custom List: Indian citizen | Relationship Group: self+spouse+child",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 50,
+                "employeeContribution": 60
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 1500,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-16",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-2"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-1"
+        }
+      ],
+      "optionLabel": "Age: age band - 2 | Gender: Male | Custom List: NRI | Relationship Group: Self group",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 1414,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-17",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-2"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-2"
+        }
+      ],
+      "optionLabel": "Age: age band - 2 | Gender: Male | Custom List: NRI | Relationship Group: Self+Spouse",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 1200,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": true,
+              "sumInsuredId": 2,
+              "companyContribution": 1500,
+              "employeeContribution": 100
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 0.4,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-18",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-2"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-3"
+        }
+      ],
+      "optionLabel": "Age: age band - 2 | Gender: Male | Custom List: NRI | Relationship Group: self+spouse+child",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 1400,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 2,
+              "companyContribution": 1400,
+              "employeeContribution": 1500
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-19",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-2"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-1"
+        }
+      ],
+      "optionLabel": "Age: age band - 2 | Gender: Female | Custom List: Indian citizen | Relationship Group: Self group",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 120,
+                "employeeContribution": 140
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 130,
+              "employeeContribution": 140
+            },
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 2,
+              "companyContribution": 1100,
+              "employeeContribution": 1200
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 1600,
+                "employeeContribution": 2000
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 0.4,
+              "employeeContribution": 0.5
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-20",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-2"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-2"
+        }
+      ],
+      "optionLabel": "Age: age band - 2 | Gender: Female | Custom List: Indian citizen | Relationship Group: Self+Spouse",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 300,
+              "employeeContribution": 400
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 120,
+                "employeeContribution": 140
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 2,
+              "companyContribution": 0.4,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-21",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-2"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-1"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-3"
+        }
+      ],
+      "optionLabel": "Age: age band - 2 | Gender: Female | Custom List: Indian citizen | Relationship Group: self+spouse+child",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 1400,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": false,
+                "isAvailable": false,
+                "sumInsuredId": 1,
+                "companyContribution": 0,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 1,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-22",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-2"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-1"
+        }
+      ],
+      "optionLabel": "Age: age band - 2 | Gender: Female | Custom List: NRI | Relationship Group: Self group",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 200,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 1800,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 300,
+                "employeeContribution": 500
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 0.4,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-23",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-2"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-2"
+        }
+      ],
+      "optionLabel": "Age: age band - 2 | Gender: Female | Custom List: NRI | Relationship Group: Self+Spouse",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 1400,
+                "employeeContribution": 0
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 180,
+              "employeeContribution": 190
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 190,
+                "employeeContribution": 200
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 0.33,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    },
+    {
+      "optionId": "opt-24",
+      "optionMeta": [
+        {
+          "parameterId": "param-1",
+          "parameterOptionId": "r-2"
+        },
+        {
+          "parameterId": "param-2",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-3",
+          "parameterOptionId": "lov-2"
+        },
+        {
+          "parameterId": "param-4",
+          "parameterOptionId": "rg-3"
+        }
+      ],
+      "optionLabel": "Age: age band - 2 | Gender: Female | Custom List: NRI | Relationship Group: self+spouse+child",
+      "basePolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 120,
+                "employeeContribution": 140
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 2000,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "base",
+          "configured": true
+        }
+      },
+      "parentalPolicyChoices": {
+        "addonChoices": [
+          {
+            "choices": [
+              {
+                "isDefault": true,
+                "isAvailable": true,
+                "sumInsuredId": 1,
+                "companyContribution": 2100,
+                "employeeContribution": 2000
+              }
+            ],
+            "policyId": "optional-1",
+            "configured": true
+          }
+        ],
+        "mainPolicyChoices": {
+          "choices": [
+            {
+              "isDefault": true,
+              "isAvailable": true,
+              "sumInsuredId": 1,
+              "companyContribution": 0.4,
+              "employeeContribution": 0
+            },
+            {
+              "isDefault": false,
+              "isAvailable": false,
+              "sumInsuredId": 2,
+              "companyContribution": 0,
+              "employeeContribution": 0
+            }
+          ],
+          "policyId": "parental",
+          "configured": true
+        }
+      }
+    }
+  ],
+  "relationships": {
+    "familyMaxPolicyLevel": "7",
+    "enabledPolicyRelations": [
+      {
+        "type": "Self",
+        "enabled": true,
+        "maxCount": "1",
+        "configuredOptions": [
+          {
+            "name": "Self",
+            "maxAge": "90",
+            "minAge": "18",
+            "enabled": true,
+            "maxAgeError": ""
+          }
+        ]
+      },
+      {
+        "type": "Spouse/Partner",
+        "enabled": true,
+        "maxCount": "1",
+        "configuredOptions": [
+          {
+            "name": "Husband",
+            "maxAge": "90",
+            "minAge": "18",
+            "enabled": true
+          },
+          {
+            "name": "Wife",
+            "maxAge": "90",
+            "minAge": "18",
+            "enabled": true
+          },
+          {
+            "name": "Spouse",
+            "maxAge": "",
+            "minAge": "",
+            "enabled": false
+          },
+          {
+            "name": "Partner",
+            "maxAge": "",
+            "minAge": "",
+            "enabled": false
+          },
+          {
+            "name": "Same-sex Spouse",
+            "maxAge": "",
+            "minAge": "",
+            "enabled": false
+          },
+          {
+            "name": "Same-sex Partner",
+            "maxAge": "",
+            "minAge": "",
+            "enabled": false
+          }
+        ]
+      },
+      {
+        "type": "Children",
+        "enabled": true,
+        "maxCount": "1",
+        "configuredOptions": [
+          {
+            "name": "Son",
+            "maxAge": "25",
+            "minAge": "0",
+            "enabled": true
+          },
+          {
+            "name": "Daughter",
+            "maxAge": "25",
+            "minAge": "0",
+            "enabled": true
+          },
+          {
+            "name": "Child",
+            "maxAge": "",
+            "minAge": "",
+            "enabled": false
+          }
+        ]
+      },
+      {
+        "type": "Parents",
+        "enabled": true,
+        "maxCount": "2",
+        "configuredOptions": [
+          {
+            "name": "Father",
+            "maxAge": "90",
+            "minAge": "18",
+            "enabled": true
+          },
+          {
+            "name": "Mother",
+            "maxAge": "90",
+            "minAge": "18",
+            "enabled": true
+          },
+          {
+            "name": "Mother-in-law",
+            "maxAge": "",
+            "minAge": "",
+            "enabled": false
+          },
+          {
+            "name": "Father-in-law",
+            "maxAge": "",
+            "minAge": "",
+            "enabled": false
+          },
+          {
+            "name": "Parent",
+            "maxAge": "",
+            "minAge": "",
+            "enabled": false
+          }
+        ]
+      },
+      {
+        "type": "Siblings",
+        "enabled": true,
+        "maxCount": "2",
+        "configuredOptions": [
+          {
+            "name": "Brother",
+            "maxAge": "60",
+            "minAge": "0",
+            "enabled": true,
+            "maxAgeError": "",
+            "minAgeError": ""
+          },
+          {
+            "name": "Sister",
+            "maxAge": "60",
+            "minAge": "0",
+            "enabled": true
+          },
+          {
+            "name": "Sibling",
+            "maxAge": "",
+            "minAge": "",
+            "enabled": false
+          }
+        ]
+      }
+    ]
+  },
+  "policyTemplate": {
+    "basePolicy": {
+      "addonIds": [
+        {
+          "optionId": "optional-1",
+          "iirmPolicyNumber": "4321",
+          "eligibleRelations": [
+            "Self"
+          ],
+          "insurerPolicyNumber": "321",
+          "provisionPolicyNumber": "21"
+        }
+      ],
+      "mainPolicyId": "base",
+      "clubSumInsured": false,
+      "iirmPolicyNumber": "1234",
+      "eligibleRelations": [
+        "Self",
+        "Husband",
+        "Wife",
+        "Son",
+        "Daughter",
+        "Father",
+        "Mother",
+        "Brother",
+        "Sister"
+      ],
+      "insurerPolicyNumber": "123",
+      "provisionPolicyNumber": "12"
+    },
+    "parentalPolicy": {
+      "addonIds": [
+        {
+          "optionId": "optional-1",
+          "iirmPolicyNumber": "12121212",
+          "eligibleRelations": [
+            "Father",
+            "Mother"
+          ],
+          "insurerPolicyNumber": "121212",
+          "provisionPolicyNumber": "1212"
+        }
+      ],
+      "mainPolicyId": "parental",
+      "clubSumInsured": true,
+      "iirmPolicyNumber": "1234321",
+      "eligibleRelations": [
+        "Father",
+        "Mother"
+      ],
+      "insurerPolicyNumber": "12321",
+      "provisionPolicyNumber": "121"
+    }
+  }
+}

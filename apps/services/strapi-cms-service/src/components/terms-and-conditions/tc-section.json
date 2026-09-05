@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_terms_and_conditions_tc_sections",
+  "info": {
+    "displayName": "TC Section",
+    "description": "A titled section within a terms and conditions document"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "content": {
+      "type": "customField",
+      "customField": "plugin::jodit-editor.jodit"
+    },
+    "sequenceNumber": {
+      "type": "integer",
+      "min": 1
+    }
+  }
+}

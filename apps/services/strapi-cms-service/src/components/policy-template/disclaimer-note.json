@@ -1,0 +1,17 @@
+{
+    "collectionName": "components_policy_template_disclaimer_notes",
+    "info": {
+        "displayName": "Disclaimer Note",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "text": {
+            "type": "text"
+        },
+        "isMandatory": {
+            "type": "boolean",
+            "default": false
+        }
+    }
+}

@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 148 96.1953" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="SvgRadialGauge" clip-path="url(#clip0_422_179)">
+<path id="Vector" d="M16.0028 106.555C16.0028 91.173 22.1132 76.4212 32.9898 65.5446C43.8664 54.668 58.6182 48.5576 74 48.5576C89.3818 48.5576 104.134 54.668 115.01 65.5446C125.887 76.4212 131.997 91.173 131.997 106.555" stroke="var(--stroke-0, #F3F4F6)" stroke-width="13.9993" stroke-linecap="round"/>
+<path id="Vector_2" d="M16.0028 106.555C16.0028 92.7455 20.9302 79.3893 29.8986 68.8887C38.867 58.388 51.288 51.4319 64.9272 49.2717" stroke="var(--stroke-0, #3B82F6)" stroke-width="13.9993" stroke-linecap="round"/>
+</g>
+<defs>
+<clipPath id="clip0_422_179">
+<rect width="148" height="96.1953" fill="white"/>
+</clipPath>
+</defs>
+</svg>

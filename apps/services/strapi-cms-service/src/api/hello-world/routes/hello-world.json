@@ -1,0 +1,44 @@
+{
+    "routes": [
+        {
+            "method": "GET",
+            "path": "/hello-worlds",
+            "handler": "hello-world.find",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "GET",
+            "path": "/hello-worlds/:id",
+            "handler": "hello-world.findOne",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "POST",
+            "path": "/hello-worlds",
+            "handler": "hello-world.create",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "PUT",
+            "path": "/hello-worlds/:id",
+            "handler": "hello-world.update",
+            "config": {
+                "policies": []
+            }
+        },
+        {
+            "method": "DELETE",
+            "path": "/hello-worlds/:id",
+            "handler": "hello-world.delete",
+            "config": {
+                "policies": []
+            }
+        }
+    ]
+}

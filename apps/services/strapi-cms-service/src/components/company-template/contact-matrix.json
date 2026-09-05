@@ -1,0 +1,39 @@
+{
+    "collectionName": "components_company_template_contact_matrices",
+    "info": {
+        "displayName": "Contact Matrix",
+        "description": ""
+    },
+    "options": {},
+    "attributes": {
+        "supportTimings": {
+            "type": "string",
+            "default": "Monday to Friday, 9:00 AM to 6:00 PM"
+        },
+        "hrContacts": {
+            "type": "component",
+            "repeatable": false,
+            "component": "company-template.contact-group"
+        },
+        "dpoContacts": {
+            "type": "component",
+            "repeatable": false,
+            "component": "company-template.contact-group"
+        },
+        "grievanceContacts": {
+            "type": "component",
+            "repeatable": false,
+            "component": "company-template.contact-group"
+        },
+        "tpa": {
+            "type": "component",
+            "repeatable": false,
+            "component": "company-template.contact-group"
+        },
+        "broker": {
+            "type": "component",
+            "repeatable": false,
+            "component": "company-template.contact-group"
+        }
+    }
+}

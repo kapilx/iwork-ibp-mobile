@@ -1,0 +1,15 @@
+S. No,Nudge Title,Nudge,Prompt (for system / AI to generate the action suggestion)
+1,Lead Qualification Alert,140 leads are unqualified. Schedule a review session to improve lead qualification rate?,“Identify all unqualified leads and suggest suitable actions. Recommend scheduling a lead qualification review meeting to improve conversion rates.”
+2,Pending Proposals,85 qualified leads haven't received proposals yet. Generate proposal drafts for top prospects?,“Fetch qualified leads with no proposals. Recommend generating proposal drafts for high-value prospects and creating a prioritized proposal list.”
+3,Pending Client Response,53 proposals are pending client response. Send follow-up reminders to move them to negotiation?,“Locate proposals pending client response. Suggest sending personalized follow-up reminders and guide the user to move these leads toward negotiation.”
+4,Stalled Negotiations,14 deals are in negotiation for over 2 weeks. Schedule review meetings with sales managers?,“Identify deals stuck in negotiation beyond expected TAT. Recommend scheduling internal review meetings with sales managers to re-strategize.”
+5,Renewal Quotes Pending,15 policies due for renewal haven't been quoted yet. Generate renewal quotes?,“Fetch all due-renewal cases without quotes. Suggest generating renewal quotes immediately to avoid potential renewal leakage.”
+6,Renewal Follow-ups Due,20 quoted renewals need follow-up. Schedule client calls for this week?,“Find all renewal cases where quotes are submitted but follow-up is not done. Recommend scheduling client calls within the week.”
+7,At-Risk Renewals,5 renewals in negotiation are at risk of loss due to pricing. Review competitive pricing options?,“Identify renewal negotiations marked as high risk due to pricing. Recommend reviewing competitive pricing options or alternative benefit structures.”
+8,Win-Back Opportunity,15 policies were lost this month. Initiate win-back campaigns for competitive losses?,“Find all recently lost policies and classify competitive losses. Suggest launching targeted win-back campaigns with revised offerings.”
+9,Mined Business Below Target,"Mined business is at 72%, below the 75% target. Review cross-sell opportunities with existing clients?",“Analyze mined business performance vs target. Recommend exploring cross-sell or up-sell opportunities to bridge performance gap.”
+10,New Business Target Exceeded!,New business exceeded target by 11%! Recognize top performers and share best practices with the team?,“Identify contributors who exceeded new business targets. Suggest recognition actions and share best practices across the team.”
+,,,
+,,,
+,,,
+,,,

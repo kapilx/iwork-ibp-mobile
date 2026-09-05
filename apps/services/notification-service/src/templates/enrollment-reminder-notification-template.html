@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light only" />
+  <meta name="supported-color-schemes" content="light" />
+  <title>Insurance Enrolment Reminder</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #2f2f2f;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+
+    table {
+      border-spacing: 0;
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+
+    img {
+      border: 0;
+      outline: none;
+      text-decoration: none;
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .email-wrap {
+      width: 100%;
+      background-color: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .email-container {
+      width: 600px;
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border: 1px solid #e3e8ef;
+      border-radius: 8px;
+    }
+
+    .top-strip {
+      background-color: #0f6fc2;
+      height: 8px;
+      line-height: 8px;
+      font-size: 0;
+      padding: 0;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .header-row {
+      background-color: #ffffff;
+      padding: 24px 24px 8px 24px;
+    }
+
+    .top-inner {
+      width: 100%;
+    }
+
+    .top-left,
+    .top-right {
+      vertical-align: middle;
+    }
+
+    .top-left {
+      width: 50%;
+      text-align: left;
+    }
+
+    .top-right {
+      width: 50%;
+      text-align: right;
+    }
+
+    .company-logo {
+      max-width: 90px;
+      height: auto;
+    }
+
+    .iirm-logo {
+      max-width: 110px;
+      height: auto;
+      margin-left: auto;
+    }
+
+    .content {
+      padding: 0 24px;
+      background-color: #ffffff;
+    }
+
+    .hello {
+      font-size: 18px;
+      margin: 0 0 14px;
+      color: #222222;
+      line-height: 1.4;
+    }
+
+    .hero-section {
+      padding: 0 24px 10px;
+      background-color: #ffffff;
+    }
+
+    .hero-table {
+      width: 100%;
+    }
+
+    .hero-left {
+      width: 65%;
+      vertical-align: top;
+      text-align: left;
+      padding-right: 10px;
+    }
+
+    .hero-right {
+      width: 35%;
+      text-align: right;
+      vertical-align: middle;
+    }
+
+    .main-title {
+      font-size: 21px;
+      font-weight: 700;
+      margin: 0;
+      line-height: 1.3;
+      color: #b91c1c;
+    }
+
+    .sub-text {
+      font-size: 14px;
+      color: #4d5b6a;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    .illustration {
+      width: 180px;
+      max-width: 180px;
+      margin-left: auto;
+    }
+
+    .section {
+      padding: 0 24px 20px;
+      background-color: #ffffff;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f6fc2;
+      margin: 0 0 10px;
+      line-height: 1.4;
+    }
+
+    .policy-card {
+      width: 100%;
+      background-color: #f8f8f8;
+      border: 1px solid #d9dde3;
+      border-left: 5px solid #1a73e8;
+      border-radius: 8px;
+      margin-bottom: 14px;
+    }
+
+    .card-cell {
+      padding: 24px 26px;
+    }
+
+    .policy-line {
+      font-size: 14px;
+      color: #3d4b59;
+      margin: 4px 0;
+      line-height: 1.7;
+    }
+
+    .warning-card {
+      width: 100%;
+      background-color: #fff5f5;
+      border: 1px solid #fecaca;
+      border-left: 5px solid #dc2626;
+      border-radius: 8px;
+    }
+
+    .warning-title {
+      color: #b91c1c;
+      font-size: 17px;
+      font-weight: 700;
+      margin: 0 0 10px;
+      line-height: 1.35;
+    }
+
+    .warning-text {
+      color: #b91c1c;
+      font-size: 14px;
+      margin: 4px 0;
+      line-height: 1.7;
+    }
+
+    .info-card {
+      width: 100%;
+      background-color: #f8f8f8;
+      border: 1px solid #d9dde3;
+      border-left: 5px solid #1a73e8;
+      border-radius: 8px;
+    }
+
+    .info-card-cell {
+      padding: 24px 26px;
+    }
+
+    .info-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 12px;
+      color: #1f1f1f;
+      line-height: 1.35;
+    }
+
+    .info-ol {
+      padding-left: 20px;
+      margin: 0;
+      font-size: 14px;
+      color: #334150;
+      line-height: 1.8;
+    }
+
+    .cta-row {
+      background-color: #ffffff;
+      padding: 10px 24px 28px;
+      text-align: left;
+    }
+
+    .cta-btn {
+      background-color: #0f6fc2;
+      color: #ffffff !important;
+      text-decoration: none;
+      padding: 14px 34px;
+      border-radius: 24px;
+      font-size: 15px;
+      display: inline-block;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .closing-row {
+      background-color: #ffffff;
+      padding: 0 24px 18px;
+    }
+
+    .closing-text {
+      font-size: 14px;
+      color: #3d4b59;
+      margin: 0 0 16px;
+      line-height: 1.6;
+    }
+
+    .signoff {
+      font-size: 14px;
+      color: #3d4b59;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .grass-bottom-row {
+      background-color: #ffffff;
+      text-align: right;
+      padding: 0;
+    }
+
+    .grass-bottom {
+      width: 130px;
+      max-width: 130px;
+      margin-left: auto;
+    }
+
+    .footer {
+      background-color: #152737;
+      color: #c5d1dc;
+      font-size: 12px;
+      text-align: center;
+      padding: 12px;
+      line-height: 1.4;
+      border-radius: 0 0 8px 8px;
+    }
+
+    @media only screen and (max-width: 620px) {
+      .email-container {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      .top-left,
+      .top-right {
+        display: table-cell !important;
+        width: 50% !important;
+        vertical-align: middle !important;
+      }
+
+      .top-left {
+        text-align: left !important;
+      }
+
+      .top-right {
+        text-align: right !important;
+        padding-top: 0 !important;
+      }
+
+      .company-logo {
+        max-height: 30px !important;
+        width: auto !important;
+      }
+
+      .iirm-logo {
+        max-height: 32px !important;
+        width: auto !important;
+        margin-left: auto !important;
+      }
+
+      .hero-left,
+      .hero-right {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      .hero-right {
+        text-align: center !important;
+        padding-top: 14px !important;
+      }
+
+      .illustration {
+        width: 140px !important;
+        max-width: 140px !important;
+        margin: 0 auto !important;
+      }
+
+      .header-row,
+      .content,
+      .hero-section,
+      .section,
+      .cta-row,
+      .closing-row {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
+
+      .main-title {
+        font-size: 22px !important;
+        line-height: 1.35 !important;
+      }
+
+      .hello {
+        font-size: 18px !important;
+      }
+
+      .card-cell,
+      .info-card-cell {
+        padding: 18px !important;
+      }
+
+      .cta-btn {
+        display: inline-block !important;
+        width: auto !important;
+      }
+
+      .grass-bottom {
+        width: 110px !important;
+        max-width: 110px !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <table class="email-wrap" width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center">
+        <table class="email-container" width="600" cellpadding="0" cellspacing="0">
+
+          <tr>
+            <td class="top-strip">&nbsp;</td>
+          </tr>
+
+          <tr>
+            <td class="header-row">
+              <table class="top-inner" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td class="top-right">
+                    <img src="{{iirmLogoUrl}}" alt="IIRM Logo" class="iirm-logo" />
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="content">
+              <p class="hello">Hello {{employeeName}},</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="hero-section">
+              <table class="hero-table" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td class="hero-left">
+                    <h2 class="main-title">Reminder: Complete Your Insurance Enrollment</h2>
+                    {{#if isMultiPolicy}}
+                    <p class="sub-text">
+                      You have {{policyCount}} pending policies with the same enrollment deadline.
+                      Please complete enrollment before the deadline to avoid coverage interruption.
+                    </p>
+                    {{else}}
+                    <p class="sub-text">
+                      Your enrollment is still pending. Please complete it before the deadline to avoid interruption in coverage.
+                    </p>
+                    {{/if}}
+                  </td>
+                  <td class="hero-right">
+                    <img src="{{illustrationLogoUrl}}" alt="Illustration" class="illustration" />
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="section">
+              <table class="warning-card" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td class="info-card-cell">
+                    <p class="warning-title">Enrollment Pending</p>
+                    <p class="warning-text"><strong>Last Date to Enroll:</strong> {{enrollmentEndDate}}</p>
+                    {{#if remainingDays}}
+                    <p class="warning-text"><strong>Days Remaining:</strong> {{remainingDays}}</p>
+                    {{/if}}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="section">
+              <h3 class="section-title">Policy Details</h3>
+
+              {{#if policyDetails.length}}
+              {{#each policyDetails}}
+              <table class="policy-card" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td class="card-cell">
+                    <p class="policy-line"><strong>Policy Name:</strong> {{policyName}}</p>
+                    <p class="policy-line"><strong>Policy Period:</strong> {{policyStartDate}} - {{policyEndDate}}</p>
+                    <p class="policy-line"><strong>Total Lives:</strong> {{totalLives}}</p>
+                    <p class="policy-line"><strong>Premium:</strong> {{premium}}</p>
+                    <p class="policy-line"><strong>Company Paid:</strong> {{companyPaid}}</p>
+                    <p class="policy-line"><strong>Self Paid:</strong> {{selfPaid}}</p>
+                    <p class="policy-line"><strong>Sum Insured:</strong> {{sumInsured}}</p>
+                    <p class="policy-line"><strong>Members Covered:</strong>
+                      {{#if membersCovered.length}}
+                        {{#each membersCovered}}{{this}}{{#unless @last}} | {{/unless}}{{/each}}
+                      {{else}}
+                        {{../membersCoveredText}}
+                      {{/if}}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              {{/each}}
+              {{else}}
+              <table class="policy-card" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td class="card-cell">
+                    <p class="policy-line">No policy details available.</p>
+                  </td>
+                </tr>
+              </table>
+              {{/if}}
+            </td>
+          </tr>
+
+          <tr>
+            <td class="section">
+              <table class="info-card" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                  <td class="info-card-cell">
+                    <h3 class="info-title">How to Access the Portal</h3>
+                    <ol class="info-ol">
+                     <li>Click the portal link below.</li>
+                      <li>Click the Login button.</li>
+                      <li>On the login screen, choose Email or Phone, based on the enabled option available to you.</li>
+                      <li> Enter your details and login into the portal.</li>
+                    </ol>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="cta-row">
+              <a href="{{safeUrl portalLink}}" class="cta-btn" target="_blank" rel="noopener noreferrer">Complete Enrollment</a>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="closing-row">
+              <p class="closing-text">
+                For help, contact your HR/support team.<br />
+              </p>
+              <p class="signoff">
+                Warm regards,<br />
+                <strong>IIRM</strong>
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="footer">
+              © Copyright {{currentYear}} IIRM. All Rights Reserved
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -1,0 +1,2 @@
+order = ["prd-00-overview.md", "prd-01-create-opportunity.md", "prd-02-stage-activities.md", "prd-03-won-lost.md", "prd-04-policy-creation.md"]
+sort  = "name_asc"

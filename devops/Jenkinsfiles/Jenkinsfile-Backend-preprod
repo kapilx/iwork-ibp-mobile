@@ -1,0 +1,406 @@
+pipeline {
+    agent any
+
+    parameters {
+        booleanParam(name: 'API_GATEWAY', defaultValue: false, description: 'Build and push ApiGateway Docker Image')
+        booleanParam(name: 'SERVICE_REGISTRY', defaultValue: false, description: 'Build and push Service-Registry Docker Image')
+        booleanParam(name: 'AUTH_SERVICE', defaultValue: false, description: 'Build and push Auth-Service Docker Image')
+        booleanParam(name: 'ORG_SERVICE', defaultValue: false, description: 'Build and push Org-Service Docker Image')
+        booleanParam(name: 'OPPORTUNITY_SERVICE', defaultValue: false, description: 'Build and push Opportunity-Service Docker Image')
+        booleanParam(name: 'KNOWLEDGE_SERVICE', defaultValue: false, description: 'Build and push Knowledge-Service Docker Image')
+        booleanParam(name: 'NOTIFICATION_SERVICE', defaultValue: false, description: 'Build and push Notification-Service Docker Image')
+        booleanParam(name: 'AI_SERVICE', defaultValue: false, description: 'Build and push ai-Service Docker Image')
+        booleanParam(name: 'POLICY_SERVICE', defaultValue: false, description: 'Build and push policy-Service Docker Image')
+        booleanParam(name: 'SCHEDULER_SERVICE', defaultValue: false, description: 'Build and push Scheduler-Service Docker Image')
+        booleanParam(name: 'DOCUMENT_SERVICE', defaultValue: false, description: 'Build and push Document-Service Docker Image')
+        booleanParam(name: 'IBP_SERVICE', defaultValue: false, description: 'Build and push IBP-Service Docker Image')
+        booleanParam(name: 'AI_UTILITY_SERVICE', defaultValue: false, description: 'Build and push AI-Utility-Service Docker Image')
+        booleanParam(name: 'CONFIG_SERVICE', defaultValue: false, description: 'Build and push Config-Service Docker Image')
+        booleanParam(name: 'STRAPI_CMS_SERVICE', defaultValue: false, description: 'Build and push Strapi-Cms-Service Docker Image')
+    }
+
+    environment {
+        SONARQUBE_PATH="/var/lib/jenkins/tools/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner -Dsonar.projectKey=Backend -Dsonar.sources=./"
+        AWS_ACCOUNT_ID = '241533143959'
+        AWS_REGION = 'ap-south-1'
+        ECR_BASE_URL = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        EKS_CLUSTER_NAME = "IIRM-PreProd"
+        //fd_secret_ignore
+        LINK= "https://api.newiwork.indiainsure.com/iirm"
+        //fd_secret_ignore
+        GOOGLE_CHAT_LINK= "https://chat.googleapis.com/v1/spaces/AAQAJMUj2F4/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=q08ZzlkJ7fXMx87vXuIAXkh2QKu7qqyCQ-iAfyG_l1g"
+
+    }
+
+    stages {
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         script {
+        //             nodejs('IIRM') {                      
+        //             withSonarQubeEnv('Prod-Sonarqube') {
+        //                 sh "${SONARQUBE_PATH}"
+        //               }
+        //             }
+        //         }
+        //     }
+        //  }
+        stage('get_commit_msg') {
+            steps {
+                script {
+                    env.GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
+                    env.GIT_COMMIT_EMAIL = sh (
+                        script: 'git --no-pager show -s --format=\'%ae\'',
+                        returnStdout: true
+                    ).trim()
+                }
+            }
+        }
+        stage('Login to AWS ECR') {
+            steps {
+                script {
+                    sh "aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_BASE_URL}"
+                }
+            }
+        }
+
+        stage('Build Basic Docker Image') {
+            steps {
+                script {
+                    sh "docker build -t iirm-node_modules . -f devops/Dockerfiles/Dockerfile"                
+                }
+            }
+        }
+
+        stage('Authenticating with EKS') {
+            steps {
+                script {
+                    sh "aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER_NAME}"                
+                }
+            }
+        }
+
+        stage('ApiGateway') {
+            when {
+                expression { params.API_GATEWAY != false }
+            }
+            environment {
+                SERVICE_NAME = 'api-gateway'
+                ECR_REPO = 'preprod-apigateway'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/apigateway"
+                    sh "kubectl set image deployment/apigateway apigateway=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-apigateway:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+
+        stage('Service-Registry') {
+            when {
+                expression { params.SERVICE_REGISTRY != false }
+            }
+            environment {
+                SERVICE_NAME = 'service-registry'
+                ECR_REPO = 'preprod-serviceregistry'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/serviceregistry"
+                    sh "kubectl set image deployment/serviceregistry serviceregistry=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-serviceregistry:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+
+        stage('Auth-Service') {
+            when {
+                expression { params.AUTH_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'auth-service'
+                ECR_REPO = 'preprod-auth-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/auth-service"
+                    sh "kubectl set image deployment/auth-service auth-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-auth-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    
+                }
+            }
+        }
+
+        stage('Org-Service') {
+            when {
+                expression { params.ORG_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'org-service'
+                ECR_REPO = 'preprod-org-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/org-service"
+                    sh "kubectl set image deployment/org-service org-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-org-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+
+        stage('Opportunity-Service') {
+            when {
+                expression { params.OPPORTUNITY_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'opportunity-service'
+                ECR_REPO = 'preprod-opportunity-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/opportunity-service"
+                    sh "kubectl set image deployment/opportunity-service opportunity-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-opportunity-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+        stage('Knowledge-Service') {
+            when {
+                expression { params.KNOWLEDGE_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'knowledge-service'
+                ECR_REPO = 'preprod-knowledge-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/knowledge-service"
+                    sh "kubectl set image deployment/knowledge-service knowledge-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-knowledge-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+        stage('Notification-Service') {
+            when {
+                expression { params.NOTIFICATION_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'notification-service'
+                ECR_REPO = 'preprod-notification-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/notification-service"
+                    sh "kubectl set image deployment/notification-service notification-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-notification-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+        stage('AI-Service') {
+            when {
+                expression { params.AI_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'ai-service'
+                ECR_REPO = 'preprod-ai-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/ai-service"
+                    sh "kubectl set image deployment/ai-service ai-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-ai-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+        stage('policy-Service') {
+            when {
+                expression { params.POLICY_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'policy-service'
+                ECR_REPO = 'preprod-policy-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/policy-service"
+                    sh "kubectl set image deployment/policy-service policy-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-policy-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+        stage('scheduler-Service') {
+            when {
+                expression { params.SCHEDULER_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'scheduler-service'
+                ECR_REPO = 'preprod-scheduler-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/scheduler-service"
+                    sh "kubectl set image deployment/scheduler-service scheduler-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-scheduler-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+        stage('document-Service') {
+            when {
+                expression { params.DOCUMENT_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'document-service'
+                ECR_REPO = 'preprod-document-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/document-service"
+                    sh "kubectl set image deployment/document-service document-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-document-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+        stage('ibp-Service') {
+            when {
+                expression { params.IBP_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'ibp-service'
+                ECR_REPO = 'preprod-ibp-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/ibp-service"
+                    sh "kubectl set image deployment/ibp-service ibp-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-ibp-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+        stage('ai-utility-Service') {
+            when {
+                expression { params.AI_UTILITY_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'ai-utility-service'
+                ECR_REPO = 'preprod-ai-utility-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-Python"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/ai-utility-service"
+                    sh "kubectl set image deployment/ai-utility-service ai-utility-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-ai-utility-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+        stage('config-Service') {
+            when {
+                expression { params.CONFIG_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'config-service'
+                ECR_REPO = 'preprod-config-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-all"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/config-service"
+                    sh "kubectl set image deployment/config-service config-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-config-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+        stage('strapi-cms-service') {
+            when {
+                expression { params.STRAPI_CMS_SERVICE != false }
+            }
+            environment {
+                SERVICE_NAME = 'strapi-cms-service'
+                ECR_REPO = 'preprod-strapi-cms-service'
+            }
+            steps {
+                script {
+                    sh "docker build --build-arg STRAPI_PUBLIC_URL=${LINK}/${SERVICE_NAME} --build-arg SERVICE_NAME=${SERVICE_NAME} -t ${ECR_BASE_URL}/${ECR_REPO}:latest . -f devops/Dockerfiles/Dockerfile-Strapi"
+                    sh "docker push ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                    sh "sleep 5"
+                    sh "kubectl rollout restart deployment/strapi-cms-service"
+                    sh "kubectl set image deployment/strapi-cms-service strapi-cms-service=241533143959.dkr.ecr.ap-south-1.amazonaws.com/preprod-strapi-cms-service:latest"
+                    sh "docker rmi ${ECR_BASE_URL}/${ECR_REPO}:latest"
+                }
+            }
+        }
+        stage('Cleanup') {
+            steps {
+                script {
+                    sh "docker system prune -f"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                def selected = params.findAll { it.value }.keySet().join(", ")
+                def message =
+                    "Project Name: ${JOB_NAME}\n" +
+                    "Build Number: ${BUILD_NUMBER}\n" +
+                    "Environment: PreProd\n" +
+                    "Branch: ${GIT_BRANCH}\n" +
+                    "Author Email: ${GIT_COMMIT_EMAIL}\n" +
+                    "Commit Message: ${GIT_COMMIT_MSG}\n"+
+                    "Services Deployed: ${selected}\n"
+
+                def buildResult = currentBuild.currentResult
+                if (buildResult == "SUCCESS") {
+                    message += "Output: ${env.LINK}\nBuild Result: Success"
+                } else {
+                    message += "Output Log: ${env.RUN_DISPLAY_URL}\nBuild Result: Failed"
+                }
+
+                googlechatnotification message: message, url: "${GOOGLE_CHAT_LINK}"
+            }
+            cleanWs()
+        }
+    }
+}

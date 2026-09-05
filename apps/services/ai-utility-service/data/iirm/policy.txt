@@ -1,0 +1,2333 @@
+POLICY-RELATED TABLES DETAILED SCHEMA
+
+CENTRAL LOOKUP TABLE FOR ALL ENUMERATIONS:
+
+0. lookup_data
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (lookup_data_id_seq)
+   - lookup_key: VARCHAR(255), NOT NULL (categorizes the lookup type)
+   - lookup_name: VARCHAR(255), NOT NULL (human-readable category name)
+   - value_key: VARCHAR(255), NOT NULL (system key for the value)
+   - value: TEXT, NOT NULL (human-readable display value)
+   - description: TEXT, NULLABLE (additional details about the lookup value)
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - lookup_order: INTEGER, NULLABLE, DEFAULT 0 
+   - created_by: VARCHAR(255), NOT NULL
+   - updated_by: VARCHAR(255), NULLABLE
+   - deleted_at: TIMESTAMP 
+   - status: INETEGR, DEFAULT 1
+   - organisation_id: INTEGER, DEFAULT 0
+
+1. document_processing_file
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (document_processing_file_id_seq)
+   - entity_type: VARCHAR(50), NOT NULL
+   - entity_id: INTEGER, NOT NULL
+   - document_id: INTEGER, NOT NULL, FOREIGN KEY (file_uploads.id)
+   - document_type: VARCHAR(50), NOT NULL
+   - process_status: VARCHAR(20), NOT NULL, DEFAULT 'CREATED'
+   - created_by: INTEGER, NOT NULL, DEFAULT 0
+   - updated_by: INTEGER, NOT NULL, DEFAULT 0
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - endorsement_id: INTEGER, NULLABLE
+   - expected_employees_count: INTEGER, NULLABLE
+   - expected_dependents_count: INTEGER, NULLABLE
+
+2. endorsement
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+   - endorsement_type: VARCHAR(50), NULLABLE (not a lookup, direct string field)
+   - endorsement_date: TIMESTAMP, NULLABLE
+   - endorsment_count: INTEGER, NULLABLE, DEFAULT 0
+   - ack_file_id: INTEGER, NULLABLE
+   - endorsement_ack_count: INTEGER, NULLABLE, DEFAULT 0
+   - sum_insured: NUMERIC(18,2), NULLABLE
+   - premium_at_inception: NUMERIC(18,2), NULLABLE
+   - net_premium: NUMERIC(18,2), NULLABLE
+   - other_amount: NUMERIC(18,2), NULLABLE
+   - terrorism_amount: NUMERIC(18,2), NULLABLE
+   - date_of_income: TIMESTAMP, NULLABLE
+   - basic_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - od_percentage: NUMERIC(5,2), NULLABLE
+   - tp_percentage: NUMERIC(5,2), NULLABLE
+   - tpa_processed_count: INTEGER, NULLABLE, DEFAULT 0
+   - tpa_acknowledged_date: TIMESTAMP, NULLABLE
+   - mig_ref_no: VARCHAR(255), NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - ingested_mode: VARCHAR(255), NULLABLE, DEFAULT 'APPLICATION'
+   - company_id: INTEGER, NOT NULL
+   - insurer_endorsement_number: VARCHAR(255), NULLABLE
+   - insurer_endorsement_date: TIMESTAMP, NULLABLE
+   - endorsement_entry_date: TIMESTAMP, NULLABLE
+   - endorsment_file_id: INTEGER, NULLABLE
+   - gross_premium: NUMERIC(18,2), NULLABLE
+   - gst_amount: NUMERIC(18,2), NULLABLE
+   - income_type_lid: INTEGER, NULLABLE
+   - basic_brokerage_amount: NUMERIC(18,2), NULLABLE
+   - brokerage_amount_asper_iwork: NUMERIC(18,2), NULLABLE
+   - brokerage_amount_asper_isg: NUMERIC(18,2), NULLABLE
+   - fee_amount: NUMERIC(18,2), NULLABLE
+   - commission_terrorism_amount: NUMERIC(18,2), NULLABLE
+   - net_percentage: NUMERIC(5,2), NULLABLE
+   - share_percentage: NUMERIC(5,2), NULLABLE
+   - terrorism_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - deal_confirmed_lid: INTEGER, NULLABLE
+   - remarks: TEXT, NULLABLE
+   - financial_non_financially: VARCHAR(50), NULLABLE
+   - income_month: TIMESTAMP, NULLABLE
+   - tpa_document_id: INTEGER, NULLABLE
+   - tpa_error_count: INTEGER, NOT NULL, DEFAULT 0
+   - tpa_error_file_id: INTEGER, NULLABLE
+   - premium_collected: NUMERIC, NULLABLE, DEFAULT 0
+   - ingested_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - brokerage_collected: NUMERIC(19,2), NULLABLE
+   - endorsement_status: VARCHAR(50), NULLABLE
+   - current_endorsement_step: INTEGER, NULLABLE
+   - os_ticket_number: VARCHAR(50), NULLABLE
+   - insurer_communication_date: TIMESTAMP, NULLABLE
+   - insurer_communication_details: TEXT, NULLABLE
+   - insurer_acknowledgement_number: VARCHAR(50), NULLABLE
+   - insurer_endorsed_employee_count: INTEGER, NULLABLE
+   - insurer_endorsed_dependent_count: INTEGER, NULLABLE
+   - endorsement_effective_date: TIMESTAMP, NULLABLE
+   - client_confirmation_message: TEXT, NULLABLE
+   - client_confirmation_date: TIMESTAMP, NULLABLE
+   - tpa_upload_remarks: TEXT, NULLABLE
+   - endorsment_dependent_count: INTEGER, NULLABLE
+   - employee_endorsement_addition_count: INTEGER, NULLABLE
+   - employee_endorsement_deletion_count: INTEGER, NULLABLE
+   - is_inception: BOOLEAN, NULLABLE
+   - enrollment_start_date: TIMESTAMP, NULLABLE
+   - enrollment_end_date: TIMESTAMP, NULLABLE
+   - basic_premium: NUMERIC(19,2), NULLABLE
+   - srcc_amount: NUMERIC(19,2), NULLABLE
+   - admin_charges: NUMERIC(19,2), NULLABLE
+   - cess_amount: NUMERIC(19,2), NULLABLE
+   - gst_percentage: NUMERIC(19,2), NULLABLE
+   - basic_premium_percentage: NUMERIC(5,2), NULLABLE
+   - srcc_percentage: NUMERIC(5,2), NULLABLE
+   - srcc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - tc_brokerage_amount: NUMERIC(19,2), NULLABLE
+
+3. policy
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_id_seq)
+   - policy_name: VARCHAR(255), NOT NULL  
+   - policy_type_lid: INTEGER, NOT NULL
+   - opportunity_id: INTEGER, NULLABLE, FOREIGN KEY -> opportunity(id)
+   - company_id: INTEGER, NOT NULL, FOREIGN KEY -> company(id)
+   - policy_from: DATE, NOT NULL
+   - policy_to: DATE, NOT NULL
+   - provisional_policy_no: VARCHAR(255), NULLABLE
+   - sum_insured: BIGINT, NULLABLE
+   - premium_at_inception: BIGINT, NULLABLE
+   - gst_percentage: NUMERIC(19,2), NULLABLE
+   - gst: NUMERIC(5,2), NULLABLE
+   - insurer_policy_number: VARCHAR(255), NULLABLE
+   - commission_terrorism: NUMERIC(19,2), NULLABLE
+   - policy_configuration: JSON, NULLABLE
+   - configuration_status_lid: INTEGER, NULLABLE
+   - enrollment_status_lid: INTEGER, NULLABLE
+   - status_lid: INTEGER, NOT NULL
+   - created_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_by: INTEGER, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - basic_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - policy_type: INTEGER, NULLABLE
+   - mig_sum_insured: NUMERIC(19,2), NULLABLE
+   - mig_premium_at_inception: NUMERIC(19,2), NULLABLE
+   - country_id: INTEGER, NULLABLE
+   - is_mined: BOOLEAN, NULLABLE, DEFAULT false
+   - opportunity_type: VARCHAR(2), NULLABLE, DEFAULT 'SO'
+   - brokerage_amount: NUMERIC(12,2), NULLABLE, DEFAULT 0
+   - insurer_endorsement_number: VARCHAR(255), NULLABLE
+   - date_of_income: DATE, NULLABLE
+   - gst_amount: NUMERIC(19,2), NULLABLE
+   - net_premium: NUMERIC(19,2), NULLABLE
+   - terrorism_amount: NUMERIC(19,2), NULLABLE
+   - other_amount: NUMERIC(19,2), NULLABLE
+   - gross_premium: NUMERIC(19,2), NULLABLE
+   - brokerage_amount_asper_iwork: NUMERIC(19,2), NULLABLE
+   - brokerage_amount_asper_isg: NUMERIC(19,2), NULLABLE
+   - fee_amount: NUMERIC(19,2), NULLABLE
+   - od_percentage: NUMERIC(5,2), NULLABLE
+   - tp_percentage: NUMERIC(5,2), NULLABLE
+   - net_percentage: NUMERIC(5,2), NULLABLE
+   - share_percentage: NUMERIC(5,2), NULLABLE
+   - terrorism_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - income_type_lid: INTEGER, NULLABLE
+   - deal_confirmed_lid: INTEGER, NULLABLE
+   - policy_group_type_lid: INTEGER, NULLABLE
+   - income_month: DATE, NULLABLE
+   - date_of_income_from_iwork: DATE, NULLABLE
+   - owner_id: INTEGER, NULLABLE
+   - mig_ref_no: VARCHAR(255), NULLABLE
+   - premium_collected: NUMERIC, NULLABLE, DEFAULT 0
+   - ingested_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - ingested_mode: VARCHAR(255), NULLABLE, DEFAULT 'APPLICATION'
+   - brokerage_collected: NUMERIC(19,2), NULLABLE
+   - rcon_status: VARCHAR(50), NULLABLE
+   - rcon_brokerage: NUMERIC(12,2), NULLABLE
+   - rcon_outcome: VARCHAR(50), NULLABLE
+   - pending_brokerage: NUMERIC(12,2), NULLABLE
+   - fee_percentage: NUMERIC(5,2), NULLABLE
+   - other_percentage: NUMERIC(5,2), NULLABLE
+   - srcc_percentage: NUMERIC(5,2), NULLABLE
+   - srcc_amount: NUMERIC(19,2), NULLABLE
+   - admin_charges_percentage: NUMERIC(5,2), NULLABLE
+   - admin_charges: NUMERIC(19,2), NULLABLE
+   - cess_percentage: NUMERIC(5,2), NULLABLE
+   - cess_amount: NUMERIC(19,2), NULLABLE
+   - total_gross_premium_inc_tax_charges: NUMERIC(19,2), NULLABLE
+   - basic_premium: NUMERIC(19,2), NULLABLE
+   - basic_premium_percentage: NUMERIC(5,2), NULLABLE
+   - tc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - basic_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - srcc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - am_id: INTEGER, NULLABLE
+   - isg_id: INTEGER, NULLABLE
+   - policy_details_status_lid: INTEGER, NULLABLE
+   - policy_covers_status_lid: INTEGER, NULLABLE
+   - policy_cd_status_lid: INTEGER, NULLABLE
+   - policy_details_approved_by: INTEGER, NULLABLE
+   - policy_covers_approved_by: INTEGER, NULLABLE
+   - policy_cd_approved_by: INTEGER, NULLABLE
+   - is_policy_mined_lid: INTEGER, NULLABLE
+   - service_level_lid: INTEGER, NULLABLE
+   - iwork_unique_id: VARCHAR(255), NULLABLE
+   - total_brokerage_amount: NUMERIC(19,2), NULLABLE
+
+4. policy_configuration
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_configuration_id_seq)
+   - company_id: INTEGER, NOT NULL, FOREIGN KEY -> company(id)
+   - policy_type_lid: INTEGER, NOT NULL, FOREIGN KEY -> lookup_data(id)
+   - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+   - policy_configuration_status_lid: INTEGER, NOT NULL, FOREIGN KEY -> lookup_data(id)
+   - policy_step: INTEGER, NOT NULL
+   - policy_configuration: JSONB, NOT NULL
+   - remarks: TEXT, NULLABLE
+   - version: INTEGER, NULLABLE, DEFAULT 1
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - approver_id: INETGER,
+   - rejected_by_id: INTEGER
+
+5. policy_configuration_components_detail
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - company_id: INTEGER, NOT NULL, FOREIGN KEY -> company(id)
+    - type: VARCHAR(100), NULLABLE
+    - label: VARCHAR(100), NULLABLE
+    - premium_per_life: BOOLEAN, NULLABLE
+    - multiple_sum_insured_label: VARCHAR(100), NULLABLE
+    - sum_insured_model: VARCHAR(100), NULLABLE
+    - show_company_contribution: BOOLEAN, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+6. policy_configuration_template_doc_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - document_id: INTEGER, NOT NULL, FOREIGN KEY -> file_uploads(id)
+
+7. policy_cover_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NULLABLE, FOREIGN KEY → policy(id)
+    - cover_template_id: INTEGER, NOT NULL
+    - cover_name: TEXT, NOT NULL
+    - cover_response: JSON, NULLABLE
+    - covers_meta: JSONB, NULLABLE
+    - created_at: TIMESTAMP WITH TIME ZONE, DEFAULT now()
+    - updated_at: TIMESTAMP WITH TIME ZONE, DEFAULT now()
+
+8. policy_employee_claim
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - employee_id: INTEGER, NOT NULL, FOREIGN KEY -> policy_enrollment_employee(id)
+    - employee_tpa_id: VARCHAR(100), NOT NULL
+    - claim_insured_id: VARCHAR(100), NULLABLE
+    - dependent_id: INTEGER, NULLABLE, FOREIGN KEY -> policy_enrollment_dependent(id)
+    - clm_hospital: VARCHAR(255), NULLABLE
+    - clm_diagnosis: TEXT, NULLABLE (claim_description in schema)
+    - claim_dt: DATE, NULLABLE (clm_doa in schema)
+    - clm_type: VARCHAR(50), NULLABLE
+    - clm_reported_dt: DATE, NULLABLE (not in schema)
+    - clm_int_amt: NUMERIC, NULLABLE (claim_amount in schema)
+    - claim_status: VARCHAR(50), NULLABLE
+    - clm_pre_auth_id: VARCHAR(100), NULLABLE
+    - claim_checklist: TEXT, NULLABLE
+    - clm_bill_details: TEXT, NULLABLE
+    - clm_allowed_amt: NUMERIC, NULLABLE
+    - clm_pre_auth_date: DATE, NULLABLE
+    - clm_pre_auth_amt: NUMERIC, NULLABLE
+    - clm_allowed_id: VARCHAR(100), NULLABLE
+    - is_active: BOOLEAN, NULLABLE (not in schema)
+    - is_uploaded: BOOLEAN, NULLABLE (not in schema)
+    - clm_dod: DATE, NULLABLE
+    - claim_checklist_count: INTEGER, NULLABLE
+    - user_id: VARCHAR(100), NULLABLE
+    - source_file_upload_id: INTEGER, NOT NULL, FOREIGN KEY -> file_uploads(id)
+    - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+    - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+    - deleted_at: TIMESTAMP, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+
+9. policy_employee_endorsement
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL
+    - employee_id: INTEGER, NOT NULL
+    - company_id: INTEGER, NOT NULL
+    - employee_endorsement_status_key: VARCHAR(50), NOT NULL
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - endorsement_id: INTEGER, NULLABLE, FOREIGN KEY -> endorsement(id)
+    - endorsement_addition_file_id: INTEGER, NULLABLE
+    - endorsement_deletion_file_id: INTEGER, NULLABLE
+    - endorsement_addition_created_at: TIMESTAMP, NULLABLE
+    - endorsement_deleted_created_at: TIMESTAMP, NULLABLE
+
+10. policy_employee_enrollment
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL
+    - employee_id: INTEGER, NOT NULL
+    - company_id: INTEGER, NOT NULL
+    - employee_enrollment_status_key: VARCHAR(50), NOT NULL
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - sum_insured: NUMERIC, NULLABLE, DEFAULT 0
+    - balance: NUMERIC, NULLABLE, DEFAULT 0
+    - total_premium: NUMERIC, NULLABLE, DEFAULT 0 (premium_total in schema)
+    - total_company_pay: NUMERIC, NULLABLE, DEFAULT 0
+    - total_employee_pay: NUMERIC, NULLABLE, DEFAULT 0
+    - last_paid_net_premium: NUMERIC(19,2), NULLABLE, DEFAULT 0
+    - last_paid_gross_premium: NUMERIC(19,2), NULLABLE, DEFAULT 0
+
+11. policy_employee_enrollment_choice
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - employee_enrollment_id: INTEGER, NOT NULL, FOREIGN KEY -> policy_employee_enrollment(id)
+    - sum_insured: NUMERIC, NOT NULL
+    - premium: NUMERIC, NOT NULL
+    - company_pay: NUMERIC, NOT NULL
+    - employee_pay: NUMERIC, NOT NULL
+    - policy_component_action_type: VARCHAR(100), NOT NULL
+    - policy_component_action_type_id: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - policy_component_action_label: VARCHAR(100), NULLABLE
+    - parent_policy_component_action_type_id: INTEGER, NULLABLE
+    - created_by: INTEGER, NULLABLE
+    - updated_by: INTEGER, NULLABLE
+    - deleted_at: TIMESTAMP, NULLABLE
+    - policy_component_action_label: VARCHAR(100), NULLABLE
+    - premium_per_life: BOOLEAN, NULLABLE, DEFAULT false
+    - sum_insured_model: VARCHAR(20), NULLABLE
+    - sum_insured_model_property: VARCHAR(100), NULLABLE
+    - min_sum_insured_value: NUMERIC(15,2), NULLABLE, DEFAULT 0
+    - max_sum_insured_value: NUMERIC(15,2), NULLABLE, DEFAULT 0
+
+12. policy_endorsement_template_doc_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - insurer_id: INTEGER, NOT NULL, FOREIGN KEY -> insurer(id)
+    - document_id: INTEGER, NOT NULL, FOREIGN KEY -> file_uploads(id)
+
+13. policy_enrollment_employee
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - employee_company_id: VARCHAR(100), NOT NULL
+    - employee_name: VARCHAR(100), NOT NULL
+    - full_name: VARCHAR(100), NULLABLE
+    - date_of_birth: DATE, NULLABLE
+    - gender: VARCHAR(20), NULLABLE
+    - email: VARCHAR(100), NULLABLE
+    - phone_number: VARCHAR(20), NULLABLE
+    - ctc: NUMERIC, NULLABLE
+    - designation: VARCHAR(100), NULLABLE
+    - relation_group: VARCHAR(100), NULLABLE
+    - marital_status: VARCHAR(20), NULLABLE
+    - additional_params: JSONB, NULLABLE
+    - created_by: INTEGER, NOT NULL, DEFAULT 0
+    - updated_by: INTEGER, NOT NULL, DEFAULT 0
+    - created_at: TIMESTAMP WITH TIME ZONE, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP WITH TIME ZONE, NULLABLE, DEFAULT now()
+    - deleted_at: TIMESTAMP WITH TIME ZONE, NULLABLE
+    - user_id: INTEGER, NULLABLE, FOREIGN KEY → users(id)
+    - enrollment_addition_batch_id: INTEGER, NULLABLE
+    - enrollment_deletion_batch_id: INTEGER, NULLABLE
+    - company_employee_id: VARCHAR(100), NULLABLE
+    - employee_tpa_id: VARCHAR(100), NULLABLE
+    - company_id: INTEGER, NULLABLE
+
+
+14. policy_enrollment_dependent
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY → policy(id)
+    - employee_id: INTEGER, NOT NULL, FOREIGN KEY → policy_enrollment_employee(id)
+    - name: VARCHAR(100), NOT NULL
+    - relation: VARCHAR(50), NOT NULL
+    - date_of_birth: DATE, NULLABLE
+    - gender: VARCHAR(20), NULLABLE
+    - created_by: INTEGER, NOT NULL, DEFAULT 0
+    - updated_by: INTEGER, NOT NULL, DEFAULT 0
+    - created_at: TIMESTAMP WITH TIME ZONE, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP WITH TIME ZONE, NULLABLE, DEFAULT now()
+    - deleted_at: TIMESTAMP WITH TIME ZONE, NULLABLE
+    - endorsement_addition_batch_id: INTEGER, NULLABLE
+    - endorsement_deletion_batch_id: INTEGER, NULLABLE
+    - endorsement_status_key: VARCHAR(50), NULLABLE
+    - enrollment_addition_batch_id: INTEGER, NULLABLE
+    - enrollment_deletion_batch_id: INTEGER, NULLABLE
+    - effective_date: DATE, NULLABLE
+    - relationship_type: VARCHAR(100), NULLABLE
+    - dependent_tpa_id: VARCHAR(100), NULLABLE
+    - endorsement_addition_created_at: TIMESTAMP, NULLABLE
+    - endorsement_deletion_created_at: TIMESTAMP, NULLABLE
+    - addition_endorsement_id: INTEGER, NULLABLE
+    - deletion_endorsement_id: INTEGER, NULLABLE
+    - claim_status: VARCHAR(10)
+
+
+15. policy_enrollment_employee_policy_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - employee_id: INTEGER, NOT NULL, FOREIGN KEY → policy_enrollment_employee(id)
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY → policy(id)
+    - enrollment_start_date: DATE, NULLABLE
+    - enrollment_end_date: DATE, NULLABLE
+    - created_at: TIMESTAMP WITH TIME ZONE, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP WITH TIME ZONE, NULLABLE, DEFAULT now()
+    - endorsement_addition_batch_id: INTEGER, NULLABLE
+    - endorsement_deletion_batch_id: INTEGER, NULLABLE
+    - endorsement_status_key: VARCHAR(50), NULLABLE
+    - employee_tpa_id: VARCHAR(100), NULLABLE
+    - additional_params: JSONB, NULLABLE
+    - enrollment_addition_batch_id: INTEGER, NULLABLE
+    - enrollment_deletion_batch_id: INTEGER, NULLABLE
+    - effective_date: DATE, NULLABLE
+    - deleted_at: TIMESTAMP WITH TIME ZONE, NULLABLE
+    - claim_status: VARCHAR(10)
+
+
+16. policy_enrollment_template_doc_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - document_id: INTEGER, NOT NULL, FOREIGN KEY -> file_uploads(id)
+
+17. policy_enrollment_upload_summary
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - document_processing_file_id: INTEGER, NOT NULL, FOREIGN KEY -> document_processing_file(id)
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - source_file_upload_id: INTEGER, NOT NULL, FOREIGN KEY -> file_uploads(id)
+    - error_file_upload_id: INTEGER, NULLABLE, FOREIGN KEY -> file_uploads(id)
+    - success_count: INTEGER, NOT NULL
+    - error_count: INTEGER, NOT NULL
+    - success_file_upload_id: INTEGER, NULLABLE, FOREIGN KEY -> file_uploads(id)
+    - batch_id: INTEGER, NOT NULL, auto-increment, UNIQUE
+    - process_count: INTEGER, NULLABLE, DEFAULT 0
+    - endorsement_id: INTEGER
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+
+18. policy_enrollment_template_doc_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - document_id: INTEGER, NOT NULL, FOREIGN KEY -> file_uploads(id)
+
+19. policy_insurer_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_id: INTEGER, NULLABLE, FOREIGN KEY -> policy(id)
+   - insurer_participation_type_lid: INTEGER, NOT NULL
+   - insurer_id: INTEGER, NOT NULL, FOREIGN KEY -> contact(id)
+   - insurer_branch_id: INTEGER, NULLABLE
+   - insurer_contact_id: INTEGER, NULLABLE
+   - insurer_location_id: INTEGER, NULLABLE
+   - share_percentage: NUMERIC, NULLABLE
+   - share_amount: NUMERIC, NULLABLE
+   - brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - brokerage_amount: NUMERIC(19,2), NULLABLE
+   - terrorism_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - terrorism_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - total_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - deleted_at: TIMESTAMP, NULLABLE
+
+20. policy_premium_installment_schedules
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+    - installment_1: DATE, NULLABLE
+    - installment_2: DATE, NULLABLE
+    - installment_amount: NUMERIC, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+
+21. caution_deposit
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - company_id: INTEGER, NOT NULL
+   - cd_account_number: VARCHAR(50), NOT NULL
+   - cd_bank_name: VARCHAR(100), NOT NULL
+   - insurer_id: INTEGER, NOT NULL
+   - balance_amount: NUMERIC(15,2), NOT NULL
+   - status: VARCHAR(50), NOT NULL
+   - cd_account_name: VARCHAR(100), NULLABLE
+   - created_at: TIMESTAMP, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - contact_id: INTEGER, NULLABLE (from schema shows insurer_id and other fields)
+
+22. caution_deposit_transaction
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - caution_deposit_id: INTEGER, NOT NULL, FOREIGN KEY -> caution_deposit(id)
+   - transaction_type: VARCHAR(50), NOT NULL
+   - endorsement_id: INTEGER
+   - transaction_amount: INTEGER, NOT NULL
+   - transaction_date: TIMESTAMP, NOT NULL
+   - transaction_reference_id: VARCHAR(100), NULLABLE (transaction_id in schema)
+   - reference_type: VARCHAR(50), NULLABLE (payment_method_lid equivalent)
+   - bank_name: VARCHAR(100), NULLABLE
+   - cheque_number: VARCHAR(30), NULLABLE
+   - cheque_date: DATE, NULLABLE
+   - ifsc_code: VARCHAR(20), NULLABLE
+   - remarks: TEXT, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - policy_id: INTEGER, NULLABLE
+   - cd_balance_amount: NUMERIC(15,2), NOT NULL, DEFAULT 0
+
+23. caution_deposit_policy_mapping
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_id: INTEGER, NOT NULL, FOREIGN KEY -> policy(id)
+   - caution_deposit_id: INTEGER, NOT NULL, FOREIGN KEY -> caution_deposit(id)
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+
+24. policy_tpa_map
+    - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+    - policy_id: INTEGER, NULLABLE, FOREIGN KEY -> policy(id)
+    - tpa_id: INTEGER, NOT NULL
+    - tpa_branch_id: INTEGER, NOT NULL
+    - tpa_contact_id: INTEGER, NULLABLE
+    - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+    - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+
+25. company
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment 
+   - company_name: VARCHAR(200), NOT NULL
+   - display_name: VARCHAR(4000), NULLABLE
+   - company_type_lid: INTEGER, NULLABLE
+   - company_tag_lid: INTEGER, NULLABLE
+   - currency_id: INTEGER, NULLABLE
+   - industry_segment_lid: INTEGER, NULLABLE
+   - no_of_employees: INTEGER, NULLABLE
+   - website: VARCHAR(255), NULLABLE
+   - date_of_incorporation: DATE, NULLABLE
+   - pan_card_number: VARCHAR(50), UNIQUE, NULLABLE
+   - registration_no: VARCHAR(50), NULLABLE
+   - existing_broker_id: INTEGER, NULLABLE
+   - paid_up_capital: NUMERIC(15,2), NULLABLE
+   - tan_number: VARCHAR(50), UNIQUE, NULLABLE
+   - status_lid: INTEGER, NULLABLE
+   - priority_lid: INTEGER, NULLABLE
+   - remarks: VARCHAR(4000), NULLABLE
+   - source: VARCHAR(100), NULLABLE
+   - group_company_lid: INTEGER, NULLABLE
+   - lead_crm: INTEGER, NULLABLE, FK -> users.id
+   - country_id: INTEGER, NULLABLE, FK -> country.id  
+   - account_manager: INTEGER, NULLABLE, FK -> users.id
+   - source_type_lid: INTEGER, NULLABLE
+   - sentiment_lid: INTEGER, NULLABLE
+   - annual_premium: NUMERIC, NULLABLE
+   - additional_fields: JSONB, NULLABLE
+   - service_tax: VARCHAR(50), NULLABLE
+   - audit_ref_id: INTEGER, NULLABLE
+   - total_sum_insured: NUMERIC(18,2), NULLABLE, DEFAULT 0
+   - so_count: INTEGER, NULLABLE, DEFAULT 0
+   - so_total_premium: NUMERIC(18,2), NULLABLE, DEFAULT 0
+   - ro_count: INTEGER, NULLABLE, DEFAULT 0
+   - ro_total_premium: NUMERIC(18,2), NULLABLE, DEFAULT 0
+   - policy_count: INTEGER, NULLABLE, DEFAULT 0
+   - policy_total_premium: NUMERIC(18,2), NULLABLE, DEFAULT 0
+   - brokerage: NUMERIC(18,2), NULLABLE, DEFAULT 0
+   - claim_amount: NUMERIC(18,2), NULLABLE, DEFAULT 0
+   - created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - approver_id: INTEGER, NULLABLE
+
+25a. company_address
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - company_id: INTEGER, NOT NULL, FOREIGN KEY -> company(id)
+   - address_id: INTEGER, NOT NULL, FOREIGN KEY -> address(id)
+   - is_primary: BOOLEAN, NULLABLE, DEFAULT false
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+
+25b. company_contact
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - contact_id: INTEGER, NOT NULL, FOREIGN KEY -> contact(id)
+   - company_id: INTEGER, NOT NULL, FOREIGN KEY -> company(id)
+
+25c. company_contact_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - company_id: INTEGER, NOT NULL, FOREIGN KEY -> company(id)
+   - contact_id: INTEGER, NOT NULL, FOREIGN KEY -> contact(id)
+
+25d. company_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - company_id: INTEGER, NOT NULL, FOREIGN KEY -> company(id)
+   - company_history: TEXT, NULLABLE
+   - major_products: TEXT, NULLABLE
+   - key_customers: VARCHAR(1500), NULLABLE
+   - documents_uploaded: TEXT, NULLABLE
+   - business_processes: VARCHAR(1500), NULLABLE
+   - account_strategy: VARCHAR(1500), NULLABLE
+   - targeting_reason: VARCHAR(1500), NULLABLE
+   - competitor: VARCHAR(1500), NULLABLE
+   - weakness: VARCHAR(1500), NULLABLE
+   - action_plan: VARCHAR(1500), NULLABLE
+   - potential_opportunity: TEXT, NULLABLE
+   - industry_intelligence: TEXT, NULLABLE
+   - service_plan: VARCHAR(1500), NULLABLE
+   - acquisition_history: VARCHAR(1500), NULLABLE
+   - biz_profile: VARCHAR(1500), NULLABLE
+   - service_performance: VARCHAR(1500), NULLABLE
+   - sentiment: VARCHAR, NULLABLE
+   - sales_pitch: TEXT, NULLABLE
+   - ai_sales_pitch: TEXT, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+
+25e. company_strategy
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - company_id: INTEGER, NOT NULL, FOREIGN KEY -> company(id)
+   - strategy_for_the_account: TEXT, NULLABLE
+   - reason_for_targeting: TEXT, NULLABLE
+   - competition_for_the_account: TEXT, NULLABLE
+   - weakness: TEXT, NULLABLE
+   - action_plan: TEXT, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: VARCHAR(255), NULLABLE
+   - updated_by: VARCHAR(255), NULLABLE
+
+26. insurer
+   - id – INTEGER, Primary Key, Default: nextval('"public".insurer_company_id_seq'::regclass), NOT NULL
+   - name – VARCHAR(200), NOT NULL
+   - display_name – VARCHAR(100), NOT NULL
+   - company_type_lid – INTEGER, Nullable, Default: 0
+   - website – VARCHAR(255), Nullable
+   - is_life_lid – INTEGER, NOT NULL
+   - company_tag_lid – INTEGER, Nullable, Default: 0
+   - remarks – VARCHAR(4000), Nullable
+   - created_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+   - updated_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+   - created_by – INTEGER, NOT NULL, Default: 0
+   - updated_by – INTEGER, NOT NULL, Default: 0
+   - deleted_at – TIMESTAMP, Nullable
+   - insure_code – VARCHAR(100), Nullable
+   - status_lid – INTEGER, NOT NULL, Default: 1
+   - country_id – INTEGER, Nullable, Default: 2
+
+27. tpa
+   - id – INTEGER, Primary Key, Default: nextval('"public".tpa_id_seq'::regclass), NOT NULL
+   - name – VARCHAR(200), NOT NULL
+   - display_name – VARCHAR(100), NOT NULL
+   - company_type_lid – INTEGER, NOT NULL
+   - website – VARCHAR(100), Nullable
+   - remarks – VARCHAR(4000), Nullable
+   - created_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+   - updated_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+   - created_by – INTEGER, NOT NULL
+   - updated_by – INTEGER, NOT NULL
+   - deleted_at – TIMESTAMP, Nullable
+   - status_lid – INTEGER, Nullable
+   - country_id – INTEGER, Nullable, Default: 2
+
+28. address
+   - id – INTEGER, Primary Key, Default: nextval('"public".address_id_seq'::regclass), NOT NULL
+   - address_type_lid – INTEGER, Nullable
+   - addr_1 – VARCHAR(255), NOT NULL
+   - addr_2 – VARCHAR(255), Nullable
+   - area – VARCHAR(4000), Nullable
+   - country_id – INTEGER, NOT NULL, Foreign Key → country(id)
+   - state_id – INTEGER, NOT NULL, Foreign Key → state(id)
+   - city_id – INTEGER, NOT NULL, Foreign Key → city(id)
+   - pincode – VARCHAR(20), Nullable
+   - phone_number – VARCHAR(20), Nullable
+   - alternate_phone_number – VARCHAR(20), Nullable
+   - email – VARCHAR(100), Nullable
+   - support_number – VARCHAR(20), Nullable
+   - fax – VARCHAR(50), Nullable
+   - created_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+   - updated_at – TIMESTAMP, NOT NULL, Default: CURRENT_TIMESTAMP
+   - created_by – INTEGER, NOT NULL
+   - updated_by – INTEGER, NOT NULL
+   - deleted_at – TIMESTAMP, Nullable
+   - landmark – VARCHAR(2000), Nullable
+
+29. employee
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (employee_id_seq)
+   - first_name: VARCHAR(100), NOT NULL
+   - last_name: VARCHAR(100), NOT NULL
+   - email_id: VARCHAR(150), NOT NULL, UNIQUE
+   - mobile: VARCHAR(20), NOT NULL
+   - user_id: INTEGER, NOT NULL, FOREIGN KEY -> users(id)
+   - branch_id: INTEGER, NULLABLE, FOREIGN KEY -> org_branch(id)
+   - department_id: INTEGER, NOT NULL, FOREIGN KEY -> org_department(id)
+   - designation_id: INTEGER, NOT NULL
+   - reporting_user_id: INTEGER, NULLABLE
+   - iirm_emp_id: VARCHAR(100), NOT NULL
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - salutation_lid: INTEGER, NULLABLE
+   - reporting_manager_employee_id: INTEGER, NULLABLE
+   - status_lid: INTEGER, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+   - organisation_id: INTEGER, NULLABLE
+   - vertical_id: INTEGER, NULLABLE, FOREIGN KEY -> org_vertical(id)
+   - sbu_id: INTEGER, NULLABLE
+   - date_of_birth: DATE, NULLABLE
+   - date_of_joining: DATE, NULLABLE
+   - profile_url: TEXT, NULLABLE
+
+30. broker
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - broker_name: VARCHAR(200), NOT NULL
+   - display_name: VARCHAR(100), NOT NULL
+   - company_type_lid: INTEGER, NOT NULL, FOREIGN KEY -> lookup_data(id)
+   - website: VARCHAR(255), NULLABLE
+   - remarks: VARCHAR(4000), NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - status_lid: INTEGER, NULLABLE, FOREIGN KEY -> lookup_data(id)
+   - audit_ref_id: INTEGER, NULLABLE
+   - country_id: INTEGER, NULLABLE, FOREIGN KEY -> country(id)
+
+31. users
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - first_name: VARCHAR(100), NOT NULL
+   - last_name: VARCHAR(100), NOT NULL
+   - email_id: VARCHAR(150), NOT NULL, UNIQUE
+   - mobile: VARCHAR(20), NULLABLE
+   - login_name: VARCHAR(100), NOT NULL, UNIQUE
+   - password: VARCHAR(255), NOT NULL
+   - branch_id: INTEGER, NULLABLE
+   - department_id: INTEGER, NULLABLE
+   - designation_id: INTEGER, NULLABLE
+   - reporting_user_id: INTEGER, NULLABLE
+   - salutation_lid: INTEGER, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+   - iirm_emp_id: VARCHAR(255), NULLABLE
+   - organisation_id: INTEGER, NULLABLE
+   - vertical_id: INTEGER, NULLABLE
+   - created_at: TIMESTAMP WITH TIME ZONE, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - created_by: INTEGER, NULLABLE
+   - updated_at: TIMESTAMP WITH TIME ZONE, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_by: INTEGER, NULLABLE
+   - user_type_key: VARCHAR(255), NULLABLE
+   - user_status_key: VARCHAR(255), NULLABLE
+   - sbu_id: INTEGER, NULLABLE
+   - status_lid: INTEGER, NULLABLE, FOREIGN KEY -> lookup_data(id)
+
+32. policy_asset
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_asset_id_seq)
+   - cover_code: VARCHAR(50), NOT NULL
+   - risk_location_type: VARCHAR(100), NOT NULL
+   - risk_location_details: TEXT, NULLABLE
+   - category: VARCHAR(100), NOT NULL
+   - coverage_type: VARCHAR(100), NOT NULL
+   - quantity: INTEGER, NULLABLE
+   - uom: VARCHAR(100), NOT NULL
+
+33. policy_asset_endorsement
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_asset_endorsement_id_seq)
+   - policy_id: INTEGER, NOT NULL
+   - company_id: INTEGER, NOT NULL
+   - endorsement_type: VARCHAR(50), NULLABLE
+   - endorsement_date: TIMESTAMP, NULLABLE
+   - insurer_endorsement_number: VARCHAR(255), NULLABLE
+   - insurer_endorsement_date: TIMESTAMP, NULLABLE
+   - endorsement_entry_date: TIMESTAMP, NULLABLE
+   - endorsment_file_id: INTEGER, NULLABLE
+   - endorsement_asset_count: INTEGER, NULLABLE, DEFAULT 0
+   - ack_file_id: INTEGER, NULLABLE
+   - endorsement_ack_count: INTEGER, NULLABLE, DEFAULT 0
+   - sum_insured: NUMERIC(18, 2), NULLABLE
+   - premium_at_inception: NUMERIC(18, 2), NULLABLE
+   - gross_premium: NUMERIC(18, 2), NULLABLE
+   - net_premium: NUMERIC(18, 2), NULLABLE
+   - gst_amount: NUMERIC(18, 2), NULLABLE
+   - terrorism_amount: NUMERIC(18, 2), NULLABLE
+   - date_of_income: TIMESTAMP, NULLABLE
+   - income_type_lid: INTEGER, NULLABLE
+   - basic_brokerage_amount: NUMERIC(18, 2), NULLABLE
+   - brokerage_amount_asper_iwork: NUMERIC(18, 2), NULLABLE
+   - brokerage_amount_asper_isg: NUMERIC(18, 2), NULLABLE
+   - fee_amount: NUMERIC(18, 2), NULLABLE
+   - terrorism_brokerage_amount: NUMERIC(18, 2), NULLABLE
+   - other_amount: NUMERIC(18, 2), NULLABLE
+   - od_percentage: NUMERIC(5, 2), NULLABLE
+   - tp_percentage: NUMERIC(5, 2), NULLABLE
+   - net_percentage: NUMERIC(5, 2), NULLABLE
+   - share_percentage: NUMERIC(5, 2), NULLABLE
+   - commission_terrorism_percentage: NUMERIC(5, 2), NULLABLE
+   - deal_confirmed_lid: INTEGER, NULLABLE
+   - remarks: TEXT, NULLABLE
+   - financial_non_financially: VARCHAR(50), NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - basic_brokerage_percentage: NUMERIC(5, 2), NULLABLE
+   - income_month: TIMESTAMP, NULLABLE
+   - tpa_document_id: INTEGER, NULLABLE
+   - tpa_processed_count: INTEGER, NULLABLE, DEFAULT 0
+   - tpa_acknowledged_date: TIMESTAMP, NULLABLE
+   - tpa_error_count: INTEGER, NOT NULL, DEFAULT 0
+   - tpa_error_file_id: INTEGER, NULLABLE
+   - mig_ref_no: VARCHAR(255), NULLABLE
+   - premium_collected: NUMERIC, NULLABLE, DEFAULT 0
+   - ingested_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - ingested_mode: VARCHAR(255), NULLABLE
+   - brokerage_collected: NUMERIC(19, 2), NULLABLE
+   - endorsement_status: VARCHAR(50), NULLABLE
+   - current_endorsement_step: INTEGER, NULLABLE
+   - os_ticket_number: VARCHAR(50), NULLABLE
+   - provisional_endorsement_number: VARCHAR(50), NULLABLE
+   - insurer_communication_date: TIMESTAMP, NULLABLE
+   - insurer_communication_details: TEXT, NULLABLE
+   - insurer_endorsed_employee_count: INTEGER, NULLABLE
+   - insurer_endorsed_dependent_count: INTEGER, NULLABLE
+   - endorsement_effective_date: TIMESTAMP, NULLABLE
+   - insurer_acknowledgement_number: VARCHAR(50), NULLABLE
+   - client_confirmation_message: TEXT, NULLABLE
+   - client_confirmation_date: TIMESTAMP, NULLABLE
+   - tpa_upload_remarks: TEXT, NULLABLE
+   - endorsment_sub_asset_count: INTEGER, NULLABLE
+   - endorsement_addition_count: INTEGER, NULLABLE
+   - endorsement_deletion_count: INTEGER, NULLABLE
+   - is_inception: BOOLEAN, NULLABLE
+
+34. policy_asset_endorsement_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_asset_endorsement_map_id_seq)
+   - policy_id: INTEGER, NOT NULL
+   - cover_code: VARCHAR(50), NOT NULL
+   - endorsement_addition_batch_id: INTEGER, NULLABLE
+   - endorsement_deletion_batch_id: INTEGER, NULLABLE
+   - endorsement_status: VARCHAR(100), NULLABLE
+   - effective_date: TIMESTAMP, NULLABLE
+   - deletion_effective_date: TIMESTAMP, NULLABLE
+   - rate: VARCHAR(50), NOT NULL
+   - sum_insured: NUMERIC(15, 2), NULLABLE
+   - premium: NUMERIC(15, 2), NULLABLE
+   - endorsement_addition_id: INTEGER, NULLABLE
+   - endorsement_deletion_id: INTEGER, NULLABLE
+
+35. policy_audit_log
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_audit_log_id_seq)
+   - policy_id: INTEGER, NULLABLE
+   - policy_configuration_id: INTEGER, NULLABLE
+   - entity_type: VARCHAR(100), NULLABLE
+   - entity_id: INTEGER, NULLABLE
+   - action: VARCHAR(100), NOT NULL
+   - performed_by: INTEGER, NULLABLE
+   - remarks: TEXT, NULLABLE
+   - metadata: JSONB, NULLABLE
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE
+
+36. policy_claim
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_employee_claim_id_seq)
+   - policy_id: INTEGER, NOT NULL, FOREIGN KEY (policy.id)
+   - employee_id: INTEGER, NULLABLE, FOREIGN KEY (policy_enrollment_employee.id)
+   - employee_tpa_id: VARCHAR(100), NULLABLE
+   - claim_insured_id: VARCHAR(100), NULLABLE
+   - dependent_id: INTEGER, NULLABLE, FOREIGN KEY (policy_enrollment_dependent.id)
+   - clm_hospital: VARCHAR(255), NULLABLE
+   - clm_doa: DATE, NULLABLE
+   - clm_dod: DATE, NULLABLE
+   - claim_dt: DATE, NULLABLE
+   - clm_type: VARCHAR(50), NULLABLE
+   - claim_amount: NUMERIC, NULLABLE
+   - claim_description: TEXT, NULLABLE
+   - claim_status: VARCHAR(50), NULLABLE
+   - clm_pre_auth_id: VARCHAR(100), NULLABLE
+   - claim_checklist: TEXT, NULLABLE
+   - clm_bill_details: TEXT, NULLABLE
+   - clm_allowed_amt: NUMERIC, NULLABLE
+   - clm_pre_auth_date: DATE, NULLABLE
+   - clm_pre_auth_amt: NUMERIC, NULLABLE
+   - clm_allowed_id: VARCHAR(100), NULLABLE
+   - claim_checklist_count: INTEGER, NULLABLE
+   - user_id: VARCHAR(100), NULLABLE
+   - source_file_upload_id: INTEGER, NULLABLE, FOREIGN KEY (file_uploads.id)
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - company_id: INTEGER, NULLABLE
+   - opportunity_id: INTEGER, NULLABLE
+   - claim_number: VARCHAR(50), NULLABLE, UNIQUE
+   - active_activity: VARCHAR(255), NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+
+37. policy_claim_settlement
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_employee_claim_settlement_id_seq)
+   - claim_id: INTEGER, NOT NULL, FOREIGN KEY (policy_claim.id)
+   - source_file_upload_id: INTEGER, NULLABLE, FOREIGN KEY (file_uploads.id)
+   - clm_sett_no: VARCHAR(100), NULLABLE
+   - clm_sett_amt: NUMERIC, NULLABLE
+   - clm_sett_date: DATE, NULLABLE
+   - clm_sett_details: TEXT, NULLABLE
+   - clm_dis_amt: NUMERIC, NULLABLE
+   - clm_sett_chq_bnk: VARCHAR(100), NULLABLE
+   - clm_sett_chq_dt: DATE, NULLABLE
+   - clm_sett_chq_no: VARCHAR(100), NULLABLE
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - claim_activity_id: INTEGER, NULLABLE
+   - approved_by: VARCHAR(255), NULLABLE
+   - mode_of_settlement_key: VARCHAR(255), NULLABLE
+   - status_key: VARCHAR(255), NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+
+38. policy_faq_uploads
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_faq_uploads_id_seq)
+   - policy_id: INTEGER, NOT NULL
+   - file_id: INTEGER, NOT NULL
+   - file_name: VARCHAR(255), NOT NULL
+   - file_path: VARCHAR(500), NOT NULL
+   - faq_count: INTEGER, NOT NULL
+   - uploaded_by: INTEGER, NOT NULL
+   - uploaded_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - status_lkey: VARCHAR(50), NULLABLE, DEFAULT 'FAQ_UPLOAD_FILE_PROCESSING'
+   - Indexes: idx_faq_uploads_policy_id (policy_id)
+
+39. policy_faqs
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_faqs_id_seq)
+   - policy_id: INTEGER, NOT NULL
+   - category: VARCHAR(100), NOT NULL
+   - question: TEXT, NOT NULL
+   - answer: TEXT, NOT NULL
+   - is_active: BOOLEAN, NULLABLE, DEFAULT true
+   - created_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_by: INTEGER, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+   - Indexes:
+       - idx_faqs_category (category)
+       - idx_faqs_is_active (is_active)
+       - idx_faqs_policy_id (policy_id)
+
+40. policy_participant_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_participant_map_id_seq)
+   - policy_id: INTEGER, NOT NULL, FOREIGN KEY → policy(id)
+   - participant_id: INTEGER, NOT NULL, FOREIGN KEY → users(id)
+   - participant_type: VARCHAR(100), NULLABLE
+   - Indexes: None
+
+41. policy_risk_location_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_risk_location_map_id_seq)
+   - policy_id: INTEGER, NOT NULL, FOREIGN KEY → policy(id)
+   - address_id: INTEGER, NOT NULL, FOREIGN KEY → address(id)
+   - Indexes: None
+
+42. policy_sub_asset
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_sub_asset_id_seq)
+   - main_cover_code: VARCHAR(50), NOT NULL
+   - sub_cover_description: TEXT, nullable
+   - sub_limit_type: VARCHAR(100), nullable
+   - Indexes: None
+
+43. policy_sub_asset_endorsement_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (policy_sub_asset_endorsement_map_id_seq)
+   - policy_id: INTEGER, NOT NULL
+   - cover_code: VARCHAR(50), NOT NULL
+   - sub_asset_id: INTEGER, NOT NULL
+   - endorsement_addition_batch_id: INTEGER, nullable
+   - endorsement_deletion_batch_id: INTEGER, nullable
+   - endorsement_status: VARCHAR(100), nullable
+   - effective_date: TIMESTAMP, nullable
+   - deletion_effective_date: TIMESTAMP, nullable
+   - sub_limit_amount: NUMERIC(15,2), nullable
+   - endorsement_addition_id: INTEGER, nullable
+   - endorsement_deletion_id: INTEGER, nullable
+   - Indexes: None
+
+44. policy_type_and_endorsement_steps_mapping
+   - id: INTEGER, NOT NULL, auto-increment (policy_type_and_endorsement_steps_mapping_id_seq)
+   - policy_type_id: INTEGER, nullable
+   - endorsement_step_id: INTEGER, nullable
+   - endorsement_step_order: INTEGER, nullable
+   - Indexes: None
+
+45. policy_type_segregation
+   - id: INTEGER, NOT NULL, primary key, auto-increment (policy_type_segregation_id_seq)
+   - policy_type_lid: INTEGER, NOT NULL, foreign key → lookup_data.id
+   - irdai_policy_type_lid: INTEGER, nullable, foreign key → lookup_data.id
+   - iirm_policy_type_lid: INTEGER, nullable, foreign key → lookup_data.id
+   - assoc_active_policy_type_lid: INTEGER, nullable, foreign key → lookup_data.id
+   - policy_type_inactive_date: TIMESTAMP, nullable
+   - Indexes:
+       - Unique index on policy_type_lid (uq_policy_type_segregation_policy_type)
+
+46. opportunity
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - company_id: INTEGER, NOT NULL
+   - contact_id: INTEGER, NULLABLE
+   - estimated_brokerage: DOUBLE PRECISION, NULLABLE
+   - policy_type_lid: INTEGER, NOT NULL
+   - policy_status_lid: INTEGER, NOT NULL
+   - service_level_lid: INTEGER, NOT NULL
+   - expiry_date: DATE, NOT NULL
+   - sum_insured: DOUBLE PRECISION, NULLABLE
+   - premium_paid: DOUBLE PRECISION, NULLABLE
+   - sharing_percentage: DOUBLE PRECISION, NULLABLE
+   - estimated_fee: DOUBLE PRECISION, NULLABLE
+   - prev_insurer_id: INTEGER, NULLABLE
+   - prev_insurer_location_id: INTEGER, NULLABLE
+   - prev_insurer_branch_id: INTEGER, NULLABLE
+   - prev_tpa_id: INTEGER, NULLABLE
+   - prev_tpa_location_id: INTEGER, NULLABLE
+   - prev_tpa_branch_id: INTEGER, NULLABLE
+   - remarks: TEXT, NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - opportunity_type_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - is_policy_mined_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - source_type_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - source: VARCHAR(255), NULLABLE
+   - sales_pitch: TEXT, NULLABLE
+   - status_lid: INTEGER, NULLABLE
+   - owner_id: INTEGER, NULLABLE
+   - audit_ref_id: INTEGER, NULLABLE
+   - ref_policy_id: INTEGER, NULLABLE
+   - estimated_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - ref_opportunity_id: INTEGER, NULLABLE
+   - am_id: INTEGER, NULLABLE
+   - isg_id: INTEGER, NULLABLE
+   - injected_by: VARCHAR(100)
+
+47. opporuntity_activity_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - ref_stage_id: INTEGER, NOT NULL
+   - ref_activity_id: INTEGER, NOT NULL
+   - activity_name: VARCHAR(200), NULLABLE
+   - stage_name: VARCHAR(200), NULLABLE
+   - original_due_date: TIMESTAMP, NULLABLE
+   - lead_days: INTEGER, NULLABLE
+   - approval: VARCHAR(10), NULLABLE, DEFAULT 'No'
+   - mandatory: VARCHAR(10), NULLABLE, DEFAULT 'Yes'
+   - lead_role_id: INTEGER, NULLABLE, FOREIGN KEY → roles(id)
+   - activity_meta: JSONB, NULLABLE
+   - due_date: TIMESTAMP, NULLABLE
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - created_by: INTEGER, NOT NULL, DEFAULT 0
+   - updated_by: INTEGER, NOT NULL, DEFAULT 0
+   - opportunity_table: VARCHAR(100), NULLABLE
+   - status_lid: INTEGER, NULLABLE
+   - activity_key: VARCHAR(100), NULLABLE
+   - ref_role_key: VARCHAR(255), NULLABLE
+   - owner_id: INTEGER, NULLABLE
+   - planned_at: TIMESTAMP, NULLABLE
+   - completed_at: TIMESTAMP, NULLABLE
+   - activity_order: INTEGER, NULLABLE
+   - file_path_url: VARCHAR(500), NULLABLE
+   - activity_status_key: VARCHAR(20)
+
+48. opportunity_activity_participants
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - activity_id: INTEGER, NOT NULL
+   - participant_id: INTEGER, NOT NULL, FOREIGN KEY → users(id)
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - opportunity_activity_id: INTEGER, NULLABLE
+
+49. opportunity_broking_slip_activity_document_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_activity_map_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_activity_map(id)
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - document_id: INTEGER, NOT NULL, FOREIGN KEY → file_uploads(id)
+   - document_type_lid: INTEGER, NOT NULL
+
+50. opportunity_broking_slip_document_map_details
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - document_id: INTEGER, NOT NULL
+
+51. opportunity_broking_slip_version_cover_map_details
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - cover_map_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_cover_map(id)
+   - policy_type_id: INTEGER, NOT NULL
+   - broking_slip_version_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_broking_slip_version_details(id)
+   - cover_name: TEXT, NOT NULL
+   - cover_response: TEXT, NOT NULL
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+
+52. opportunity_broking_slip_version_details
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - sum_insured: NUMERIC, NOT NULL
+   - brokerage_percentage: NUMERIC, NULLABLE
+   - policy_from: DATE, NOT NULL
+   - policy_to: DATE, NOT NULL
+   - renewal_date: DATE, NOT NULL
+   - quote_receipt_timeline: DATE, NOT NULL
+   - business_activity: TEXT, NULLABLE
+   - risk_mitigation_features: TEXT, NOT NULL
+   - clauses: TEXT, NOT NULL
+   - insurer_remarks: TEXT, NOT NULL
+   - remarks: TEXT, NULLABLE
+   - broking_slip_version: INTEGER, NOT NULL
+   - broking_slip_name: TEXT, NOT NULL
+   - basic_premium: NUMERIC(19,2), NULLABLE
+   - brokerage_amount: NUMERIC(19,2), NULLABLE
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+
+53. opportunity_challenges
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - challenge_type_lid: INTEGER, NOT NULL
+   - description: TEXT, NULLABLE
+   - mitigation_type_lid: INTEGER, NOT NULL
+   - mitigation_description: TEXT, NULLABLE
+
+54. opportunity_claim_experience
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity(id)
+   - policy_from: DATE, NULLABLE
+   - policy_to: DATE, NULLABLE
+   - nature_of_loss: VARCHAR(255), NULLABLE
+   - premium: DOUBLE PRECISION, NULLABLE
+   - claim_amount: DOUBLE PRECISION, NULLABLE
+   - claim_percentage: DOUBLE PRECISION, NULLABLE
+   - remarks: TEXT, NULLABLE
+
+55. opportunity_competitor
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - competitor: VARCHAR(255), NOT NULL
+   - competitor_id: INTEGER, NULLABLE
+   - competitor_branch_id: INTEGER, NULLABLE
+
+56. opportunity_contact_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - contact_id: INTEGER, NOT NULL, FOREIGN KEY → contact(id)
+
+57. opportunity_cover_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL
+   - policy_type_id: INTEGER, NOT NULL
+   - cover_id: INTEGER, NOT NULL
+   - mandate_type: VARCHAR(50), NOT NULL        -- Yes / No / yes
+   - approval_required: VARCHAR(10), NULLABLE   -- default 'No'
+   - cover_name: TEXT, NULLABLE
+   - cover_description: TEXT, NULLABLE
+   - display_sequence: INTEGER, NULLABLE
+   - display_category: VARCHAR(100), NULLABLE   -- Asset / Basic
+   - cover_type: INTEGER, NULLABLE              -- LID-based
+   - input_type: VARCHAR(100), NULLABLE         -- dropdown / number / text / textarea
+   - input_lov: JSONB, NULLABLE                 -- value-label map
+   - covers_meta: JSONB, NULLABLE               -- extended configuration
+   - created_at: TIMESTAMP, NOT NULL
+   - updated_at: TIMESTAMP, NOT NULL
+
+58. opportunity_data_validation
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NULLABLE
+   - activity_id: INTEGER, NULLABLE              -- always 1
+   - opportunity_activity_id: INTEGER, NULLABLE
+   - plan_date: DATE, NULLABLE                   -- default CURRENT_DATE
+   - perform_date: DATE, NULLABLE                -- mostly NULL
+   - description: TEXT, NULLABLE
+   - activity_type_lid: INTEGER, NULLABLE
+   - status_lid: INTEGER, NULLABLE               -- always 4502
+   - task_id: INTEGER, NULLABLE, FOREIGN KEY → task(id)
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+
+59. opportunity_data_validation_document_map
+   - id: INTEGER, PRIMARY KEY
+   - data_validation_id: INTEGER, NOT NULL
+   - document_id: INTEGER, NOT NULL, FK → file_uploads(id)
+   - task_id: INTEGER, NOT NULL, FK → task(id)
+   - document_type_lid: INTEGER, NOT NULL
+
+60. opportunity_document_map
+   - id: INTEGER, PRIMARY KEY
+   - opportunity_id: INTEGER, NOT NULL, FK → opportunity(id)
+   - document_id: INTEGER, NOT NULL, FK → file_uploads(id)
+
+61. opportunity_final_negotiation
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - meeting_id: INTEGER, NULLABLE, FOREIGN KEY → meeting(id)
+   - opportunity_id: INTEGER, NULLABLE
+   - opportunity_activity_id: INTEGER, NULLABLE
+   - activity_id: INTEGER, NULLABLE
+   - policy_placed_type_lid: INTEGER, NULLABLE
+   - is_lead_insurer_pay_commission_lid: INTEGER, NULLABLE
+   - is_quote_edited: INTEGER, NULLABLE
+   - is_final_negotiation_lid: INTEGER, NOT NULL
+   - status_lid: INTEGER, NULLABLE
+   - lead_insurer_id: INTEGER, NULLABLE, FOREIGN KEY → insurer(id)
+   - quote_insurer_id: INTEGER, NULLABLE
+   - quote_insurer_location_id: INTEGER, NULLABLE
+   - finalized_quote_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity_quote_entry(id)
+   - finalized_version_id: INTEGER, NULLABLE
+   - select_meeting_id: INTEGER, NULLABLE
+   - basic_premium: NUMERIC(19,2), NULLABLE
+   - terrorism: NUMERIC(19,2), NULLABLE
+   - net_premium: NUMERIC(19,2), NULLABLE
+   - basic_premium_percentage: NUMERIC(5,2), NULLABLE
+   - srcc_percentage: NUMERIC(5,2), NULLABLE
+   - srcc_amount: NUMERIC(19,2), NULLABLE
+   - terrorism_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - basic_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - brokerage_amount: NUMERIC(19,2), NULLABLE
+   - basic_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - srcc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - tc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - gst_percentage: NUMERIC(5,2), NULLABLE
+   - gst_amount: NUMERIC(19,2), NULLABLE
+   - fee_percentage: NUMERIC(5,2), NULLABLE
+   - fee: NUMERIC(19,2), NULLABLE
+   - other_percentage: NUMERIC(5,2), NULLABLE
+   - other: NUMERIC(19,2), NULLABLE
+   - admin_charges_percentage: NUMERIC(5,2), NULLABLE
+   - admin_charges: NUMERIC(19,2), NULLABLE
+   - cess_percentage: NUMERIC(5,2), NULLABLE
+   - cess_amount: NUMERIC(19,2), NULLABLE
+   - total_gross_premium_inc_tax: NUMERIC(19,2), NULLABLE
+   - total_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - gross_premium: NUMERIC(19,2), NULLABLE
+   - insurer_remarks: TEXT, NULLABLE
+   - remarks: TEXT, NULLABLE
+   - other_insurer_comments: TEXT, NULLABLE
+   - min_of_meeting: TEXT, NULLABLE
+   - quote_received_on: TIMESTAMP, NULLABLE
+   - meeting_date: DATE, NULLABLE
+   - start_time: TIME, NULLABLE
+   - end_time: TIME, NULLABLE
+   - location_type_lid: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+
+62. opportunity_final_negotiation_doc_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_final_negotiation_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity_final_negotiation(id)
+   - document_id: INTEGER, NULLABLE, FOREIGN KEY → file_uploads(id)
+   - document_type_lid: INTEGER, NULLABLE
+
+63. opportunity_final_negotiation_qcr_variation
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_final_negotiation_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity_final_negotiation(id)
+   - issue: VARCHAR(255), NULLABLE
+
+64. opportunity_final_negotiation_quote_cover_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_final_negotiation_id: INTEGER, NOT NULL
+   - quote_id: INTEGER, NOT NULL
+   - cover_map_id: INTEGER, NOT NULL
+   - insurer_cover_response: TEXT, NULLABLE
+   - opportunity_id: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+
+65. opportunity_final_negotiation_service_level_agreement
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_final_negotiation_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity_final_negotiation(id)
+   - service_type_id: INTEGER, NULLABLE
+   - number_of_days: INTEGER, NULLABLE
+
+66. opportunity_final_negotiation_sharing_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_final_negotiation_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity_final_negotiation(id)
+   - insurer_id: INTEGER, NULLABLE, FOREIGN KEY → insurer(id)
+   - share_percentage: NUMERIC, NULLABLE
+   - brokerage_percentage: NUMERIC, NULLABLE
+   - brokerage_amount: NUMERIC, NULLABLE
+   - share_amount: NUMERIC(19,2), NULLABLE
+   - insurer_location_id: INTEGER, NULLABLE
+   - insurer_branch_id: INTEGER, NULLABLE
+   - insurer_contact_id: INTEGER, NULLABLE
+   - is_lead_insurer: INTEGER, NULLABLE
+   - terrorism_brokerage_percentage: NUMERIC(5,2), NULLABLE,
+   - terrorism_brokerage_amount: NUMERIC(19,2), NULLABLE,
+   - total_brokerage_amount NUMERIC(19,2), NULLABLE
+
+67. opportunity_final_negotiation_tax_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_final_negotiation_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity_final_negotiation(id)
+   - tax: INTEGER, NULLABLE
+   - tax_value: INTEGER, NULLABLE
+
+68. opportunity_hand_over_meet (Handover Meeting Records - CAN QUERY MEETING SCHEDULES)
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - activity_id: INTEGER, NOT NULL
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - opportunity_activity_id: INTEGER, NOT NULL
+   - meeting_id: INTEGER, NULLABLE, FOREIGN KEY → meeting(id) (Join with meeting table for dates/times)
+   - select_meeting_id: INTEGER, NULLABLE
+   - hand_over_meeting_type_lid: INTEGER, NOT NULL
+   - status_lid: INTEGER, NULLABLE
+   - remarks: TEXT, NULLABLE
+   - mom: TEXT, NULLABLE (minutes of meeting)
+   - meeting_date: DATE,
+   - start_time: TIMESTAMP
+   - end_time: TIMESTAMP
+   - location_type_lid: INTEGER
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   
+   IMPORTANT: Join with meeting table via meeting_id to get meeting dates and scheduling information
+
+69. opportunity_held_cover_note
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity(id)
+   - activity_id: INTEGER, NULLABLE
+   - opportunity_activity_id: INTEGER, NULLABLE
+   - status_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - placement_slip_deviations_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - deviations_addressed_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - revised_held_cover_note_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - resolution_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - deviations: VARCHAR(500), NULLABLE
+   - remarks: VARCHAR(1000), NULLABLE
+   - acknowledged_by: INTEGER, NULLABLE
+   - receipt_no: VARCHAR(255), NULLABLE
+   - receipt_date: TIMESTAMP, NULLABLE
+   - all_documents_received_date: TIMESTAMP, NULLABLE
+   - lead_insurer_id: INTEGER, NULLABLE
+   - is_lead_insurer_pay_commission: INTEGER, NULLABLE
+   - policy_placed_type_lid: INTEGER, NULLABLE
+   - sum_insured: NUMERIC(19,2), NULLABLE
+   - basic_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - brokerage_amount: NUMERIC(19,2), NULLABLE
+   - basic_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - basic_premium_percentage: NUMERIC(5,2), NULLABLE
+   - basic_premium: NUMERIC(19,2), NULLABLE
+   - srcc_percentage: NUMERIC(5,2), NULLABLE
+   - srcc_amount: NUMERIC(19,2), NULLABLE
+   - srcc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - terrorism_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - terrorism: NUMERIC(19,2), NULLABLE
+   - gst_percentage: NUMERIC(5,2), NULLABLE
+   - gst_amount: NUMERIC(19,2), NULLABLE
+   - fee_percentage: NUMERIC(5,2), NULLABLE
+   - fee: NUMERIC(19,2), NULLABLE
+   - other_percentage: NUMERIC(5,2), NULLABLE
+   - other: NUMERIC(19,2), NULLABLE
+   - admin_charges_percentage: NUMERIC(5,2), NULLABLE
+   - admin_charges: NUMERIC(19,2), NULLABLE
+   - cess_percentage: NUMERIC(5,2), NULLABLE
+   - cess_amount: NUMERIC(19,2), NULLABLE
+   - net_premium: NUMERIC(19,2), NULLABLE
+   - total_gross_premium_inc_tax: NUMERIC(19,2), NULLABLE
+   - gross_premium: NUMERIC(19,2), NULLABLE
+   - total_premium: NUMERIC(19,2), NULLABLE
+   - tc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - total_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+
+70. opportunity_held_cover_note_cover_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - held_cover_note_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_held_cover_note(id)
+   - opportunity_id: INTEGER, NOT NULL
+   - cover_template_id: INTEGER, NOT NULL
+   - cover_name: VARCHAR, NOT NULL
+   - cover_response: VARCHAR, NULLABLE
+   - covers_meta: JSONB, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+
+71. opportunity_held_cover_note_document_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - held_cover_note_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_held_cover_note(id)
+   - document_id: INTEGER, NOT NULL, FOREIGN KEY → file_uploads(id)
+   - document_type_lid: INTEGER, NOT NULL
+   Indexes / Constraints
+      - INDEX (held_cover_note_id)
+      - INDEX (document_id)
+      - UNIQUE (held_cover_note_id, document_id)
+
+72. opportunity_held_cover_note_insurer_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - held_cover_note_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_held_cover_note(id)
+   - insurer_id: INTEGER, NOT NULL, FOREIGN KEY → insurer(id)
+   - insurer_location_id: INTEGER, NOT NULL
+   - insurer_branch_id: INTEGER, NOT NULL
+   - insurer_contact_id: INTEGER, NOT NULL
+   - is_lead_insurer: INTEGER, NULLABLE
+   - share_percentage: NUMERIC(5,2), NOT NULL
+   - share_amount: NUMERIC(19,2), NOT NULL
+   - brokerage_percentage: NUMERIC(5,2), NOT NULL
+   - brokerage_amount: NUMERIC(19,2), NOT NULL
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+   - terrorism_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - terrorism_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - total_brokerage_amount: NUMERIC(19,2), NULLABLE
+
+73. opportunity_kdm_meeting (KDM Meeting Records - CAN QUERY MEETING SCHEDULES)
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - meeting_id: INTEGER, NOT NULL, FOREIGN KEY → meeting(id)
+   - status_lid: INTEGER, NULLABLE
+   - remarks: TEXT, NULLABLE
+   - opportunity_id: INTEGER, NOT NULL
+   - activity_id: INTEGER, NOT NULL
+   - kdm_meeting_type_lid: INTEGER, NOT NULL
+   - select_meeting_id: INTEGER, NULLABLE
+   - mom: TEXT, NULLABLE (minutes of meeting)
+   - opportunity_activity_id: INTEGER, NULLABLE
+   - start_time: TIMESTAMP,
+   - end_time: TIMESTAMP,
+   - location_type_lid: INTEGER
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - deleted_at: TIMESTAMP, NULLABLE
+
+73a. meeting (Core Meeting Table - Contains Scheduling Information)
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - activity_id: INTEGER, NOT NULL
+   - meeting_type_lid: INTEGER, NOT NULL
+   - company_id: INTEGER, NOT NULL
+   - meeting_date: DATE, NOT NULL (use for date-based queries)
+   - start_time: TIME, NOT NULL
+   - end_time: TIME, NOT NULL
+   - duration: INTEGER, NOT NULL (in minutes)
+   - location_type_lid: INTEGER, NULLABLE
+   - meeting_subject: VARCHAR(255), NULLABLE
+   - meeting_agenda: TEXT, NULLABLE (detailed meeting agenda)
+   - meeting_status_lid: INTEGER, NULLABLE
+   - meeting_rating: INTEGER, NULLABLE
+   - feedback_submitted: VARCHAR(30), NULLABLE
+   - remarks: TEXT, NULLABLE
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   
+   IMPORTANT: Use meeting.meeting_date for date-based queries like "this month", "scheduled for", etc.
+
+74. opportunity_lost
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL
+   - activity_id: INTEGER, NULLABLE
+   - opportunity_activity_id: INTEGER, NULLABLE
+   - remarks: TEXT, NULLABLE
+   - reason_for_loss_lid: INTEGER, NULLABLE
+   - status_lid: INTEGER, NULLABLE
+   - injected_by VARCHAR(100)
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - deleted_at: TIMESTAMP, NULLABLE
+
+75. opportunity_mandate_details_contact_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - mandate_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_mandate_details_entry(id)
+   - contact_id: INTEGER, NOT NULL, FOREIGN KEY → contact(id)
+
+76. opportunity_mandate_details_document_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - mandate_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_mandate_details_entry(id)
+   - document_type_lid: INTEGER, NOT NULL, FOREIGN KEY → lookup_data(id)
+   - document_id: INTEGER, NOT NULL, FOREIGN KEY → file_uploads(id)
+
+77. opportunity_mandate_details_entry
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - activity_id: INTEGER, NOT NULL, FOREIGN KEY → mstr_activity(id)
+   - company_id: INTEGER, NOT NULL, FOREIGN KEY → company(id)
+   - activity_date: DATE, NOT NULL, DEFAULT CURRENT_DATE
+   - plan_date: DATE, NOT NULL
+   - mandate_type_lid: INTEGER, NOT NULL, FOREIGN KEY → lookup_data(id)
+   - valid_from: DATE, NOT NULL
+   - valid_to: DATE, NOT NULL
+   - compensation_payable: NUMERIC(15,2), NOT NULL
+   - compensation_type_lid: INTEGER, NOT NULL, FOREIGN KEY → lookup_data(id)
+   - issued_on: DATE, NOT NULL
+   - remarks: TEXT, NULLABLE
+   - status_lid: INTEGER, NULLABLE
+   - opportunity_activity_id: INTEGER, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+
+78. opportunity_placement_slip_cd_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - placement_slip_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_placement_slip_generation(id)
+   - cd_account_type_lid: INTEGER, NULLABLE
+   - cheque_amount: NUMERIC(19,2), NOT NULL
+   - cheque_number: VARCHAR, NOT NULL
+   - bank_name: VARCHAR, NOT NULL
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - payment_type_lid: INTEGER, NULLABLE
+   - transaction_type_lid: INTEGER, NULLABLE
+   - account_name: VARCHAR(100), NULLABLE
+   - open_balance: NUMERIC(19,2), NULLABLE
+   - select_cd_account: NUMERIC(10,2), NULLABLE
+   - cheque_date: DATE, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+   - account_number: VARCHAR(50), NULLABLE
+
+79. opportunity_placement_slip_cover_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - placement_slip_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_placement_slip_generation(id)
+   - cover_template_id: INTEGER, NOT NULL
+   - cover_name: VARCHAR, NOT NULL
+   - cover_response: VARCHAR, NOT NULL
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - opportunity_id: INTEGER, NULLABLE
+   - covers_meta: JSONB, NULLABLE
+
+80. opportunity_placement_slip_document_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - placement_slip_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_placement_slip_generation(id)
+   - document_id: INTEGER, NOT NULL
+   - document_type_lid: INTEGER, NOT NULL, FOREIGN KEY → lookup_data(id)
+
+81. opportunity_placement_slip_generation
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_activity_id: INTEGER, NOT NULL
+   - policy_from_date: DATE, NOT NULL
+   - policy_to_date: DATE, NOT NULL
+   - sum_insured: NUMERIC, NOT NULL
+   - basic_premium: NUMERIC, NOT NULL
+   - is_premium_installment_based: INTEGER, NOT NULL
+   - fee: NUMERIC, NOT NULL
+   - is_fee_in_installment: INTEGER, NOT NULL
+   - terrorism_brokerage_percentage: NUMERIC, NULLABLE
+   - gst_percentage: NUMERIC, NOT NULL
+   - gst_amount: NUMERIC, NOT NULL
+   - other: NUMERIC(19,2), NULLABLE
+   - total_premium: NUMERIC, NOT NULL
+   - lead_insurer_id: INTEGER, NULLABLE
+   - is_lead_insurer_pay_commission: INTEGER, NULLABLE
+   - placement_slip_date: DATE, NOT NULL
+   - max_age_of_dependents: INTEGER, NULLABLE
+   - basic_brokerage_percentage: NUMERIC, NOT NULL
+   - policy_placed_type_lid: INTEGER, NULLABLE
+   - remarks: VARCHAR, NULLABLE
+   - status_lid: INTEGER, NOT NULL
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - brokerage_amount: NUMERIC, NOT NULL, DEFAULT 0
+   - basic_premium_percentage: NUMERIC(5,2), NULLABLE
+   - srcc_percentage: NUMERIC(5,2), NULLABLE
+   - srcc_amount: NUMERIC(19,2), NULLABLE
+   - terrorism: NUMERIC(19,2), NULLABLE
+   - total_gross_premium_inc_tax: NUMERIC(19,2), NULLABLE
+   - fee_percentage: NUMERIC(5,2), NULLABLE
+   - other_percentage: NUMERIC(5,2), NULLABLE
+   - admin_charges_percentage: NUMERIC(5,2), NULLABLE
+   - admin_charges: NUMERIC(19,2), NULLABLE
+   - cess_percentage: NUMERIC(5,2), NULLABLE
+   - cess_amount: NUMERIC(19,2), NULLABLE
+   - gross_premium: NUMERIC(19,2), NULLABLE
+   - tc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - basic_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - srcc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - net_premium: NUMERIC(19,2), NULLABLE
+   - total_brokerage_amount: NUMERIC(19,2), NULLABLE
+
+82. opportunity_placement_slip_installement_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - placement_slip_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_placement_slip_generation(id)
+   - first_installment_date: DATE, NOT NULL
+   - second_installment_date: DATE, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - installment_amount: NUMERIC, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+
+83. opportunity_placement_slip_insurer_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - placement_slip_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_placement_slip_generation(id)
+   - insurer_id: INTEGER, NOT NULL
+   - insurer_location_id: INTEGER, NOT NULL
+   - insurer_branch_id: INTEGER, NOT NULL
+   - insurer_contact_id: INTEGER, NOT NULL
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - is_lead_insurer: INTEGER, NULLABLE
+
+84. opportunity_placement_slip_sharing_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - placement_slip_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_placement_slip_generation(id)
+   - insurer_id: INTEGER, NOT NULL
+   - share_percentage: NUMERIC, NOT NULL
+   - brokerage_percentage: NUMERIC
+   - brokerage_amount: NUMERIC
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+   - share_amount: NUMERIC, NULLABLE,
+   - terrorism_brokerage_percentage: NUMERIC(5,2),
+   - terrorism_brokerage_amount: NUMERIC(19,2),
+   - total_brokerage_amount: NUMERIC(19,2)
+
+85. opportunity_placement_slip_tpa_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - placement_slip_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_placement_slip_generation(id)
+   - tpa_id: INTEGER, NOT NULL
+   - tpa_location_id: INTEGER, NOT NULL
+   - tpa_branch_id: INTEGER, NOT NULL
+   - tpa_contact_id: INTEGER, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT CURRENT_TIMESTAMP
+   - deleted_at: TIMESTAMP, NULLABLE
+
+86. opportunity_policy_confirmation
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity(id)
+   - activity_id: INTEGER, NULLABLE
+   - opportunity_activity_id: INTEGER, NULLABLE
+   - status_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - policy_data_wrong_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - deviation_resolved_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - deviations: VARCHAR(500), NULLABLE
+   - resolution_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - comments: VARCHAR(500), NULLABLE
+   - policy_data_rectified_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - remarks: VARCHAR(500), NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - basic_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - brokerage_amount: NUMERIC(19,2), NULLABLE
+   - basic_premium_percentage: NUMERIC(5,2), NULLABLE
+   - basic_premium: NUMERIC(19,2), NULLABLE
+   - srcc_percentage: NUMERIC(5,2), NULLABLE
+   - srcc_amount: NUMERIC(19,2), NULLABLE
+   - terrorism_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - terrorism: NUMERIC(19,2), NULLABLE
+   - gst_percentage: NUMERIC(5,2), NULLABLE
+   - gst_amount: NUMERIC(19,2), NULLABLE
+   - net_premium: NUMERIC(19,2), NULLABLE
+   - total_gross_premium_inc_tax: NUMERIC(19,2), NULLABLE
+   - fee_percentage: NUMERIC(5,2), NULLABLE
+   - fee: NUMERIC(19,2), NULLABLE
+   - other_percentage: NUMERIC(5,2), NULLABLE
+   - other: NUMERIC(19,2), NULLABLE
+   - admin_charges_percentage: NUMERIC(5,2), NULLABLE
+   - admin_charges: NUMERIC(19,2), NULLABLE
+   - cess_percentage: NUMERIC(5,2), NULLABLE
+   - cess_amount: NUMERIC(19,2), NULLABLE
+   - gross_premium: NUMERIC(19,2), NULLABLE
+   - tc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - basic_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - srcc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - sum_insured: NUMERIC(19,2), NULLABLE
+   - total_premium: NUMERIC(19,2), NULLABLE
+   - lead_insurer_id: INTEGER, NULLABLE
+   - is_lead_insurer_pay_commission: INTEGER, NULLABLE
+   - policy_placed_type_lid: INTEGER, NULLABLE
+   - total_brokerage_amount: NUMERIC(19,2)
+   Indexes:
+      - idx_opportunity_policy_confirmation_activity_id(activity_id)
+      - idx_opportunity_policy_confirmation_created_at(created_at)
+      - idx_opportunity_policy_confirmation_opportunity_activity_id(opportunity_activity_id)
+      - idx_opportunity_policy_confirmation_opportunity_id(opportunity_id)
+      - idx_opportunity_policy_confirmation_status_lid(status_lid)
+
+87. opportunity_policy_confirmation_document_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_confirmation_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_policy_confirmation(id)
+   - document_id: INTEGER, NOT NULL, FOREIGN KEY → file_uploads(id)
+   - document_type_lid: INTEGER, NULLABLE
+   Indexes:
+      - idx_policy_confirmation_document_map_document_id(document_id)
+      - idx_policy_confirmation_document_map_policy_confirmation_id(policy_confirmation_id)
+      - uq_policy_confirmation_document(policy_confirmation_id, document_id) [UNIQUE]
+
+88. opportunity_policy_confirmation_insurer_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_confirmation_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_policy_confirmation(id)
+   - insurer_id: INTEGER, NOT NULL, FOREIGN KEY → insurer(id)
+   - insurer_location_id: INTEGER, NOT NULL
+   - insurer_branch_id: INTEGER, NOT NULL
+   - insurer_contact_id: INTEGER, NOT NULL
+   - is_lead_insurer: INTEGER, NULLABLE
+   - share_percentage: NUMERIC(5,2), NOT NULL
+   - share_amount: NUMERIC(19,2), NOT NULL
+   - brokerage_percentage: NUMERIC(5,2), NOT NULL
+   - brokerage_amount: NUMERIC(19,2), NOT NULL
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+   - terrorism_brokerage_percentage: NUMERIC(5,2),
+   - terrorism_brokerage_amount: NUMERIC(19,2),
+   - total_brokerage_amount: NUMERIC(19,2)
+
+89. opportunity_policy_docket
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity(id)
+   - activity_id: INTEGER, NULLABLE
+   - opportunity_activity_id: INTEGER, NULLABLE
+   - status_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - issuance_date: DATE, NULLABLE
+   - held_cover_note: INTEGER, NULLABLE
+   - policy_document: INTEGER, NULLABLE
+   - policy_docket: INTEGER, NULLABLE
+   - endorsement: INTEGER, NULLABLE
+   - health_claims: INTEGER, NULLABLE
+   - non_health_claims: INTEGER, NULLABLE
+   - mir: INTEGER, NULLABLE
+   - monthly_meeting: INTEGER, NULLABLE
+   - quarterly_meeting: INTEGER, NULLABLE
+   - renewal_notice: INTEGER, NULLABLE
+   - data_collection: INTEGER, NULLABLE
+   - remarks: VARCHAR(500), NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+
+90. opportunity_policy_docket_document_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_docket_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_policy_docket(id)
+   - document_id: INTEGER, NOT NULL
+   - document_type_lid: INTEGER, NOT NULL, FOREIGN KEY → lookup_data(id)
+   Indexes:
+      - uq_policy_docket_document (policy_docket_id, document_id) UNIQUE
+
+91. opportunity_policy_hard_copy
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity(id)
+   - activity_id: INTEGER, NULLABLE
+   - opportunity_activity_id: INTEGER, NULLABLE
+   - status_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - insurer_policy_no: VARCHAR(100), NULLABLE
+   - hard_copy_received_on: DATE, NULLABLE
+   - deviations_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - basic_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - basic_premium: INTEGER, NULLABLE
+   - deviation_coverages_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - coverages: VARCHAR(500), NULLABLE
+   - exclusions: VARCHAR(500), NULLABLE
+   - deductibles: VARCHAR(500), NULLABLE
+   - deviations_addressed_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - resolution_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - policy_hard_copy_received_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - remarks: VARCHAR(500), NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - brokerage_amount: NUMERIC, NULLABLE
+   - basic_premium_percentage: NUMERIC(5,2), NULLABLE
+   - srcc_percentage: NUMERIC(5,2), NULLABLE
+   - srcc_amount: NUMERIC(19,2), NULLABLE
+   - terrorism_brokerage_percentage: NUMERIC(5,2), NULLABLE
+   - terrorism: NUMERIC(19,2), NULLABLE
+   - gst_percentage: NUMERIC(5,2), NULLABLE
+   - gst_amount: NUMERIC(19,2), NULLABLE
+   - net_premium: NUMERIC(19,2), NULLABLE
+   - total_gross_premium_inc_tax: NUMERIC(19,2), NULLABLE
+   - fee_percentage: NUMERIC(5,2), NULLABLE
+   - fee: NUMERIC(19,2), NULLABLE
+   - other_percentage: NUMERIC(5,2), NULLABLE
+   - other: NUMERIC(19,2), NULLABLE
+   - admin_charges_percentage: NUMERIC(5,2), NULLABLE
+   - admin_charges: NUMERIC(19,2), NULLABLE
+   - cess_percentage: NUMERIC(5,2), NULLABLE
+   - cess_amount: NUMERIC(19,2), NULLABLE
+   - gross_premium: NUMERIC(19,2), NULLABLE
+   - tc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - basic_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - srcc_brokerage_amount: NUMERIC(19,2), NULLABLE
+   - sum_insured: NUMERIC(19,2), NULLABLE
+   - total_premium: NUMERIC(19,2), NULLABLE
+   - lead_insurer_id: INTEGER, NULLABLE
+   - is_lead_insurer_pay_commission: INTEGER, NULLABLE
+   - policy_placed_type_lid: INTEGER, NULLABLE
+   - total_brokerage_amount: NUMERIC(19,2)
+
+92. opportunity_policy_hard_copy_cover_detail
+   - id: INTEGER, NOT NULL, auto-increment
+   - policy_hard_copy_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_policy_hard_copy(id)
+   - opportunity_id: INTEGER, NOT NULL
+   - cover_template_id: INTEGER, NOT NULL
+   - cover_name: VARCHAR, NOT NULL
+   - cover_response: VARCHAR, NULLABLE
+   - covers_meta: JSONB, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+
+93. opportunity_policy_hard_copy_document_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_hard_copy_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_policy_hard_copy(id)
+   - document_id: INTEGER, NOT NULL, FOREIGN KEY → file_uploads(id)
+   - document_type_lid: INTEGER, NOT NULL, FOREIGN KEY → lookup_data(id)
+   Indexes:
+      - uq_policy_hard_copy_document (policy_hard_copy_id, document_id) UNIQUE
+
+94. opportunity_policy_hard_copy_insurer_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - policy_hard_copy_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_policy_hard_copy(id)
+   - insurer_id: INTEGER, NOT NULL, FOREIGN KEY → insurer(id)
+   - insurer_location_id: INTEGER, NOT NULL
+   - insurer_branch_id: INTEGER, NOT NULL
+   - insurer_contact_id: INTEGER, NOT NULL
+   - is_lead_insurer: INTEGER, NULLABLE
+   - share_percentage: NUMERIC(5,2), NOT NULL
+   - share_amount: NUMERIC(19,2), NOT NULL
+   - brokerage_percentage: NUMERIC(5,2), NOT NULL
+   - brokerage_amount: NUMERIC(19,2), NOT NULL
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE
+   - updated_at: TIMESTAMP, NULLABLE
+   - deleted_at: TIMESTAMP, NULLABLE
+   - terrorism_brokerage_percentage: NUMERIC(5,2),
+   - terrorism_brokerage_amount: NUMERIC(19,2),
+   - total_brokerage_amount: NUMERIC(19,2)
+
+95. opportunity_premium_calculation
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity(id)
+   - activity_id: INTEGER, NULLABLE
+   - opportunity_activity_id: INTEGER, NULLABLE
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - status_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - remarks: TEXT, NULLABLE
+
+96. opportunity_premium_calculation_document_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_activity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_activity_map(id)
+   - document_id: INTEGER, NOT NULL, FOREIGN KEY → file_uploads(id)
+   - document_type_lid: INTEGER, NOT NULL, FOREIGN KEY → lookup_data(id)
+
+97. opportunity_premium_cover_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - cover_map_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity_cover_map(id)
+   - policy_type_lid: INTEGER, NOT NULL
+   - cover_name: VARCHAR, NULLABLE
+   - cover_response: VARCHAR, NULLABLE
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - created_by: INTEGER, NULLABLE
+   - updated_by: INTEGER, NULLABLE
+
+98. opportunity_previous_mediator_details
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - company_id: INTEGER, NOT NULL
+   - location_id: INTEGER, NULLABLE, FOREIGN KEY → city(id)
+   - branch_id: INTEGER, NULLABLE, FOREIGN KEY → address(id)
+   - mediator_type: VARCHAR, NOT NULL, values: ["BROKER", "INSURER", "TPA"]
+   Indexes:
+      - uq_company_opportunity_mediator_type: UNIQUE(company_id, opportunity_id, mediator_type)
+
+99. opportunity_previous_placement_details
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - challenges_and_mitigation: TEXT, NULLABLE
+   - existing_competition: TEXT, NULLABLE
+   - remarks: TEXT, NULLABLE
+
+100. opportunity_quote
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - existing_quote_info: VARCHAR, NULLABLE
+   - remarks: TEXT, NULLABLE, 7 distinct values
+   - status_lid: INTEGER, NULLABLE, default value: 4502
+   - opportunity_activity_id: INTEGER, NULLABLE
+
+101. opportunity_quote_comparison_report
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - activity_id: INTEGER, NULLABLE, single unique value: 8
+   - opportunity_activity_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity_activity_map(id)
+   - status_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id), single value: 4502
+   - insurance_market: TEXT, NULLABLE, 7 distinct values
+   - client_specific: TEXT, NULLABLE, 6 distinct values
+   - issues_faced: TEXT, NULLABLE, 6 distinct values
+   - industry_benchmarking_comments: TEXT, NULLABLE, 5 distinct values
+   - analysis_recommendation: TEXT, NULLABLE, 5 distinct values
+   - overall_comments: TEXT, NULLABLE, 5 distinct values
+   - remarks: TEXT, NULLABLE, 5 distinct values
+   - created_by: INTEGER, NULLABLE, 11 distinct values
+   - updated_by: INTEGER, NULLABLE, 11 distinct values
+   - created_at: TIMESTAMP, NULLABLE, 257 distinct values
+   - updated_at: TIMESTAMP, NULLABLE, 257 distinct values
+
+102. opportunity_quote_comparison_report_document_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - quote_comparison_report_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_quote_comparison_report(id), 1 distinct value
+   - document_id: INTEGER, NOT NULL, 3 distinct values
+   - document_type_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id), 2 distinct values
+
+103. opportunity_quote_cover_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, 258 distinct values
+   - quote_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_quote_entry(id), 264 distinct values
+   - cover_map_id: INTEGER, NOT NULL, 14298 distinct values
+   - policy_type_id: INTEGER, NULLABLE, 44 distinct values
+   - cover_name: TEXT, NULLABLE, 905 distinct values
+   - insurer_cover_response: TEXT, NULLABLE, 2333 distinct values
+   - created_at: TIMESTAMP, NULLABLE, 265 distinct values, default: now()
+   - updated_at: TIMESTAMP, NULLABLE, 265 distinct values, default: now()
+   - created_by: INTEGER, NULLABLE, 10 distinct values
+   - updated_by: INTEGER, NULLABLE, 10 distinct values
+
+104. opportunity_quote_doc_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - document_id: INTEGER, NULLABLE, 170 distinct values
+   - document_type_lid: INTEGER, NULLABLE, 7 distinct values
+   - created_at: TIMESTAMP, NULLABLE, 147 distinct values, default: now()
+   - updated_at: TIMESTAMP, NULLABLE, 147 distinct values, default: now()
+   - created_by: INTEGER, NULLABLE, all null
+   - updated_by: INTEGER, NULLABLE, all null
+   - opportunity_activity_id: INTEGER, NULLABLE, 147 distinct values
+
+105. opportunity_quote_entry
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity(id), 258 distinct values
+   - broking_slip_id: INTEGER, NULLABLE, 260 distinct values
+   - insurer_id: INTEGER, NULLABLE, 33 distinct values
+   - quote_received_on: DATE, NULLABLE, 77 distinct values
+   - basic_premium: NUMERIC, NULLABLE, 238 distinct values
+   - terrorism: NUMERIC, NULLABLE, 22 distinct values
+   - net_premium: NUMERIC, NULLABLE, 242 distinct values
+   - basic_brokerage_percent: NUMERIC, NULLABLE, 38 distinct values
+   - insurer_remarks: TEXT, NULLABLE, 13 distinct values
+   - attachment_url: TEXT, NULLABLE, all null
+   - status_id: INTEGER, NULLABLE, all null
+   - created_by: INTEGER, NULLABLE, 11 distinct values
+   - updated_by: INTEGER, NULLABLE, 11 distinct values
+   - created_at: TIMESTAMP, NULLABLE, 266 distinct values, default: now()
+   - updated_at: TIMESTAMP, NULLABLE, 266 distinct values, default: now()
+   - opportunity_activity_id: INTEGER, NULLABLE, 260 distinct values
+   - deleted_at: TIMESTAMP, NULLABLE, 5 distinct values
+   - insurer_location_id: INTEGER, NULLABLE, 75 distinct values
+   - basic_premium_percentage: NUMERIC(5,2), NULLABLE, 7 distinct values
+   - srcc_percentage: NUMERIC(5,2), NULLABLE, 6 distinct values
+   - srcc_amount: NUMERIC(19,2), NULLABLE, 9 distinct values
+   - terrorism_brokerage_percentage: NUMERIC(5,2), NULLABLE, 7 distinct values
+   - gst_percentage: NUMERIC(5,2), NULLABLE, 6 distinct values
+   - gst_amount: NUMERIC(19,2), NULLABLE, 10 distinct values
+   - total_gross_premium_inc_tax: NUMERIC(19,2), NULLABLE, 11 distinct values
+   - fee_percentage: NUMERIC(5,2), NULLABLE, 1 distinct value
+   - fee: NUMERIC(19,2), NULLABLE, 8 distinct values
+   - other_percentage: NUMERIC(5,2), NULLABLE, 3 distinct values
+   - other: NUMERIC(19,2), NULLABLE, 10 distinct values
+   - admin_charges_percentage: NUMERIC(5,2), NULLABLE, 2 distinct values
+   - admin_charges: NUMERIC(19,2), NULLABLE, 9 distinct values
+   - cess_percentage: NUMERIC(5,2), NULLABLE, 2 distinct values
+   - cess_amount: NUMERIC(19,2), NULLABLE, 7 distinct values
+   - total_gross_premium_inc_tax_charges: NUMERIC(19,2), NULLABLE, 11 distinct values
+   - tc_brokerage_amount: NUMERIC(19,2), NULLABLE, 8 distinct values
+   - basic_brokerage_amount: NUMERIC(19,2), NULLABLE, 8 distinct values
+   - srcc_brokerage_amount: NUMERIC(19,2), NULLABLE, 7 distinct values
+   - brokerage_amount: NUMERIC(19,2), NULLABLE, 49 distinct values
+   - total_brokerage_amount: NUMERIC(19,2)
+
+106. opportunity_quote_entry_document_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_quote_entry_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_quote_entry(id)
+   - document_id: INTEGER, NOT NULL
+
+107. opportunity_quote_tax_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_quote_entry_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity_quote_entry(id), 259 distinct values
+   - tax_lid: INTEGER, NULLABLE, 3 distinct values
+   - tax_value: NUMERIC, NULLABLE, 227 distinct values
+   - created_at: TIMESTAMP, NULLABLE, 259 distinct values, default: now()
+   - updated_at: TIMESTAMP, NULLABLE, 259 distinct values, default: now()
+   - created_by: INTEGER, NULLABLE, 10 distinct values
+   - updated_by: INTEGER, NULLABLE, 10 distinct values
+
+108. opportunity_rfp_activity_document_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_activity_map_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_activity_map(id), 269 distinct values
+   - rfp_detail_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_rfp_detail(id), 269 distinct values
+   - document_id: INTEGER, NOT NULL, FOREIGN KEY → file_uploads(id), 521 distinct values
+   - document_type_lid: INTEGER, NULLABLE, 22 distinct values
+   Indexes:
+      - idx_opportunity_rfp_activity_document_map_document_id → document_id
+      - idx_opportunity_rfp_activity_document_map_id → id
+      - idx_opportunity_rfp_activity_document_map_opportunity_activity_ → opportunity_activity_map_id
+      - idx_opportunity_rfp_activity_document_map_rfp_detail_id → rfp_detail_id
+
+109. opportunity_rfp_client_contact_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_rfp_details_entry_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_rfp_details_entry(id), 742 distinct values
+   - contact_id: INTEGER, NOT NULL, 376 distinct values
+   - expected_premium: INTEGER, NULLABLE, 429 distinct values
+   - created_at: TIMESTAMP, NULLABLE, 742 distinct values, default: now()
+   - updated_at: TIMESTAMP, NULLABLE, 742 distinct values, default: now()
+   - deleted_at: TIMESTAMP, NULLABLE, 0 distinct values (all null)
+   - created_by: INTEGER, NOT NULL, 43 distinct values
+   - updated_by: INTEGER, NOT NULL, 43 distinct values
+   Indexes:
+      - idx_opportunity_rfp_client_contact_detail_contact_id → contact_id
+      - idx_opportunity_rfp_client_contact_detail_id → id
+      - idx_opportunity_rfp_client_contact_detail_opportunity_rfp_detai → opportunity_rfp_details_entry_id
+
+110. opportunity_rfp_client_contact_influencers
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - client_contact_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_rfp_client_contact_detail(id), 272 distinct values
+   - influencer_contact_id: INTEGER, NOT NULL, 11 distinct values
+   Indexes:
+      - idx_opportunity_rfp_client_contact_influencers_client_contact_i → client_contact_id
+      - idx_opportunity_rfp_client_contact_influencers_id → id
+      - idx_opportunity_rfp_client_contact_influencers_influencer_conta → influencer_contact_id
+
+111. opportunity_rfp_cover_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id), 745 distinct values
+   - cover_map_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_cover_map(id), 37822 distinct values
+   - policy_type_id: INTEGER, NOT NULL, 76 distinct values
+   - cover_name: VARCHAR, NOT NULL, 1417 distinct values
+   - cover_response: VARCHAR(25000), NOT NULL, 4941 distinct values
+   - created_at: TIMESTAMP, NULLABLE, default: CURRENT_TIMESTAMP, 754 distinct values
+   - updated_at: TIMESTAMP, NULLABLE, default: CURRENT_TIMESTAMP, 754 distinct values
+   - created_by: INTEGER, NULLABLE, 43 distinct values
+   - updated_by: INTEGER, NULLABLE, 43 distinct values
+   Indexes:
+      - idx_opportunity_rfp_cover_detail_cover_map_id → cover_map_id
+      - idx_opportunity_rfp_cover_detail_id → id
+      - idx_opportunity_rfp_cover_detail_opportunity_id → opportunity_id
+      - idx_opportunity_rfp_cover_detail_policy_type_id → policy_type_id
+
+112. opportunity_rfp_credit_sharing
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - executive_id: INTEGER, NULLABLE, 7 distinct values
+   - credit_sharing_percentage: NUMERIC, NULLABLE, 4 distinct values (0, 5, 50, 100)
+   - opportunity_rfp_details_entry_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_rfp_details_entry(id), 36 distinct values
+   - created_at: TIMESTAMP, NULLABLE, default: now(), 36 distinct values
+   - updated_at: TIMESTAMP, NULLABLE, default: now(), 36 distinct values
+   - deleted_at: TIMESTAMP, NULLABLE, 0 distinct values (all null)
+   - created_by: INTEGER, NOT NULL, 9 distinct values
+   - updated_by: INTEGER, NOT NULL, 9 distinct values
+   Indexes:
+      - idx_opportunity_rfp_credit_sharing_executive_id → executive_id
+      - idx_opportunity_rfp_credit_sharing_id → id
+
+113. opportunity_rfp_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id), 757 distinct values
+   - opportunity_activity_id: INTEGER, NOT NULL, 757 distinct values
+   - remarks: TEXT, NULLABLE, 83 distinct values
+   - status_lid: INTEGER, NOT NULL, 1 distinct value (4502)
+   - created_at: TIMESTAMP, NULLABLE, default: CURRENT_TIMESTAMP, 766 distinct values
+   - updated_at: TIMESTAMP, NULLABLE, default: CURRENT_TIMESTAMP, 766 distinct values
+   - created_by: INTEGER, NULLABLE, 43 distinct values
+   - updated_by: INTEGER, NULLABLE, 43 distinct values
+   Indexes:
+      - idx_opportunity_rfp_detail_id → id
+      - idx_opportunity_rfp_detail_opportunity_activity_id → opportunity_activity_id
+      - idx_opportunity_rfp_detail_opportunity_id → opportunity_id
+
+114. opportunity_rfp_details_entry
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id), 742 distinct values
+   - activity_id: INTEGER, NOT NULL, 1 distinct value (5)
+   - opportunity_activity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_activity_map(id), 742 distinct values
+   - status_lid: INTEGER, NOT NULL, 2 distinct values (4610, 4627)
+   - description: TEXT, NULLABLE, 352 distinct values
+   - requirements: TEXT, NULLABLE, 295 distinct values
+   - target_qcr_date: DATE, NULLABLE, 177 distinct values
+   - multiple_brokers_involved: INTEGER, NULLABLE, 2 distinct values (9401, 9402)
+   - is_market_allocation_done: INTEGER, NULLABLE, 2 distinct values (9401, 9402, null)
+   - client_expectations: TEXT, NULLABLE, 179 distinct values
+   - threats_from_existing_insurer: TEXT, NULLABLE, 83 distinct values
+   - threats_from_existing_tpa: TEXT, NULLABLE, 89 distinct values
+   - extraneous_factors: TEXT, NULLABLE, 83 distinct values
+   - strategy_plan: TEXT, NULLABLE, 229 distinct values
+   - remarks: TEXT, NULLABLE, 29 distinct values (various short strings and null)
+   - created_at: TIMESTAMP, NULLABLE, default: now(), 742 distinct values
+   - updated_at: TIMESTAMP, NULLABLE, default: now(), 742 distinct values
+   - deleted_at: TIMESTAMP, NULLABLE, all null
+   - created_by: INTEGER, NOT NULL, 43 distinct values
+   - updated_by: INTEGER, NOT NULL, 38 distinct values
+   Indexes:
+      - idx_opportunity_rfp_details_entry_id → id
+      - idx_opportunity_rfp_details_entry_opportunity_activity_id → opportunity_activity_id
+      - idx_opportunity_rfp_details_entry_opportunity_id → opportunity_id
+
+115. opportunity_rfp_details_entry_document_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - document_id: INTEGER, NOT NULL, 125 distinct values
+   - opportunity_rfp_details_entry_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_rfp_details_entry(id), 95 distinct values
+   - document_type_lid: INTEGER, NOT NULL, 14 distinct values (list of IDs: 1701, 1702, 1711, 1714, 1717–1724, 1729, 1731)
+   Indexes:
+      - idx_opportunity_rfp_details_entry_document_map_id → id
+
+116. opportunity_rfp_insurer_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - insurer_id: INTEGER, NOT NULL
+   - insurer_location_id: INTEGER, NULLABLE
+   - insurer_branch: INTEGER, NULLABLE
+   - insurer_contact_id: INTEGER, NULLABLE
+   - preference_type_lid: INTEGER, NOT NULL
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - opportunity_rfp_details_entry_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_rfp_details_entry(id)
+   Indexes:
+      - idx_opportunity_rfp_insurer_detail_id → id
+      - idx_opportunity_rfp_insurer_detail_insurer_contact_id → insurer_contact_id
+      - idx_opportunity_rfp_insurer_detail_insurer_id → insurer_id
+
+117. opportunity_rfp_tpa_detail
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - tpa_id: INTEGER, NOT NULL
+   - tpa_location_id: INTEGER, NULLABLE
+   - tpa_branch: INTEGER, NULLABLE
+   - tpa_contact_id: INTEGER, NULLABLE
+   - preference_type_lid: INTEGER, NOT NULL
+   - opportunity_rfp_details_entry_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity_rfp_details_entry(id)
+   - created_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - updated_at: TIMESTAMP, NULLABLE, DEFAULT now()
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   Indexes:
+      - idx_opportunity_rfp_tpa_detail_id → id
+      - idx_opportunity_rfp_tpa_detail_tpa_contact_id → tpa_contact_id
+      - idx_opportunity_rfp_tpa_detail_tpa_id → tpa_id
+
+118. opportunity_risk_location_map
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - opportunity_id: INTEGER, NOT NULL, FOREIGN KEY → opportunity(id)
+   - address_id: INTEGER, NOT NULL, FOREIGN KEY → address(id)
+   Indexes:
+      - idx_opp_risk_loc_addr_id → address_id
+      - idx_opp_risk_loc_opp_id → opportunity_id
+
+119. file_uploads (Document Storage Table)
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - file_key: TEXT, NOT NULL (ONLY file identifier column - no file_path, no original_name)
+   - upload_type: VARCHAR(50), NULLABLE
+   - status: VARCHAR(10), NOT NULL, DEFAULT 'ACTIVE'
+   - company_type: VARCHAR(255), NOT NULL
+   - document_type_lid: INTEGER, NOT NULL, FOREIGN KEY → lookup_data(id)
+   - company_id: INTEGER, NOT NULL
+   - opportunity_id: INTEGER, NULLABLE
+   - opportunity_activity_id: INTEGER, NULLABLE  
+   - policy_id: INTEGER, NULLABLE
+   - claim_id: INTEGER, NULLABLE
+   - claim_activity_id: INTEGER, NULLABLE
+   - meeting_id: INTEGER, NULLABLE
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - deleted_at: TIMESTAMP, NULLABLE
+   
+   CRITICAL: This table ONLY has 'file_key' - NO other file name/path columns exist!
+   DO NOT use: original_name, file_path, file_name, file_url - these columns DO NOT EXIST!
+
+120. task (Task Management Table)
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (task_id_seq)
+   - task_name: VARCHAR(255), NOT NULL
+   - activity_id: INTEGER, NULLABLE (links to opportunity activity)
+   - company_id: INTEGER, NULLABLE, FOREIGN KEY → company(id)
+   - due_date: DATE, NOT NULL
+   - priority_lid: INTEGER, NOT NULL, FOREIGN KEY → lookup_data(id)
+   - description: TEXT, NULLABLE
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - opportunity_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity(id)
+   - assignee_id: INTEGER, NULLABLE (user/employee assigned to the task)
+   - task_status_lid: INTEGER, NOT NULL, DEFAULT 1, FOREIGN KEY → lookup_data(id)
+   - task_type_lid: INTEGER, NOT NULL, DEFAULT 1, FOREIGN KEY → lookup_data(id)
+   - task_category_lid: INTEGER, NULLABLE, DEFAULT 1, FOREIGN KEY → lookup_data(id)
+   - task_close: VARCHAR(20), NULLABLE
+   - task_is_editable: VARCHAR(20), NULLABLE
+   - policy_id: INTEGER, NULLABLE, FOREIGN KEY → policy(id)
+   - task_origin: VARCHAR(100), NULLABLE
+   - task_label: VARCHAR(150), NULLABLE
+   - sub_task_type_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - comments: TEXT, NULLABLE
+
+   Purpose: Contains task information including task name, description, created by, assigned to whom, 
+   priority, and also if the task belongs to an activity of an opportunity, task category, and status of the task.
+
+121. task_document_map (Task Document Mapping Table)
+   - id: INTEGER, PRIMARY KEY, NOT NULL
+   - task_id: INTEGER, NOT NULL, FOREIGN KEY → task(id)
+   - document_id: INTEGER, NOT NULL, FOREIGN KEY → file_uploads(id)
+
+   Purpose: Contains the documents mapped to the respective task.
+
+122. meeting (Meeting Management Table)
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (meeting_id_seq)
+   - activity_id: INTEGER, NULLABLE (links to opportunity activity)
+   - opportunity_id: INTEGER, NULLABLE, FOREIGN KEY → opportunity(id)
+   - meeting_type_lid: INTEGER, NOT NULL, FOREIGN KEY → lookup_data(id)
+   - company_id: INTEGER, NULLABLE, FOREIGN KEY → company(id)
+   - meeting_date: DATE, NOT NULL
+   - start_time: TIME WITH TIME ZONE, NOT NULL
+   - end_time: TIME WITH TIME ZONE, NOT NULL
+   - duration: INTEGER, NULLABLE (calculated duration in minutes)
+   - created_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - updated_at: TIMESTAMP, NOT NULL, DEFAULT now()
+   - deleted_at: TIMESTAMP, NULLABLE
+   - created_by: INTEGER, NOT NULL
+   - updated_by: INTEGER, NOT NULL
+   - location_type_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+   - meeting_subject: VARCHAR(255), NULLABLE
+   - meeting_agenda: TEXT, NULLABLE
+   - meeting_status_lid: INTEGER, NOT NULL, FOREIGN KEY → lookup_data(id)
+   - meeting_rating: INTEGER, NULLABLE
+   - feedback_submitted: VARCHAR(255), NULLABLE
+   - remarks: TEXT, NULLABLE
+
+   Purpose: Holds the meeting details like meeting subject, agenda, start_time, end_time, 
+   opportunity activity id, company_id, created_by, meeting_status, meeting rating, and remarks.
+
+123. meeting_challenges_map (Meeting Challenges Mapping Table)
+   - id: INTEGER, PRIMARY KEY, NOT NULL
+   - meeting_id: INTEGER, NOT NULL, FOREIGN KEY → meeting(id)
+   - challenge_id: INTEGER, NOT NULL (references predefined challenges from lookup_data)
+   - created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+
+   Purpose: Contains the details of predefined challenges for a meeting.
+
+124. meeting_document_map (Meeting Document Mapping Table)
+   - id: INTEGER, PRIMARY KEY, NOT NULL
+   - meeting_id: INTEGER, NOT NULL, FOREIGN KEY → meeting(id)
+   - document_id: INTEGER, NOT NULL, FOREIGN KEY → file_uploads(id)
+   - document_type_lid: INTEGER, NULLABLE, FOREIGN KEY → lookup_data(id)
+
+   Purpose: Contains the information of documents mapped to the meeting.
+
+125. meeting_next_steps_map (Meeting Next Steps Mapping Table)
+   - id: INTEGER, PRIMARY KEY, NOT NULL
+   - meeting_id: INTEGER, NOT NULL, FOREIGN KEY → meeting(id)
+   - next_step_id: INTEGER, NOT NULL (references predefined next steps from lookup_data)
+   - created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+
+   Purpose: Contains the details of predefined next steps for a meeting.
+
+126. meeting_outcomes_map (Meeting Outcomes Mapping Table)
+   - id: INTEGER, PRIMARY KEY, NOT NULL
+   - meeting_id: INTEGER, NOT NULL, FOREIGN KEY → meeting(id)
+   - outcome_id: INTEGER, NOT NULL (references predefined outcomes from lookup_data)
+   - created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+
+   Purpose: Contains the details of predefined outcomes for a meeting.
+
+127. meeting_participant_map (Meeting Participants Mapping Table)
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment (meeting_participant_map_id_seq)
+   - meeting_id: INTEGER, NOT NULL, FOREIGN KEY → meeting(id)
+   - participant_id: INTEGER, NOT NULL (contact or employee id based on participant_record_type)
+   - created_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP, DEFAULT CURRENT_TIMESTAMP
+   - participant_record_type: VARCHAR(25), NULLABLE (values: 'TPA_CONTACT', 'INSURER_CONTACT', 'BROKER_CONTACT', 'COMPANY_CONTACT', 'EMPLOYEE')
+   - participant_company_id: INTEGER, NOT NULL
+
+   Purpose: Contains the participants list of a meeting (one-to-many relationship).
+
+128. business_target (Business Target Management Table)
+   - id: INTEGER, PRIMARY KEY, NOT NULL, auto-increment
+   - user_id: INTEGER, NOT NULL (user/employee assigned the target)
+   - month: DATE, NOT NULL (target month)
+   - entity_type: VARCHAR(150), NOT NULL (business entity type like 'PREMIUM', 'POLICY', 'COMPANY', etc.)
+   - kpi: VARCHAR(150), NOT NULL (key performance indicator)
+   - type_of_target: VARCHAR(150), NOT NULL (target type classification)
+   - value_of_target: NUMERIC(19,2), NOT NULL (target value amount)
+   - created_at: TIMESTAMP WITH TIME ZONE, DEFAULT CURRENT_TIMESTAMP
+   - updated_at: TIMESTAMP WITH TIME ZONE, DEFAULT CURRENT_TIMESTAMP
+
+   Purpose: Contains business targets assigned to users/employees for specific months, tracking KPIs and target values for performance measurement.

@@ -1,0 +1,1 @@
+ALTER TABLE policy_employee_enrollment RENAME COLUMN enrollment_status TO employee_enrollment_status_key;

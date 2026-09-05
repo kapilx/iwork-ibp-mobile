@@ -1,0 +1,8 @@
+# Daksh pipeline document order — maintained by /daksh init and each stage.
+# Add new entries here as stages complete. Vyasa displays docs in this order.
+order = [
+  "IBP_HR Portal - Employee Support-PRD.md",
+  "IBP_HR Portal - Employee Support-SDS.md",
+  "IBP_HR Portal - Employee Support-TRD.md",
+]
+folders_first = false

@@ -1,0 +1,3126 @@
+"id","name","label","end_point","query","created_at","updated_at","deleted_at","created_by","updated_by","deleted_by","order_no"
+"11","active-user-info","Active User Info","active-user-info","select user_name, manager_name, iirm_employee_id, organisation, vertical, department, branch, designation, roles, user_email, manager_email, login, uid, manager_uid from vr_active_user_info where manager_name = COALESCE(###ManagerName###,manager_name) and organisation = COALESCE(###Organisation###,organisation) and vertical = COALESCE(###Vertical###,vertical) and department = COALESCE(###Department###,department) and branch = COALESCE(###Branch###,branch) and designation = COALESCE(###Designation###,designation) order by user_name","2025-08-04 08:41:30.814215","","","1","","",""
+"8","user-hierarchy","User Hierarchy","user-hierarchy","select employee_from, hierarchy, employee_to, from_reference_status, to_reference_status, from_reference_id, to_reference_id from vr_user_hierarchy where hierarchy = COALESCE(###HIERARCHY###,hierarchy) and from_reference_status = COALESCE(###FromReferenceStatus### ,from_reference_status) and to_reference_status = COALESCE(###ToReferenceStatus###  ,to_reference_status) ORDER BY employee_from DESC","2025-07-23 19:50:39.386826","2025-07-23 19:50:39.386826","","","","",""
+"7","role-permission-info","Role Permission Info","role-permission-info","select function_name, action_name, permitted_role_name from vr_role_permission_info 
+where function_name = COALESCE(###FunctionName###,function_name) and action_name = COALESCE(###ActionName### ,action_name) and permitted_role_name = COALESCE(###PermittedRoleName###  ,permitted_role_name) order by function_name, action_name, permitted_role_name","2025-07-23 19:50:39.386826","2025-07-23 19:50:39.386826","","","","",""
+"10","user-access","User Access","user-access","select create_by, operation, created_at from vr_user_access where created_at::date BETWEEN ###START_DATE###::date and ###END_DATE###::date order by create_by, operation, created_at","2025-08-02 10:09:56.62745","","","1","","",""
+"5","lookup-info","Lookup Info","lookup-info","select lookup_name, lookup_value, lookup_description, display_order, lookup_value_key, unique_lookup_key, lookup_id from vr_lookup_info where lookup_name = COALESCE(###Name###,lookup_name) order by lookup_name, display_order","2025-07-23 19:50:39.386826","2025-07-23 19:50:39.386826","","","","",""
+"2","user-activity-aggregated","User Activity Summary","user-activity-aggregated","select created_by, entity_type, operation, count(1) as action_count from vr_user_activity where created_at::date BETWEEN ###START_DATE###::date and ###END_DATE###::date group by created_by, entity_type, operation order by created_by, entity_type, operation","2025-07-23 18:49:49.345316","2025-07-23 18:49:49.345316","","","","",""
+"1","user-activity","User Activity","user-activity","select entity_type, entity_name, operation, created_by, created_at, status from vr_user_activity where created_at::date BETWEEN ###START_DATE###::date and ###END_DATE###::date order by created_at desc;","2025-07-23 18:49:49.345316","2025-07-23 18:49:49.345316","","","","",""
+"9","user-access-summary","User Access Summary","user-access-summary","select create_by, operation, count(1) as attempts from vr_user_access where created_at::date BETWEEN ###START_DATE###::date and ###END_DATE###::date group by create_by, operation order by create_by;","2025-08-02 09:30:56.475201","","","1","","",""
+"14","org-branch-info","Branch Info","org-branch-info","select organisation_name, branch_name from vr_org_branch where organisation_name = COALESCE(###OrganisationName###,organisation_name) order by organisation_name,branch_name","2025-08-04 09:18:05.213905","","","1","","",""
+"15","org-designation-info","Designation Info","org-designation-info","select designation_name, grade_level from vr_org_designation order by grade_level","2025-08-04 09:18:05.220316","","","1","","",""
+"13","org-vert-dept-info","Vertical Department Info","org-vert-dept-info","select organisation_name, vertical_name, department_name from vr_org_vertical_department where organisation_name = COALESCE(###OrganisationName###,organisation_name) and vertical_name = COALESCE(###VerticalName###,vertical_name) order by organisation_name, vertical_name, department_name","2025-08-04 09:20:15.309411","","","1","","",""
+"12","inactive-user-info","Inactive User Info","inactive-user-info","select user_name, manager_name, iirm_employee_id, organisation, vertical, department, branch, designation, roles, user_email, manager_email, login, uid, manager_uid from vr_active_user_info where manager_name = COALESCE(###ManagerName###,manager_name) and organisation = COALESCE(###Organisation###,organisation) and vertical = COALESCE(###Vertical###,vertical) and department = COALESCE(###Department###,department) and branch = COALESCE(###Branch###,branch) and designation = COALESCE(###Designation###,designation) order by user_name","2025-08-04 08:41:30.823027","","","1","","",""
+"20","user-hierarchy-raw","User Hierarchy Raw","user-hierarchy-raw","select employee_id, employee_name, manager_id, manager_name, skip_level, relationship, hierarchy, hierarchy_path, visual_hierarchy from vr_user_hierarchy_raw where employee_name = COALESCE(###EmployeeName###,employee_name) and manager_name = COALESCE(###ManagerName###,manager_name) and hierarchy = COALESCE(###Hierarchy###,hierarchy) order by employee_name","2025-08-26 12:21:11.012933","","","1","","",""
+"16","user-permission-info","User Permission Info","user-permission-info","select user_name, user_email, permitted_function_name, permitted_action_name from fr_user_permission_info (###UserName###, ###UserEmail###, ###PermittedFunctionName###, ###PermittedActionName###)","2025-11-27 11:00:25.457035","","","1","","",""
+"57","external_hr_user_detail","External HR – User Detail","external_hr_user_detail","
+SELECT
+  hum.id                              AS ""hrManagementId"",
+  hum.user_id                         AS ""userId"",
+  hum.user_name                       AS ""fullName"",
+  hum.email_id                        AS ""email"",
+  hum.role_key                        AS ""roleKey"",
+  hum.company_id                      AS ""companyId"",
+  hum.company_name                    AS ""companyName"",
+  hum.phone_number                    AS ""phoneNumber"",
+  hum.date_of_birth                   AS ""dateOfBirth"",
+  COALESCE(
+    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('policyId', epm.policy_id))
+      FILTER (WHERE epm.policy_id IS NOT NULL),
+    '[]'
+  )                                   AS ""policies"",
+  COALESCE(
+    JSON_AGG(DISTINCT JSONB_BUILD_OBJECT('addressId', elm.address_id))
+      FILTER (WHERE elm.address_id IS NOT NULL),
+    '[]'
+  )                                   AS ""locations""
+FROM hr_user_management hum
+LEFT JOIN external_hr_policy_map   epm ON epm.hr_management_id = hum.id
+LEFT JOIN external_hr_location_map elm ON elm.hr_management_id = hum.id
+WHERE hum.role_key   = 'EXTERNAL_HR'
+  AND hum.deleted_at IS NULL
+  AND hum.id         = ###userId###
+GROUP BY hum.id, hum.user_id, hum.user_name, hum.email_id, hum.role_key,
+         hum.company_id, hum.company_name, hum.phone_number, hum.date_of_birth
+","2026-05-13 12:11:21.843585","2026-05-13 12:11:21.843585","","SYSTEM","SYSTEM","","103"
+"43","endorsement_premium_components","Endorsement Premium Components","endorsement_premium_components","
+SELECT 'BASE_PREMIUM'                  AS ""componentKey"",'Base Premium'                  AS ""componentLabel"",NULL::numeric AS ""amount"" WHERE ###companyId### IS NOT NULL
+UNION ALL SELECT 'TAX_AMOUNT',                 'Tax Amount',                  NULL::numeric WHERE ###companyId### IS NOT NULL
+UNION ALL SELECT 'GROSS_PREMIUM',              'Gross Premium',               NULL::numeric WHERE ###companyId### IS NOT NULL
+UNION ALL SELECT 'ADDITION_PREMIUM',           'Addition Premium',            NULL::numeric WHERE ###companyId### IS NOT NULL
+UNION ALL SELECT 'DELETION_PREMIUM',           'Deletion Premium',            NULL::numeric WHERE ###companyId### IS NOT NULL
+UNION ALL SELECT 'CORRECTION_ADDITION_PREMIUM','Correction Addition Premium', NULL::numeric WHERE ###companyId### IS NOT NULL
+UNION ALL SELECT 'CORRECTION_DELETION_PREMIUM','Correction Deletion Premium', NULL::numeric WHERE ###companyId### IS NOT NULL
+UNION ALL SELECT 'NET_PREMIUM',                'Net Premium',                 NULL::numeric WHERE ###companyId### IS NOT NULL
+UNION ALL SELECT 'NET_TAX_AMOUNT',             'Net Tax Amount',              NULL::numeric WHERE ###companyId### IS NOT NULL
+UNION ALL SELECT 'NET_GROSS_PREMIUM',          'Net Gross Premium',           NULL::numeric WHERE ###companyId### IS NOT NULL
+    ","2026-05-08 12:09:33.433056","2026-05-08 12:09:33.433056","","SYSTEM","SYSTEM","","23"
+"48","portfolio_companies","Portfolio Companies","portfolio_companies","
+SELECT
+  c.id                                                AS ""companyId"",
+  COALESCE(c.display_name, c.company_name)           AS ""companyName"",
+  ind.value                                           AS ""industry"",
+  city.name                                           AS ""city"",
+  state.name                                          AS ""state"",
+  COALESCE(c.no_of_employees, 0)::int                AS ""employeeCount"",
+  CASE WHEN crm_u.first_name IS NOT NULL
+       THEN crm_u.first_name || ' ' || crm_u.last_name END AS ""rmName"",
+  gcm.group_company_id                               AS ""groupId"",
+  COALESCE(gc.display_name, gc.company_name)         AS ""groupName"",
+  grp_ind.value                                       AS ""groupSector"",
+  'GROUP_MEMBER'                                      AS ""companyRole"",
+  COALESCE(pc.policy_count,   0)::int                AS ""policyCount"",
+  COALESCE(pc.active_count,   0)::int                AS ""activePolicyCount"",
+  COALESCE(pc.inactive_count, 0)::int                AS ""inactivePolicyCount""
+FROM company c
+INNER JOIN group_company_map gcm ON gcm.company_id = c.id
+INNER JOIN company gc ON gc.id = gcm.group_company_id AND gc.deleted_at IS NULL
+LEFT JOIN lookup_data ind     ON ind.id     = c.industry_segment_lid  AND ind.deleted_at     IS NULL
+LEFT JOIN lookup_data grp_ind ON grp_ind.id = gc.industry_segment_lid AND grp_ind.deleted_at IS NULL
+LEFT JOIN users crm_u ON crm_u.id = c.lead_crm
+LEFT JOIN LATERAL (
+  SELECT ca.address_id
+  FROM company_address ca
+  WHERE ca.company_id = c.id
+  ORDER BY ca.is_primary DESC NULLS LAST, ca.id ASC
+  LIMIT 1
+) first_ca ON TRUE
+LEFT JOIN address addr ON addr.id = first_ca.address_id AND addr.deleted_at IS NULL
+LEFT JOIN city  ON city.id  = addr.city_id
+LEFT JOIN state ON state.id = addr.state_id
+LEFT JOIN (
+  SELECT company_id,
+         COUNT(*)                                           AS policy_count,
+         COUNT(*) FILTER (WHERE policy_to >= CURRENT_DATE) AS active_count,
+         COUNT(*) FILTER (WHERE policy_to <  CURRENT_DATE) AS inactive_count
+  FROM policy GROUP BY company_id
+) pc ON pc.company_id = c.id
+WHERE c.deleted_at IS NULL
+
+UNION ALL
+
+SELECT
+  c.id                                                AS ""companyId"",
+  COALESCE(c.display_name, c.company_name)           AS ""companyName"",
+  ind.value                                           AS ""industry"",
+  city.name                                           AS ""city"",
+  state.name                                          AS ""state"",
+  COALESCE(c.no_of_employees, 0)::int                AS ""employeeCount"",
+  CASE WHEN crm_u.first_name IS NOT NULL
+       THEN crm_u.first_name || ' ' || crm_u.last_name END AS ""rmName"",
+  NULL::int                                           AS ""groupId"",
+  NULL::text                                          AS ""groupName"",
+  NULL::text                                          AS ""groupSector"",
+  'INDIVIDUAL'                                        AS ""companyRole"",
+  COALESCE(pc.policy_count,   0)::int                AS ""policyCount"",
+  COALESCE(pc.active_count,   0)::int                AS ""activePolicyCount"",
+  COALESCE(pc.inactive_count, 0)::int                AS ""inactivePolicyCount""
+FROM company c
+LEFT JOIN lookup_data ind ON ind.id = c.industry_segment_lid AND ind.deleted_at IS NULL
+LEFT JOIN users crm_u ON crm_u.id = c.lead_crm
+LEFT JOIN LATERAL (
+  SELECT ca.address_id
+  FROM company_address ca
+  WHERE ca.company_id = c.id
+  ORDER BY ca.is_primary DESC NULLS LAST, ca.id ASC
+  LIMIT 1
+) first_ca ON TRUE
+LEFT JOIN address addr ON addr.id = first_ca.address_id AND addr.deleted_at IS NULL
+LEFT JOIN city  ON city.id  = addr.city_id
+LEFT JOIN state ON state.id = addr.state_id
+LEFT JOIN (
+  SELECT company_id,
+         COUNT(*)                                           AS policy_count,
+         COUNT(*) FILTER (WHERE policy_to >= CURRENT_DATE) AS active_count,
+         COUNT(*) FILTER (WHERE policy_to <  CURRENT_DATE) AS inactive_count
+  FROM policy GROUP BY company_id
+) pc ON pc.company_id = c.id
+WHERE c.deleted_at IS NULL
+  AND c.id NOT IN (SELECT DISTINCT group_company_id FROM group_company_map)
+  AND c.id NOT IN (SELECT DISTINCT company_id        FROM group_company_map)
+
+ORDER BY ""groupId"" NULLS LAST, ""companyName""
+","2026-05-08 12:12:43.528698","2026-05-08 12:12:43.528698","","SYSTEM","SYSTEM","","21"
+"56","external_hr_user_list","External HR – User List","external_hr_user_list","
+SELECT
+  hum.id                              AS ""hrManagementId"",
+  hum.user_id                         AS ""userId"",
+  hum.user_name                       AS ""fullName"",
+  hum.email_id                        AS ""email"",
+  hum.role_key                        AS ""roleKey"",
+  hum.company_name                    AS ""companyName"",
+  hum.company_id                      AS ""companyId"",
+  COUNT(DISTINCT epm.policy_id)       AS ""policyCount"",
+  hum.created_at                      AS ""createdAt""
+FROM hr_user_management hum
+LEFT JOIN external_hr_policy_map epm ON epm.hr_management_id = hum.id
+WHERE hum.role_key = 'EXTERNAL_HR'
+  AND hum.deleted_at IS NULL
+  AND (###companyId### = '' OR hum.company_id::text = ###companyId###)
+  AND (###search### = ''
+       OR hum.user_name ILIKE '%' || ###search### || '%'
+       OR hum.email_id  ILIKE '%' || ###search### || '%')
+GROUP BY hum.id, hum.user_name, hum.email_id, hum.role_key,
+         hum.company_name, hum.company_id, hum.created_at
+ORDER BY hum.created_at DESC
+","2026-05-13 12:11:21.843585","2026-05-13 12:11:21.843585","","SYSTEM","SYSTEM","","102"
+"58","policy_renewal_status","Policy Renewal Status","policy_renewal_status","
+SELECT
+  o.ref_policy_id   AS ""policyId"",
+  oam.activity_key  AS ""activityKey"",
+  oam.activity_name AS ""activityName"",
+  ld.lookup_key     AS ""statusKey""
+FROM opportunity_activity_map oam
+JOIN opportunity o  ON o.id = oam.opportunity_id
+JOIN lookup_data ld ON ld.id = oam.status_lid
+WHERE o.ref_policy_id = ANY(
+  SELECT val::INTEGER
+  FROM regexp_split_to_table(
+    NULLIF(TRIM(REGEXP_REPLACE(###policyIds###, '[\[\]\s]', '', 'g')), ''),
+    ','
+  ) AS val
+  WHERE val ~ '^\d+$'
+)
+  AND o.expiry_date > CURRENT_DATE
+  AND ld.lookup_key IN (
+    'OPPORTUNITY_ACTIVITY_STATUS_WORK_IN_PROGRESS',
+    'OPPORTUNITY_ACTIVITY_STATUS_SUBMITTED',
+    'OPPORTUNITY_ACTIVITY_STATUS_APPROVED',
+    'OPPORTUNITY_ACTIVITY_STATUS_REJECTED'
+  )
+ORDER BY
+  o.ref_policy_id ASC,
+  CASE ld.lookup_key
+    WHEN 'OPPORTUNITY_ACTIVITY_STATUS_WORK_IN_PROGRESS' THEN 1
+    WHEN 'OPPORTUNITY_ACTIVITY_STATUS_SUBMITTED' THEN 2
+    WHEN 'OPPORTUNITY_ACTIVITY_STATUS_APPROVED' THEN 3
+    WHEN 'OPPORTUNITY_ACTIVITY_STATUS_REJECTED' THEN 4
+    ELSE 5
+  END ASC
+","2026-05-15 16:04:10.776694","2026-05-19 11:39:31.256311","","SYSTEM","SYSTEM","","58"
+"17","hr_support_tickets","HR Support Tickets","hr_support_tickets","
+SELECT
+  rt.id,
+  rt.ticket_id                                         AS ""ticketId"",
+  rt.employee_id                                       AS ""employeeId"",
+  COALESCE(emp.full_name, emp.employee_name)           AS ""employeeName"",
+  emp.email_enc                                        AS ""employeeEmail"",
+  emp.designation                                      AS ""designation"",
+  rt.category,
+  rt.status,
+  rt.priority,
+  rt.mail_id                                           AS ""mailId"",
+  LEFT(rt.escalation_description, 120)                 AS ""descriptionPreview"",
+  rt.escalation_description                            AS ""description"",
+  rt.created_at                                        AS ""createdAt"",
+  rt.document_ids                                      AS ""documentIds"",
+  CASE
+    WHEN rt.created_by IS NOT NULL AND EXISTS (SELECT 1 FROM hr_user_management h WHERE h.user_id = rt.created_by AND h.deleted_at IS NULL AND h.role_key = 'PORTAL_CRM')
+      THEN 'CRM'
+    WHEN rt.created_by IS NOT NULL AND EXISTS (SELECT 1 FROM hr_user_management h WHERE h.user_id = rt.created_by AND h.deleted_at IS NULL)
+      THEN 'HR'
+    WHEN rt.mail_id IS NOT NULL AND EXISTS (SELECT 1 FROM hr_user_management h WHERE h.email_id = rt.mail_id AND h.deleted_at IS NULL AND h.role_key = 'PORTAL_CRM')
+      THEN 'CRM'
+    WHEN rt.mail_id IS NOT NULL AND EXISTS (SELECT 1 FROM hr_user_management h WHERE h.email_id = rt.mail_id AND h.deleted_at IS NULL)
+      THEN 'HR'
+    WHEN EXISTS (SELECT 1 FROM policy_enrollment_employee pe WHERE pe.user_id = rt.created_by)
+      THEN 'EMPLOYEE'
+    ELSE 'EMPLOYEE'
+  END                                                  AS ""raisedBy""
+FROM raise_ticket rt
+INNER JOIN policy_enrollment_employee emp
+  ON emp.id = rt.employee_id
+WHERE emp.company_id = ###companyId###
+  AND (NULLIF(###status###, '')   IS NULL OR rt.status   = ###status###)
+  AND (NULLIF(###category###, '') IS NULL OR rt.category = ###category###)
+  AND (NULLIF(###search###, '')   IS NULL
+       OR emp.employee_name         ILIKE '%' || ###search### || '%'
+       OR emp.full_name             ILIKE '%' || ###search### || '%'
+       OR rt.ticket_id              ILIKE '%' || ###search### || '%'
+       OR rt.escalation_description ILIKE '%' || ###search### || '%')
+  AND (NULLIF(###raisedBy###, '') IS NULL OR
+    CASE
+      WHEN rt.created_by IS NOT NULL AND EXISTS (SELECT 1 FROM hr_user_management h WHERE h.user_id = rt.created_by AND h.deleted_at IS NULL AND h.role_key = 'PORTAL_CRM')
+        THEN 'CRM'
+      WHEN rt.created_by IS NOT NULL AND EXISTS (SELECT 1 FROM hr_user_management h WHERE h.user_id = rt.created_by AND h.deleted_at IS NULL)
+        THEN 'HR'
+      WHEN rt.mail_id IS NOT NULL AND EXISTS (SELECT 1 FROM hr_user_management h WHERE h.email_id = rt.mail_id AND h.deleted_at IS NULL AND h.role_key = 'PORTAL_CRM')
+        THEN 'CRM'
+      WHEN rt.mail_id IS NOT NULL AND EXISTS (SELECT 1 FROM hr_user_management h WHERE h.email_id = rt.mail_id AND h.deleted_at IS NULL)
+        THEN 'HR'
+      ELSE 'EMPLOYEE'
+    END = ###raisedBy###
+  )
+ORDER BY rt.created_at DESC
+","2026-05-22 08:16:27.944702","2026-05-22 08:16:27.944702","","SYSTEM","SYSTEM","","104"
+"18","upcoming_installments","Upcoming Installments","upcoming_installments","
+SELECT
+  pi.id AS ""installmentId"",
+  COALESCE(pi.installment_no, 'Installment ' || COALESCE(pi.installment_sequence::text, '1')) AS ""installmentLabel"",
+  pi.installment_sequence AS ""installmentSeq"",
+  pi.installment_date AS ""installmentDate"",
+  COALESCE(pi.total_installment_amount, pi.installment_net_amount) AS ""installmentAmount"",
+  pi.installment_percentage AS ""installmentPercent""
+FROM policy_installments pi
+WHERE pi.policy_id = ###policyId###
+  AND pi.deleted_at IS NULL
+  AND pi.installment_date >= CURRENT_DATE
+ORDER BY pi.installment_date ASC
+  ","2026-05-28 19:16:50.473142","2026-05-28 19:16:50.473142","","SYSTEM","SYSTEM","","47"
+"50","portfolio_group_companies","Portfolio Group Companies","portfolio_group_companies","
+SELECT
+  c.id                                                AS ""companyId"",
+  COALESCE(c.display_name, c.company_name)           AS ""companyName"",
+  ind.value                                           AS ""industry"",
+  city.name                                           AS ""city"",
+  state.name                                          AS ""state"",
+  CASE WHEN crm_u.first_name IS NOT NULL
+       THEN crm_u.first_name || ' ' || crm_u.last_name END AS ""rmName"",
+  gcm.group_company_id                               AS ""groupId"",
+  COALESCE(gc.display_name, gc.company_name)         AS ""groupName"",
+  grp_ind.value                                       AS ""groupSector"",
+  'GROUP_MEMBER'                                      AS ""companyRole"",
+  COALESCE(pc.policy_count,    0)::int               AS ""policyCount"",
+  COALESCE(pc.active_count,    0)::int               AS ""activePolicyCount"",
+  COALESCE(pc.inactive_count,  0)::int               AS ""inactivePolicyCount"",
+  COALESCE(pc.lh_policy_count, 0)::int               AS ""lhPolicyCount"",
+  NULL::int                                           AS ""employeeCount"",
+  pc_grp.parent_policy_count                         AS ""parentPolicyCount"",
+  pc_grp.parent_active_count                         AS ""parentActivePolicyCount"",
+  pc_grp.parent_inactive_count                       AS ""parentInactivePolicyCount"",
+  pc_grp.parent_lh_policy_count                      AS ""parentLhPolicyCount"",
+  NULL::int                                           AS ""parentEmployeeCount"",
+  grp_city.name                                       AS ""parentCity"",
+  grp_state.name                                      AS ""parentState"",
+  CASE WHEN parent_crm_u.first_name IS NOT NULL
+       THEN parent_crm_u.first_name || ' ' || parent_crm_u.last_name END AS ""parentRmName""
+FROM company c
+INNER JOIN group_company_map gcm ON gcm.company_id = c.id
+INNER JOIN company gc ON gc.id = gcm.group_company_id AND gc.deleted_at IS NULL
+LEFT JOIN lookup_data ind     ON ind.id     = c.industry_segment_lid  AND ind.deleted_at     IS NULL
+LEFT JOIN lookup_data grp_ind ON grp_ind.id = gc.industry_segment_lid AND grp_ind.deleted_at IS NULL
+LEFT JOIN users crm_u ON crm_u.id = c.lead_crm
+LEFT JOIN users parent_crm_u ON parent_crm_u.id = gc.lead_crm
+LEFT JOIN (
+  SELECT DISTINCT ON (ca.company_id) ca.company_id, ca.address_id
+  FROM company_address ca ORDER BY ca.company_id, ca.is_primary DESC NULLS LAST, ca.id ASC
+) best_addr ON best_addr.company_id = c.id
+LEFT JOIN address addr ON addr.id = best_addr.address_id AND addr.deleted_at IS NULL
+LEFT JOIN city  ON city.id  = addr.city_id
+LEFT JOIN state ON state.id = addr.state_id
+LEFT JOIN (
+  SELECT DISTINCT ON (ca2.company_id) ca2.company_id, ca2.address_id
+  FROM company_address ca2 ORDER BY ca2.company_id, ca2.is_primary DESC NULLS LAST, ca2.id ASC
+) best_addr_grp ON best_addr_grp.company_id = gc.id
+LEFT JOIN address addr_grp ON addr_grp.id = best_addr_grp.address_id AND addr_grp.deleted_at IS NULL
+LEFT JOIN city  grp_city  ON grp_city.id  = addr_grp.city_id
+LEFT JOIN state grp_state ON grp_state.id = addr_grp.state_id
+LEFT JOIN (
+  SELECT p.company_id,
+         COUNT(*)                                           AS policy_count,
+         COUNT(*) FILTER (WHERE p.policy_to >= CURRENT_DATE) AS active_count,
+         COUNT(*) FILTER (WHERE p.policy_to <  CURRENT_DATE) AS inactive_count,
+         COUNT(*) FILTER (
+           WHERE p.policy_type_lid IN (
+             SELECT pts_lh.policy_type_lid
+             FROM policy_type_segregation pts_lh
+             INNER JOIN lookup_data il ON il.id = pts_lh.iirm_policy_type_lid AND il.deleted_at IS NULL
+             WHERE (lower(il.value) LIKE '%life%' OR lower(il.value) LIKE '%health%')
+               AND lower(il.value) NOT LIKE '%non-life%'
+           )
+         ) AS lh_policy_count
+  FROM policy p
+  INNER JOIN group_company_map gcm_psc ON gcm_psc.company_id = p.company_id
+  WHERE gcm_psc.group_company_id::text = ###hrCompanyId###
+     OR gcm_psc.group_company_id IN (
+       SELECT gcm_f.group_company_id FROM group_company_map gcm_f
+       WHERE gcm_f.company_id::text = ###hrCompanyId###
+     )
+     OR p.company_id::text = ###hrCompanyId###
+  GROUP BY p.company_id
+) pc ON pc.company_id = c.id
+LEFT JOIN (
+  SELECT gcm_g.group_company_id,
+         COUNT(p2.id)                                               AS parent_policy_count,
+         COUNT(p2.id) FILTER (WHERE p2.policy_to >= CURRENT_DATE)  AS parent_active_count,
+         COUNT(p2.id) FILTER (WHERE p2.policy_to <  CURRENT_DATE)  AS parent_inactive_count,
+         COUNT(p2.id) FILTER (
+           WHERE p2.policy_type_lid IN (
+             SELECT pts2.policy_type_lid
+             FROM policy_type_segregation pts2
+             INNER JOIN lookup_data il2 ON il2.id = pts2.iirm_policy_type_lid AND il2.deleted_at IS NULL
+             WHERE (lower(il2.value) LIKE '%life%' OR lower(il2.value) LIKE '%health%')
+               AND lower(il2.value) NOT LIKE '%non-life%'
+           )
+         ) AS parent_lh_policy_count
+  FROM group_company_map gcm_g
+  JOIN company cm ON cm.id = gcm_g.company_id AND cm.deleted_at IS NULL
+  JOIN policy p2 ON p2.company_id = cm.id
+  WHERE gcm_g.group_company_id::text = ###hrCompanyId###
+     OR gcm_g.group_company_id IN (
+       SELECT gcm_f.group_company_id FROM group_company_map gcm_f
+       WHERE gcm_f.company_id::text = ###hrCompanyId###
+     )
+  GROUP BY gcm_g.group_company_id
+) pc_grp ON pc_grp.group_company_id = gcm.group_company_id
+WHERE c.deleted_at IS NULL
+  AND (
+    COALESCE(pc.lh_policy_count, 0) > 0
+    OR (###hrCompanyId### != '' AND COALESCE(pc.policy_count, 0) > 0)
+    OR (###crmUserId### != '' AND COALESCE(pc.policy_count, 0) > 0)
+  )
+  AND (###crmUserId### = '' OR c.lead_crm::text = ###crmUserId### OR gc.lead_crm::text = ###crmUserId###)
+  AND (###hrCompanyId### = '' OR gcm.group_company_id::text = ###hrCompanyId### OR c.id::text = ###hrCompanyId###)
+  AND (###searchTerm### IS NULL OR COALESCE(c.display_name, c.company_name) ILIKE '%' || ###searchTerm### || '%'
+                                OR COALESCE(gc.display_name, gc.company_name) ILIKE '%' || ###searchTerm### || '%')
+  AND (
+    NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+    OR EXISTS (
+      SELECT 1
+      FROM policy_enrollment_employee_policy_map peepm_f
+      INNER JOIN policy pf ON pf.id = peepm_f.policy_id AND pf.company_id = c.id
+      INNER JOIN policy_enrollment_employee pee_f
+        ON pee_f.id = peepm_f.employee_id AND pee_f.deleted_at IS NULL
+      WHERE peepm_f.deleted_at IS NULL
+        AND pee_f.policy_config_location_id IN (
+          SELECT cpcl_loc.id
+          FROM company_policy_configuration_location cpcl_loc
+          WHERE cpcl_loc.address_id IN (
+            SELECT val::INTEGER FROM regexp_split_to_table(
+              NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+            ) AS val WHERE val ~ '^\d+$'
+          )
+        )
+    )
+  )
+  AND (
+    ###externalHrUserId### IS NULL
+    OR c.id IN (
+      SELECT DISTINCT company_id
+      FROM external_hr_policy_map
+      WHERE hr_management_id = ###externalHrUserId###::INTEGER
+        AND company_id IS NOT NULL
+    )
+  )
+ORDER BY ""groupId"", ""companyName""
+","2026-05-08 12:13:12.829517","2026-06-29 17:24:13.611964","","SYSTEM","SYSTEM","","23"
+"24","dashboard_claims_monthly_trend","Dashboard Claims Monthly Trend","dashboard_claims_monthly_trend","
+WITH policy_window AS (
+  SELECT id, company_id, policy_from, policy_to
+  FROM policy WHERE id = ###policyId###
+),
+date_spine AS (
+  SELECT generate_series(
+    date_trunc('month', pw.policy_from),
+    date_trunc('month', pw.policy_to),
+    INTERVAL '1 month'
+  ) AS month_start
+  FROM policy_window pw
+),
+monthly_cur AS (
+  SELECT
+    date_trunc('month', c.claim_dt) AS claim_month,
+    COALESCE(SUM(c.claim_amount) FILTER (WHERE LOWER(COALESCE(c.clm_type,''))='cashless'), 0)       AS cashless_amount,
+    COALESCE(SUM(c.claim_amount) FILTER (WHERE LOWER(COALESCE(c.clm_type,''))='reimbursement'), 0)  AS reimbursement_amount,
+    COUNT(c.id) FILTER (WHERE LOWER(COALESCE(c.clm_type,''))='cashless')                            AS cashless_count,
+    COUNT(c.id) FILTER (WHERE LOWER(COALESCE(c.clm_type,''))='reimbursement')                       AS reimbursement_count
+  FROM policy_claim c
+  INNER JOIN policy_window pw ON pw.id = c.policy_id
+  WHERE c.deleted_at IS NULL
+    AND c.claim_dt BETWEEN pw.policy_from AND pw.policy_to
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR c.employee_id IN (
+        SELECT pee_f.id FROM policy_enrollment_employee pee_f
+        WHERE pee_f.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        ) AND pee_f.deleted_at IS NULL
+      )
+    )
+  GROUP BY date_trunc('month', c.claim_dt)
+),
+monthly_prev AS (
+  SELECT
+    date_trunc('month', c.claim_dt) + INTERVAL '1 year' AS claim_month,
+    COALESCE(SUM(c.claim_amount) FILTER (WHERE LOWER(COALESCE(c.clm_type,''))='cashless'), 0)       AS cashless_amount_prev_year,
+    COALESCE(SUM(c.claim_amount) FILTER (WHERE LOWER(COALESCE(c.clm_type,''))='reimbursement'), 0)  AS reimbursement_amount_prev_year,
+    COUNT(c.id) FILTER (WHERE LOWER(COALESCE(c.clm_type,''))='cashless')                            AS cashless_count_prev_year,
+    COUNT(c.id) FILTER (WHERE LOWER(COALESCE(c.clm_type,''))='reimbursement')                       AS reimbursement_count_prev_year
+  FROM policy_claim c
+  INNER JOIN policy_window pw ON 1=1
+  WHERE c.deleted_at IS NULL
+    AND c.policy_id = COALESCE(
+      (SELECT opp.ref_policy_id FROM policy p2
+       JOIN opportunity opp ON opp.id = p2.opportunity_id AND opp.ref_policy_id IS NOT NULL
+       WHERE p2.id = ###policyId### LIMIT 1),
+      pw.id
+    )
+    AND c.claim_dt BETWEEN (pw.policy_from - INTERVAL '1 year') AND (pw.policy_to - INTERVAL '1 year')
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR c.employee_id IN (
+        SELECT pee_f.id FROM policy_enrollment_employee pee_f
+        WHERE pee_f.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        ) AND pee_f.deleted_at IS NULL
+      )
+    )
+  GROUP BY date_trunc('month', c.claim_dt)
+)
+SELECT
+  TO_CHAR(ds.month_start, 'Mon ''YY')           AS ""month"",
+  ds.month_start                                  AS ""monthStart"",
+  COALESCE(mc.cashless_amount, 0)                AS ""cashlessAmount"",
+  COALESCE(mc.reimbursement_amount, 0)           AS ""reimbursementAmount"",
+  COALESCE(mc.cashless_count, 0)                 AS ""cashlessCount"",
+  COALESCE(mc.reimbursement_count, 0)            AS ""reimbursementCount"",
+  COALESCE(mp.cashless_amount_prev_year, 0)      AS ""cashlessAmountPrevYear"",
+  COALESCE(mp.reimbursement_amount_prev_year, 0) AS ""reimbursementAmountPrevYear"",
+  COALESCE(mp.cashless_count_prev_year, 0)       AS ""cashlessCountPrevYear"",
+  COALESCE(mp.reimbursement_count_prev_year, 0)  AS ""reimbursementCountPrevYear""
+FROM date_spine ds
+LEFT JOIN monthly_cur  mc ON DATE(mc.claim_month) = DATE(ds.month_start)
+LEFT JOIN monthly_prev mp ON DATE(mp.claim_month) = DATE(ds.month_start)
+ORDER BY ds.month_start
+","2026-05-08 12:03:43.680983","2026-05-29 09:01:34.590637","","SYSTEM","SYSTEM","","23"
+"44","cd_kpi_summary","CD Management KPI Summary","cd_kpi_summary","
+WITH allowed_cd AS (
+  SELECT DISTINCT cd.id
+  FROM caution_deposit cd
+  WHERE cd.company_id = ###companyId###
+    AND cd.status = 'ACTIVE'
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR EXISTS (
+        SELECT 1
+        FROM caution_deposit_policy_mapping cdpm2
+        INNER JOIN policy_enrollment_employee_policy_map peepm_f
+          ON peepm_f.policy_id = cdpm2.policy_id AND peepm_f.deleted_at IS NULL
+        INNER JOIN policy_enrollment_employee pee_f
+          ON pee_f.id = peepm_f.employee_id AND pee_f.deleted_at IS NULL
+        WHERE cdpm2.caution_deposit_id = cd.id
+          AND pee_f.policy_config_location_id = ANY(
+            SELECT val::INTEGER FROM regexp_split_to_table(
+              NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+            ) AS val WHERE val ~ '^\d+$'
+          )
+      )
+    )
+    AND (###externalHrUserId### IS NULL
+         OR EXISTS (
+           SELECT 1
+           FROM caution_deposit_policy_mapping cdpm
+           WHERE cdpm.caution_deposit_id = cd.id
+             AND cdpm.policy_id IN (
+               SELECT policy_id FROM external_hr_policy_map WHERE hr_management_id = ###externalHrUserId###::INTEGER
+             )
+         ))
+),
+account_totals AS (
+  SELECT
+    COUNT(DISTINCT cd.id)              AS active_accounts_count,
+    COALESCE(SUM(cd.balance_amount), 0) AS total_deposit_balance
+  FROM caution_deposit cd
+  INNER JOIN allowed_cd ac ON ac.id = cd.id
+),
+utilisation AS (
+  SELECT COALESCE(SUM(CASE WHEN cdt.transaction_type='DEBIT_TRANSACTION' THEN cdt.transaction_amount ELSE 0 END), 0) AS total_utilised
+  FROM caution_deposit_transaction cdt
+  INNER JOIN allowed_cd ac ON ac.id = cdt.caution_deposit_id
+),
+last_credit AS (
+  SELECT cdt.transaction_date, cdt.transaction_amount, cdt.bank_name
+  FROM caution_deposit_transaction cdt
+  INNER JOIN allowed_cd ac ON ac.id = cdt.caution_deposit_id
+  WHERE cdt.transaction_type = 'CREDIT_TRANSACTION'
+  ORDER BY cdt.transaction_date DESC LIMIT 1
+),
+balance_trend AS (
+  SELECT json_agg(monthly_balance ORDER BY month_start) AS trend_data
+  FROM (
+    SELECT
+      date_trunc('month', cdt.transaction_date) AS month_start,
+      SUM(CASE WHEN cdt.transaction_type='CREDIT_TRANSACTION' THEN cdt.transaction_amount ELSE 0 END)
+      - SUM(CASE WHEN cdt.transaction_type='DEBIT_TRANSACTION'  THEN cdt.transaction_amount ELSE 0 END) AS monthly_balance
+    FROM caution_deposit_transaction cdt
+    INNER JOIN allowed_cd ac ON ac.id = cdt.caution_deposit_id
+    WHERE cdt.transaction_date >= date_trunc('month', NOW() - INTERVAL '5 months')
+    GROUP BY date_trunc('month', cdt.transaction_date)
+    ORDER BY month_start LIMIT 6
+  ) t
+)
+SELECT
+  at.total_deposit_balance                                                             AS ""totalDepositBalance"",
+  at.active_accounts_count                                                             AS ""activeCdAccountsCount"",
+  ut.total_utilised                                                                    AS ""utilisedAmount"",
+  ROUND(ut.total_utilised * 100.0 / NULLIF(at.total_deposit_balance, 0), 1)           AS ""utilisedPercent"",
+  TO_CHAR(lc.transaction_date, 'DD/MM/YYYY')                                          AS ""lastDepositDate"",
+  lc.transaction_amount                                                                AS ""lastDepositAmount"",
+  lc.bank_name                                                                         AS ""lastDepositBank"",
+  bt.trend_data                                                                        AS ""balanceTrendData""
+FROM account_totals at
+CROSS JOIN utilisation ut
+LEFT JOIN last_credit lc ON true
+LEFT JOIN balance_trend bt ON true
+","2026-05-08 12:09:48.874743","2026-05-29 09:01:34.590637","","SYSTEM","SYSTEM","","10"
+"46","cd_transactions","CD Deposit Transactions","cd_transactions","
+SELECT
+  cdt.id                                                                   AS ""txnId"",
+  TO_CHAR(cdt.transaction_date, 'DD/MM/YYYY')                              AS ""txnDate"",
+  CASE
+    WHEN cdt.transaction_type = 'CREDIT_TRANSACTION' THEN 'Deposit'
+    ELSE 'Deduction'
+  END                                                                       AS ""txnType"",
+  CASE
+    WHEN cdt.transaction_type = 'CREDIT_TRANSACTION' THEN  cdt.transaction_amount
+    ELSE                                                   -cdt.transaction_amount
+  END                                                                       AS ""amount"",
+  cd.cd_account_number                                                      AS ""cdAccountNumber"",
+  p.insurer_policy_number                                                   AS ""policyNumber"",
+  cdt.bank_name                                                             AS ""bankName"",
+  COALESCE(NULLIF(TRIM(cdt.cheque_number), ''), cdt.transaction_reference_id) AS ""referenceId"",
+  cdt.cd_balance_amount                                                     AS ""runningBalance"",
+  e.insurer_endorsement_number                                              AS ""endorsementNumber"",
+  e.endorsement_type                                                        AS ""endorsementType"",
+  COALESCE(e.employee_endorsement_addition_count, 0)                        AS ""additionCount"",
+  COALESCE(e.employee_endorsement_deletion_count, 0)                        AS ""deletionCount"",
+  TO_CHAR(cdt.cheque_date, 'DD/MM/YYYY')                                    AS ""transactionValueDate"",
+  TRIM(u.first_name || ' ' || COALESCE(u.last_name, ''))                   AS ""createdBy"",
+  cdt.remarks                                                               AS ""remarks"",
+  cdt.ifsc_code                                                             AS ""ifscCode""
+FROM caution_deposit_transaction cdt
+INNER JOIN caution_deposit cd ON cd.id = cdt.caution_deposit_id
+LEFT JOIN policy p   ON p.id  = cdt.policy_id
+LEFT JOIN endorsement e ON e.id = cdt.endorsement_id
+LEFT JOIN users u    ON u.id  = cdt.created_by
+WHERE cd.company_id = ###companyId###
+  AND (###policyId### = '' OR cdt.policy_id::text = ###policyId###)
+  AND (###txnType### = '' OR cdt.transaction_type = ###txnType###)
+  AND (NULLIF(###startDate###, '') IS NULL OR cdt.transaction_date >= NULLIF(###startDate###, '')::date)
+  AND (NULLIF(###endDate###,   '') IS NULL OR cdt.transaction_date <= NULLIF(###endDate###,   '')::date)
+  AND (
+    NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+    OR EXISTS (
+      SELECT 1
+      FROM policy_enrollment_employee_policy_map peepm_f
+      INNER JOIN policy_enrollment_employee pee_f
+        ON pee_f.id = peepm_f.employee_id AND pee_f.deleted_at IS NULL
+      WHERE peepm_f.policy_id = p.id
+        AND peepm_f.deleted_at IS NULL
+        AND pee_f.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        )
+    )
+  )
+  AND (###externalHrUserId### IS NULL
+       OR cdt.policy_id IN (SELECT policy_id FROM external_hr_policy_map WHERE hr_management_id = ###externalHrUserId###::INTEGER))
+ORDER BY cdt.transaction_date DESC, cdt.id DESC
+","2026-05-08 12:10:14.870678","2026-05-29 09:01:34.590637","","SYSTEM","SYSTEM","","12"
+"51","portfolio_individual_companies","Portfolio Individual Companies","portfolio_individual_companies","
+SELECT
+  c.id                                                AS ""companyId"",
+  COALESCE(c.display_name, c.company_name)           AS ""companyName"",
+  ind.value                                           AS ""industry"",
+  city.name                                           AS ""city"",
+  state.name                                          AS ""state"",
+  CASE WHEN crm_u.first_name IS NOT NULL
+       THEN crm_u.first_name || ' ' || crm_u.last_name END AS ""rmName"",
+  NULL::int                                           AS ""groupId"",
+  NULL::text                                          AS ""groupName"",
+  NULL::text                                          AS ""groupSector"",
+  'INDIVIDUAL'                                        AS ""companyRole"",
+  COALESCE(pc.policy_count,    0)::int               AS ""policyCount"",
+  COALESCE(pc.active_count,    0)::int               AS ""activePolicyCount"",
+  COALESCE(pc.inactive_count,  0)::int               AS ""inactivePolicyCount"",
+  COALESCE(pc.lh_policy_count, 0)::int               AS ""lhPolicyCount"",
+  NULL::int                                           AS ""employeeCount""
+FROM company c
+LEFT JOIN group_company_map gcm_p ON gcm_p.group_company_id = c.id
+LEFT JOIN group_company_map gcm_m ON gcm_m.company_id = c.id
+LEFT JOIN lookup_data ind ON ind.id = c.industry_segment_lid AND ind.deleted_at IS NULL
+LEFT JOIN users crm_u ON crm_u.id = c.lead_crm
+LEFT JOIN (
+  SELECT DISTINCT ON (ca.company_id) ca.company_id, ca.address_id
+  FROM company_address ca ORDER BY ca.company_id, ca.is_primary DESC NULLS LAST, ca.id ASC
+) best_addr ON best_addr.company_id = c.id
+LEFT JOIN address addr ON addr.id = best_addr.address_id AND addr.deleted_at IS NULL
+LEFT JOIN city  ON city.id  = addr.city_id
+LEFT JOIN state ON state.id = addr.state_id
+LEFT JOIN (
+  SELECT p.company_id,
+         COUNT(*)                                           AS policy_count,
+         COUNT(*) FILTER (WHERE p.policy_to >= CURRENT_DATE) AS active_count,
+         COUNT(*) FILTER (WHERE p.policy_to <  CURRENT_DATE) AS inactive_count,
+         COUNT(*) FILTER (
+           WHERE EXISTS (
+             SELECT 1 FROM policy_type_segregation pts_lh
+             JOIN lookup_data il ON il.id = pts_lh.iirm_policy_type_lid AND il.deleted_at IS NULL
+             WHERE pts_lh.policy_type_lid = p.policy_type_lid
+               AND (lower(il.value) LIKE '%life%' OR lower(il.value) LIKE '%health%')
+               AND lower(il.value) NOT LIKE '%non-life%'
+           )
+         ) AS lh_policy_count
+  FROM policy p GROUP BY p.company_id
+) pc ON pc.company_id = c.id
+WHERE c.deleted_at IS NULL
+  AND gcm_p.group_company_id IS NULL
+  AND gcm_m.company_id IS NULL
+  AND (
+    COALESCE(pc.lh_policy_count, 0) > 0
+    OR (###hrCompanyId### != '' AND COALESCE(pc.policy_count, 0) > 0)
+    OR (###crmUserId### != '' AND COALESCE(pc.policy_count, 0) > 0)
+  )
+  AND (###crmUserId### = '' OR c.lead_crm::text = ###crmUserId###)
+  AND (###hrCompanyId### = '' OR c.id::text = ###hrCompanyId###)
+  AND (###searchTerm### IS NULL OR COALESCE(c.display_name, c.company_name) ILIKE '%' || ###searchTerm### || '%')
+  AND (
+    NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+    OR EXISTS (
+      SELECT 1
+      FROM policy_enrollment_employee_policy_map peepm_f
+      INNER JOIN policy pf ON pf.id = peepm_f.policy_id AND pf.company_id = c.id
+      INNER JOIN policy_enrollment_employee pee_f
+        ON pee_f.id = peepm_f.employee_id AND pee_f.deleted_at IS NULL
+      WHERE peepm_f.deleted_at IS NULL
+        AND pee_f.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        )
+    )
+  )
+ORDER BY ""companyName""
+","2026-05-08 12:13:33.885964","2026-05-29 09:01:34.590637","","SYSTEM","SYSTEM","","24"
+"31","policy_claim_history","Policy Claim History","policy_claim_history","
+WITH latest_settlement AS (
+  SELECT DISTINCT ON (pcs.claim_id)
+    pcs.claim_id,
+    pcs.clm_sett_amt  AS settled_amount,
+    pcs.clm_sett_date AS settlement_date
+  FROM policy_claim_settlement pcs
+  ORDER BY pcs.claim_id, pcs.clm_sett_date DESC NULLS LAST, pcs.id DESC
+)
+SELECT
+  c.id                                             AS ""claimId"",
+  COALESCE(c.claim_number, c.id::text)             AS ""claimNumber"",
+  c.employee_id                                    AS ""employeeId"",
+  COALESCE(pee.company_employee_id, '')            AS ""employeeCode"",
+  COALESCE(pee.full_name, pee.employee_name, '—') AS ""employeeName"",
+  COALESCE(
+    c.patient_name,
+    CASE
+      WHEN c.dependent_id IS NULL THEN COALESCE(pee.full_name, pee.employee_name)
+      ELSE ped.name
+    END,
+    '—'
+  )                                                AS ""patientName"",
+  CASE
+    WHEN c.dependent_id IS NULL THEN 'Self'
+    ELSE INITCAP(LOWER(COALESCE(c.patient_relation, ped.relation, 'Dependent')))
+  END                                              AS ""relation"",
+  COALESCE(mh.name, c.clm_hospital, '—')          AS ""hospital"",
+  c.claim_dt                                       AS ""claimDate"",
+  INITCAP(COALESCE(c.clm_type, '—'))              AS ""claimType"",
+  c.claim_amount                                   AS ""claimedAmount"",
+  COALESCE(ls.settled_amount, 0)                   AS ""approvedAmount"",
+  ls.settlement_date                               AS ""settlementDate"",
+  INITCAP(COALESCE(c.claim_status, 'pending'))     AS ""status""
+FROM policy_claim c
+INNER JOIN policy p ON p.id = c.policy_id
+LEFT JOIN policy_enrollment_employee pee ON pee.id = c.employee_id AND pee.deleted_at IS NULL
+LEFT JOIN policy_enrollment_dependent ped ON ped.id = c.dependent_id AND ped.deleted_at IS NULL
+LEFT JOIN mstr_hospital mh ON mh.id = c.hospital_id AND mh.deleted_at IS NULL
+LEFT JOIN latest_settlement ls ON ls.claim_id = c.id
+WHERE c.policy_id = ###policyId###
+  AND (NULLIF(###employeeId###, '') IS NULL OR c.employee_id = NULLIF(###employeeId###, '')::int)
+  AND (###claimStatus### = '' OR LOWER(c.claim_status) = LOWER(###claimStatus###))
+  AND (###claimType### = '' OR LOWER(COALESCE(c.clm_type, '')) LIKE '%' || LOWER(###claimType###) || '%')
+  AND (###claimNo### = '' OR COALESCE(c.claim_number, '') ILIKE '%' || ###claimNo### || '%')
+  AND (###search### = ''
+       OR COALESCE(pee.full_name, pee.employee_name, '') ILIKE '%' || ###search### || '%'
+       OR COALESCE(pee.company_employee_id, '') ILIKE '%' || ###search### || '%'
+       OR COALESCE(c.claim_number, '') ILIKE '%' || ###search### || '%'
+       OR COALESCE(c.patient_name, '') ILIKE '%' || ###search### || '%'
+       OR COALESCE(mh.name, c.clm_hospital, '') ILIKE '%' || ###search### || '%')
+  AND (NULLIF(###claimDateFrom###, '') IS NULL OR c.claim_dt::date >= NULLIF(###claimDateFrom###, '')::date)
+  AND (NULLIF(###claimDateTo###,   '') IS NULL OR c.claim_dt::date <= NULLIF(###claimDateTo###,   '')::date)
+  AND (NULLIF(###settlementDateFrom###, '') IS NULL OR ls.settlement_date::date >= NULLIF(###settlementDateFrom###, '')::date)
+  AND (NULLIF(###settlementDateTo###,   '') IS NULL OR ls.settlement_date::date <= NULLIF(###settlementDateTo###,   '')::date)
+  AND (NULLIF(###amountMin###, '') IS NULL OR c.claim_amount >= NULLIF(###amountMin###, '')::numeric)
+  AND (NULLIF(###amountMax###, '') IS NULL OR c.claim_amount <= NULLIF(###amountMax###, '')::numeric)
+  AND (
+    ###tat### = ''
+    OR (###tat### = 'lte7'  AND ls.settlement_date IS NOT NULL AND (ls.settlement_date::date - c.claim_dt::date) <= 7)
+    OR (###tat### = '7to30' AND ls.settlement_date IS NOT NULL AND (ls.settlement_date::date - c.claim_dt::date) BETWEEN 8 AND 30)
+    OR (###tat### = 'gt30'  AND ls.settlement_date IS NOT NULL AND (ls.settlement_date::date - c.claim_dt::date) > 30)
+  )
+  -- New employee-level location filter
+  AND (
+    NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+    OR pee.policy_config_location_id = ANY(
+      SELECT val::INTEGER FROM regexp_split_to_table(
+        NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+      ) AS val WHERE val ~ '^\d+$'
+    )
+  )
+  AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+  AND (###externalHrUserId### IS NULL
+       OR c.policy_id IN (SELECT policy_id FROM external_hr_policy_map WHERE hr_management_id = ###externalHrUserId###::INTEGER))
+ORDER BY c.claim_dt DESC NULLS LAST, c.id DESC
+","2026-05-08 12:06:13.348584","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","30"
+"30","policy_cd_summary","Policy CD Summary","policy_cd_summary","
+WITH policy_lives AS (
+  SELECT
+    peepm.policy_id,
+    COUNT(DISTINCT peepm.employee_id)                    AS employee_count,
+    (SELECT COUNT(ped.id)
+     FROM policy_enrollment_dependent ped
+     WHERE ped.policy_id = peepm.policy_id
+       AND ped.deleted_at IS NULL)                        AS dependent_count
+  FROM policy_enrollment_employee_policy_map peepm
+  WHERE peepm.deleted_at IS NULL
+    AND peepm.policy_id = ###policyId###
+  GROUP BY peepm.policy_id
+),
+policy_cd AS (
+  SELECT
+    cdpm.policy_id,
+    COALESCE(SUM(cd.balance_amount), 0)   AS available_amount,
+    COALESCE(SUM(cdt_agg.used_amount), 0) AS used_amount,
+    MAX(cd.cd_safe_limit)                 AS cd_safe_limit
+  FROM caution_deposit cd
+  INNER JOIN caution_deposit_policy_mapping cdpm ON cdpm.caution_deposit_id = cd.id
+  INNER JOIN policy p_cd ON p_cd.id = cdpm.policy_id
+                         AND p_cd.id = ###policyId###
+                         AND p_cd.company_id = ###companyId###
+  LEFT JOIN (
+    SELECT caution_deposit_id, SUM(transaction_amount) AS used_amount
+    FROM caution_deposit_transaction
+    WHERE transaction_type = 'DEBIT_TRANSACTION'
+    GROUP BY caution_deposit_id
+  ) cdt_agg ON cdt_agg.caution_deposit_id = cd.id
+  WHERE cd.status IN ('CD_ACCOUNT_ACTIVE', 'ACTIVE')
+  GROUP BY cdpm.policy_id
+),
+policy_cd_account AS (
+  SELECT DISTINCT ON (cdpm.policy_id)
+    cdpm.policy_id,
+    cd.cd_account_number
+  FROM caution_deposit cd
+  INNER JOIN caution_deposit_policy_mapping cdpm ON cdpm.caution_deposit_id = cd.id
+  INNER JOIN policy p_cd ON p_cd.id = cdpm.policy_id
+                         AND p_cd.id = ###policyId###
+                         AND p_cd.company_id = ###companyId###
+  WHERE cd.status IN ('CD_ACCOUNT_ACTIVE', 'ACTIVE')
+  ORDER BY cdpm.policy_id, cd.id
+),
+policy_cd_running_balance AS (
+  SELECT DISTINCT ON (cdpm.policy_id)
+    cdpm.policy_id,
+    cdt.cd_balance_amount::numeric AS running_balance
+  FROM caution_deposit_transaction cdt
+  INNER JOIN caution_deposit cd ON cd.id = cdt.caution_deposit_id
+  INNER JOIN caution_deposit_policy_mapping cdpm ON cdpm.caution_deposit_id = cd.id
+  INNER JOIN policy p_cd ON p_cd.id = cdpm.policy_id
+                         AND p_cd.id = ###policyId###
+                         AND p_cd.company_id = ###companyId###
+  WHERE cd.status IN ('CD_ACCOUNT_ACTIVE', 'ACTIVE')
+  ORDER BY cdpm.policy_id, cdt.transaction_date DESC NULLS LAST, cdt.id DESC
+),
+policy_insurer AS (
+  SELECT DISTINCT ON (pim.policy_id)
+    pim.policy_id,
+    i.display_name AS insurer_name
+  FROM policy_insurer_map pim
+  INNER JOIN insurer i ON i.id = pim.insurer_id
+  ORDER BY pim.policy_id, pim.share_percentage DESC NULLS LAST, pim.id
+)
+SELECT
+  p.id                                                                                     AS ""policyId"",
+  p.policy_name                                                                            AS ""policyName"",
+  COALESCE(p.net_premium, 0)                                                              AS ""netPremium"",
+  COALESCE(pcd.available_amount, 0)                                                       AS ""cdBalance"",
+  COALESCE(pcd.used_amount, 0)                                                            AS ""cdUsedAmount"",
+  COALESCE(pcd.used_amount, 0)                                                            AS ""usedAmount"",
+  COALESCE(pcrb.running_balance, pcd.available_amount, 0)                                 AS ""cdRunningBalance"",
+  pca.cd_account_number                                                                    AS ""cdAccountNumber"",
+  COALESCE(pl.employee_count, 0) + COALESCE(pl.dependent_count, 0)                       AS ""totalLives"",
+  COALESCE(pl.employee_count, 0)                                                          AS ""employeeCount"",
+  ROUND(COALESCE(p.net_premium, 0) * COALESCE(pcd.cd_safe_limit, 10) / 100.0, 2)         AS ""safeLimit"",
+  ROUND(
+    COALESCE(pcd.used_amount, 0) * 100.0
+    / NULLIF(COALESCE(pcd.available_amount, 0) + COALESCE(pcd.used_amount, 0), 0),
+    1
+  )                                                                                        AS ""usedPercent"",
+  COALESCE(pi.insurer_name, '—')                                                         AS ""insurer"",
+  TO_CHAR(p.policy_from, 'DD Mon YYYY')                                                   AS ""periodStart"",
+  TO_CHAR(p.policy_to,   'DD Mon YYYY')                                                   AS ""periodEnd""
+FROM policy p
+LEFT JOIN policy_lives              pl   ON pl.policy_id   = p.id
+LEFT JOIN policy_cd                 pcd  ON pcd.policy_id  = p.id
+LEFT JOIN policy_cd_running_balance pcrb ON pcrb.policy_id = p.id
+LEFT JOIN policy_cd_account         pca  ON pca.policy_id  = p.id
+LEFT JOIN policy_insurer            pi   ON pi.policy_id   = p.id
+WHERE p.id = ###policyId###
+  AND p.company_id = ###companyId###
+","2026-05-08 12:05:38.20827","2026-05-20 12:07:53.342668","","SYSTEM","SYSTEM","","29"
+"21","dashboard_premium_summary","Dashboard Premium Summary","dashboard_premium_summary","
+WITH cur_year AS (
+  SELECT
+    COALESCE(SUM(p.premium_at_inception), 0) AS inception_premium,
+    0::numeric                                AS addition_premium,
+    0::numeric                                AS deletion_premium,
+    0::numeric                                AS top_up_premium,
+    COALESCE(SUM(p.net_premium), 0)           AS total_premium
+  FROM policy p
+  INNER JOIN lookup_data ld ON ld.id = p.policy_type_lid AND ld.deleted_at IS NULL
+  WHERE p.company_id = ###companyId###
+    AND (###policyType### = '' OR ld.lookup_key = ###policyType###)
+    AND p.policy_from >= ###policyPeriodStart###::date
+    AND p.policy_to   <= ###policyPeriodEnd###::date
+    AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+),
+prev_year AS (
+  SELECT
+    COALESCE(SUM(p.premium_at_inception), 0) AS inception_premium,
+    0::numeric                                AS addition_premium,
+    0::numeric                                AS deletion_premium,
+    0::numeric                                AS top_up_premium,
+    COALESCE(SUM(p.net_premium), 0)           AS total_premium
+  FROM policy p
+  INNER JOIN lookup_data ld ON ld.id = p.policy_type_lid AND ld.deleted_at IS NULL
+  WHERE p.company_id = ###companyId###
+    AND (###policyType### = '' OR ld.lookup_key = ###policyType###)
+    AND p.policy_from >= (###policyPeriodStart###::date - INTERVAL '1 year')
+    AND p.policy_to   <= (###policyPeriodEnd###::date   - INTERVAL '1 year')
+    AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+)
+SELECT
+  cy.inception_premium                                                                AS ""inceptionPremium"",
+  cy.addition_premium                                                                 AS ""additionPremium"",
+  cy.deletion_premium                                                                 AS ""deletionPremium"",
+  cy.top_up_premium                                                                   AS ""topUpPremium"",
+  cy.total_premium                                                                    AS ""totalPremium"",
+  py.inception_premium                                                                AS ""inceptionPremiumPrevYear"",
+  py.addition_premium                                                                 AS ""additionPremiumPrevYear"",
+  py.deletion_premium                                                                 AS ""deletionPremiumPrevYear"",
+  py.top_up_premium                                                                   AS ""topUpPremiumPrevYear"",
+  py.total_premium                                                                    AS ""totalPremiumPrevYear"",
+  ROUND((cy.total_premium - py.total_premium) * 100.0 / NULLIF(py.total_premium, 0), 1) AS ""totalPremiumYoYChangePercent""
+FROM cur_year cy
+CROSS JOIN prev_year py
+    ","2026-05-08 12:02:18.92567","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","20"
+"40","endorsement_overview","Endorsement Overview KPIs","endorsement_overview","
+SELECT
+  COUNT(DISTINCT e.id) AS ""totalEndorsements"",
+  NULL::numeric        AS ""netGrossPremium""
+FROM endorsement e
+INNER JOIN policy p ON p.id = e.policy_id
+WHERE p.company_id = ###companyId###
+  AND (###policyId### = '' OR e.policy_id::text = ###policyId###)
+  AND (
+    NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+    OR EXISTS (
+      SELECT 1
+      FROM policy_enrollment_employee_policy_map peepm_f
+      INNER JOIN policy_enrollment_employee pee_f
+        ON pee_f.id = peepm_f.employee_id AND pee_f.deleted_at IS NULL
+      WHERE peepm_f.policy_id = p.id
+        AND peepm_f.deleted_at IS NULL
+        AND pee_f.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        )
+    )
+  )
+  AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+  AND (###externalHrUserId### IS NULL
+       OR e.policy_id IN (SELECT policy_id FROM external_hr_policy_map WHERE hr_management_id = ###externalHrUserId###::INTEGER))
+","2026-05-08 12:08:57.413819","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","20"
+"52","portfolio_company_policies","Portfolio Company Policies","portfolio_company_policies","
+WITH loc_filter AS (
+  SELECT NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL AS is_all
+),
+loc_id_set AS (
+  SELECT val::INTEGER AS loc_id
+  FROM regexp_split_to_table(
+    COALESCE(NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ''),
+    ','
+  ) AS val
+  WHERE val ~ '^\d+$'
+),
+loc_employees AS (
+  SELECT DISTINCT
+    pee.id       AS employee_id,
+    peepm.policy_id
+  FROM policy_enrollment_employee pee
+  INNER JOIN policy_enrollment_employee_policy_map peepm
+    ON peepm.employee_id = pee.id AND peepm.deleted_at IS NULL
+  WHERE pee.deleted_at IS NULL
+    AND NOT (SELECT is_all FROM loc_filter)
+    AND pee.policy_config_location_id IN (
+      SELECT cpcl_loc.id
+      FROM company_policy_configuration_location cpcl_loc
+      WHERE cpcl_loc.address_id IN (SELECT loc_id FROM loc_id_set)
+    )
+),
+loc_policy_emp_counts AS (
+  -- Location employee count per policy
+  SELECT policy_id, COUNT(DISTINCT employee_id) AS loc_emp_count
+  FROM loc_employees
+  GROUP BY policy_id
+),
+total_policy_emp_counts AS (
+  -- Total employee count per policy (only for policies with location employees)
+  SELECT peepm.policy_id, COUNT(DISTINCT peepm.employee_id) AS total_emp_count
+  FROM policy_enrollment_employee_policy_map peepm
+  WHERE peepm.deleted_at IS NULL
+    AND peepm.policy_id IN (SELECT policy_id FROM loc_policy_emp_counts)
+  GROUP BY peepm.policy_id
+),
+endorsement_premiums AS (
+  SELECT e.policy_id, SUM(e.net_premium) AS total_endorsement_premium
+  FROM endorsement e
+  INNER JOIN policy p_ep ON p_ep.id = e.policy_id
+  WHERE e.net_premium IS NOT NULL
+    AND p_ep.company_id = ###companyId###
+  GROUP BY e.policy_id
+),
+policy_insurer AS (
+  SELECT DISTINCT ON (pim.policy_id)
+    pim.policy_id,
+    i.display_name AS insurer_name
+  FROM policy_insurer_map pim
+  INNER JOIN insurer i ON i.id = pim.insurer_id
+  WHERE pim.policy_id IN (SELECT id FROM policy WHERE company_id = ###companyId###)
+  ORDER BY pim.policy_id, pim.share_percentage DESC NULLS LAST, pim.id
+),
+policy_tpa AS (
+  SELECT DISTINCT ON (ptm.policy_id)
+    ptm.policy_id,
+    t.name AS tpa_name
+  FROM policy_tpa_map ptm
+  INNER JOIN tpa t ON t.id = ptm.tpa_id
+  WHERE ptm.policy_id IN (SELECT id FROM policy WHERE company_id = ###companyId###)
+  ORDER BY ptm.policy_id, ptm.id
+)
+SELECT
+  p.id                                                           AS ""policyId"",
+  p.company_id                                                   AS ""companyId"",
+  COALESCE(iirm_ld.value, ld.value)                             AS ""policyTypeCode"",
+  ld.value                                                       AS ""policyTypeName"",
+  pi.insurer_name                                                AS ""insurerName"",
+  COALESCE(pt.tpa_name, '—')                                    AS ""tpaName"",
+  p.insurer_policy_number                                        AS ""policyNumber"",
+  -- Pro-rate premium: full premium when no location filter,
+  -- location_emp/total_emp × net_premium when location is selected.
+  ROUND(
+    COALESCE(ep.total_endorsement_premium, p.net_premium) * COALESCE(
+      lpec.loc_emp_count::numeric / NULLIF(tpec.total_emp_count::numeric, 0),
+      1.0
+    ),
+    2
+  )                                                              AS ""premiumAmount"",
+  TO_CHAR(p.policy_from, 'DD/MM/YYYY')                          AS ""startDate"",
+  TO_CHAR(p.policy_to,   'DD/MM/YYYY')                          AS ""endDate"",
+  CASE
+    WHEN p.policy_to <  CURRENT_DATE                             THEN 'Expired'
+    WHEN p.policy_to <= CURRENT_DATE + INTERVAL '60 days'        THEN 'Renewal Due'
+    ELSE 'Active'
+  END                                                            AS ""policyStatus""
+FROM policy p
+LEFT JOIN lookup_data ld              ON ld.id = p.policy_type_lid AND ld.deleted_at IS NULL
+LEFT JOIN policy_type_segregation pts ON pts.policy_type_lid = p.policy_type_lid
+LEFT JOIN lookup_data iirm_ld         ON iirm_ld.id = pts.iirm_policy_type_lid AND iirm_ld.deleted_at IS NULL
+LEFT JOIN policy_insurer pi           ON pi.policy_id = p.id
+LEFT JOIN policy_tpa pt               ON pt.policy_id = p.id
+LEFT JOIN loc_policy_emp_counts  lpec ON lpec.policy_id = p.id
+LEFT JOIN total_policy_emp_counts tpec ON tpec.policy_id = p.id
+LEFT JOIN endorsement_premiums ep ON ep.policy_id = p.id
+WHERE p.company_id = ###companyId###
+  AND (
+    (SELECT is_all FROM loc_filter)
+    OR p.id IN (SELECT policy_id FROM loc_policy_emp_counts)
+  )
+  AND (###externalHrUserId### IS NULL
+       OR p.id IN (
+         SELECT policy_id
+         FROM external_hr_policy_map
+         WHERE hr_management_id = ###externalHrUserId###::INTEGER
+       ))
+AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+ORDER BY p.policy_from DESC
+","2026-05-08 12:14:00.640021","2026-06-29 17:24:14.570823","","SYSTEM","SYSTEM","","25"
+"49","portfolio_policies","Portfolio Policies","portfolio_policies","
+WITH policy_insurer AS (
+  SELECT DISTINCT ON (pim.policy_id)
+    pim.policy_id,
+    i.display_name AS insurer_name
+  FROM policy_insurer_map pim
+  INNER JOIN insurer i ON i.id = pim.insurer_id
+  ORDER BY pim.policy_id, pim.share_percentage DESC NULLS LAST, pim.id
+)
+SELECT
+  p.id                                                      AS ""policyId"",
+  p.company_id                                              AS ""companyId"",
+  COALESCE(iirm_ld.value, ld.value)                        AS ""policyTypeCode"",
+  ld.value                                                  AS ""policyTypeName"",
+  pi.insurer_name                                           AS ""insurerName"",
+  p.insurer_policy_number                                   AS ""policyNumber"",
+  p.net_premium                                             AS ""premiumAmount"",
+  TO_CHAR(p.policy_from, 'DD/MM/YYYY')                     AS ""startDate"",
+  TO_CHAR(p.policy_to,   'DD/MM/YYYY')                     AS ""endDate"",
+  CASE
+    WHEN p.policy_to <  CURRENT_DATE                        THEN 'Expired'
+    WHEN p.policy_to <= CURRENT_DATE + INTERVAL '60 days'   THEN 'Renewal Due'
+    ELSE 'Active'
+  END                                                       AS ""policyStatus""
+FROM policy p
+LEFT JOIN lookup_data ld ON ld.id = p.policy_type_lid AND ld.deleted_at IS NULL
+LEFT JOIN policy_type_segregation pts ON pts.policy_type_lid = p.policy_type_lid
+LEFT JOIN lookup_data iirm_ld ON iirm_ld.id = pts.iirm_policy_type_lid AND iirm_ld.deleted_at IS NULL
+LEFT JOIN policy_insurer pi ON pi.policy_id = p.id
+WHERE p.company_id IN (
+  SELECT id FROM company
+  WHERE deleted_at IS NULL
+    AND id NOT IN (SELECT DISTINCT group_company_id FROM group_company_map)
+)
+AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+ORDER BY p.company_id, p.policy_from DESC
+","2026-05-08 12:12:57.608283","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","22"
+"42","endorsement_list","Endorsement List","endorsement_list","
+SELECT
+  e.id                                                   AS ""endorsementId"",
+  e.insurer_endorsement_number                           AS ""insurerEndorsementId"",
+  e.policy_id                                            AS ""policyId"",
+  p.insurer_policy_number                                AS ""policyNumber"",
+  e.endorsement_type                                     AS ""endorsementType"",
+  TO_CHAR(e.enrollment_start_date, 'DD/MM/YYYY')         AS ""enrollmentStartDate"",
+  TO_CHAR(e.enrollment_end_date,   'DD/MM/YYYY')         AS ""enrollmentEndDate"",
+  TO_CHAR(e.created_at,            'DD/MM/YYYY')         AS ""createdAt"",
+  e.os_ticket_number                                     AS ""osTicketNumber"",
+  COALESCE(e.endorsement_status, '')                     AS ""endorsementStatus"",
+  COALESCE(counts.upload_count,  0)                      AS ""uploadCount"",
+  COALESCE(counts.success_count, 0)                      AS ""totalSuccessCount"",
+  COALESCE(counts.error_count,   0)                      AS ""totalErrorCount"",
+  COALESCE(counts.process_count, 0)                      AS ""totalProcessCount"",
+  COALESCE(e.basic_premium,  p.basic_premium)            AS ""basePremium"",
+  COALESCE(e.gst_amount,     p.gst_amount)               AS ""taxAmount"",
+  COALESCE(e.gross_premium,  p.gross_premium)            AS ""grossPremium"",
+  COALESCE(e.net_premium,    p.net_premium)              AS ""netPremium"",
+  CASE
+    WHEN COALESCE(e.net_premium, p.net_premium) IS NOT NULL
+     AND COALESCE(e.gst_amount,  p.gst_amount)  IS NOT NULL
+    THEN COALESCE(e.net_premium, p.net_premium) + COALESCE(e.gst_amount, p.gst_amount)
+    ELSE COALESCE(e.net_premium, p.net_premium, e.gross_premium, p.gross_premium)
+  END                                                    AS ""netGrossPremium"",
+  COALESCE(e.endorsment_count, 0)                        AS ""endorsmentCount"",
+  COALESCE(e.endorsment_dependent_count, 0)              AS ""endorsmentDependentCount"",
+  COALESCE(e.is_inception, false)                        AS ""isInception""
+FROM endorsement e
+INNER JOIN policy p ON p.id = e.policy_id
+LEFT JOIN (
+  SELECT
+    dpf.endorsement_id,
+    COUNT(DISTINCT dpf.id)              AS upload_count,
+    COALESCE(SUM(s.success_count), 0)   AS success_count,
+    COALESCE(SUM(s.error_count),   0)   AS error_count,
+    COALESCE(SUM(s.process_count), 0)   AS process_count
+  FROM document_processing_file dpf
+  INNER JOIN policy p2 ON p2.id = dpf.entity_id AND dpf.entity_type = 'policy'
+  LEFT JOIN policy_enrollment_upload_summary s ON s.document_processing_file_id = dpf.id
+  WHERE p2.company_id = ###companyId###
+    AND (###policyId### = '' OR dpf.entity_id::text = ###policyId###)
+  GROUP BY dpf.endorsement_id
+) counts ON counts.endorsement_id = e.id
+WHERE p.company_id = ###companyId###
+  AND (###policyId### = '' OR e.policy_id::text = ###policyId###)
+  AND (
+    NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+    OR EXISTS (
+      SELECT 1
+      FROM policy_enrollment_employee_policy_map peepm_f
+      INNER JOIN policy_enrollment_employee pee_f
+        ON pee_f.id = peepm_f.employee_id AND pee_f.deleted_at IS NULL
+      WHERE peepm_f.policy_id = p.id
+        AND peepm_f.deleted_at IS NULL
+        AND pee_f.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        )
+    )
+  )
+  AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+  AND (###externalHrUserId### IS NULL
+       OR e.policy_id IN (SELECT policy_id FROM external_hr_policy_map WHERE hr_management_id = ###externalHrUserId###::INTEGER))
+ORDER BY e.created_at DESC
+","2026-05-08 12:09:18.263787","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","22"
+"29","dashboard_top10_diseases","Dashboard Top 10 Diseases by Claims","dashboard_top10_diseases","
+WITH policy_window AS (
+  SELECT id, policy_from, policy_to FROM policy WHERE id = ###policyId###
+),
+cur_year_base AS (
+  SELECT
+    INITCAP(TRIM(COALESCE(NULLIF(TRIM(c.claim_description::text),''),'Unclassified'))) AS disease_category,
+    COUNT(c.id)                      AS total_claims,
+    COALESCE(SUM(c.claim_amount), 0) AS total_amount
+  FROM policy_claim c
+  INNER JOIN policy_window p ON p.id = c.policy_id
+  WHERE c.deleted_at IS NULL
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR c.employee_id IN (
+        SELECT pee_f.id FROM policy_enrollment_employee pee_f
+        WHERE pee_f.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        ) AND pee_f.deleted_at IS NULL
+      )
+    )
+  GROUP BY INITCAP(TRIM(COALESCE(NULLIF(TRIM(c.claim_description::text),''),'Unclassified')))
+),
+cur_year AS (
+  SELECT disease_category, total_claims, total_amount,
+         RANK() OVER (ORDER BY total_amount DESC) AS cur_rank
+  FROM cur_year_base
+),
+prev_year_ranked AS (
+  SELECT
+    INITCAP(TRIM(COALESCE(NULLIF(TRIM(c.claim_description::text),''),'Unclassified'))) AS disease_category,
+    COALESCE(SUM(c.claim_amount), 0)                                                    AS total_amount_py,
+    RANK() OVER (ORDER BY COALESCE(SUM(c.claim_amount),0) DESC)                        AS prev_rank
+  FROM policy_claim c
+  INNER JOIN policy_window p ON p.id = c.policy_id
+  WHERE c.deleted_at IS NULL
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR c.employee_id IN (
+        SELECT pee_f.id FROM policy_enrollment_employee pee_f
+        WHERE pee_f.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        ) AND pee_f.deleted_at IS NULL
+      )
+    )
+  GROUP BY INITCAP(TRIM(COALESCE(NULLIF(TRIM(c.claim_description::text),''),'Unclassified')))
+)
+SELECT
+  cy.disease_category                                                                                      AS ""diseaseCategory"",
+  cy.total_claims                                                                                          AS ""totalClaims"",
+  cy.total_amount                                                                                          AS ""totalAmount"",
+  COALESCE(py.total_amount_py, 0)                                                                         AS ""totalAmountPrevYear"",
+  py.prev_rank                                                                                             AS ""rankPrevYear"",
+  CASE WHEN py.prev_rank IS NULL THEN NULL ELSE py.prev_rank - cy.cur_rank END                           AS ""rankChange"",
+  ROUND((cy.total_amount - COALESCE(py.total_amount_py,0)) * 100.0 / NULLIF(py.total_amount_py,0), 1)  AS ""yoYChangePercent""
+FROM cur_year cy
+LEFT JOIN prev_year_ranked py ON py.disease_category = cy.disease_category
+ORDER BY cy.total_amount DESC
+","2026-05-08 12:05:23.976083","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","28"
+"25","dashboard_enrollment_status","Dashboard Enrollment Status","dashboard_enrollment_status","
+WITH location_filter AS (
+    SELECT
+        NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') AS location_string
+),
+
+location_ids AS (
+    SELECT val::int AS address_id
+    FROM location_filter,
+         regexp_split_to_table(location_string, ',') val
+    WHERE val ~ '^\d+$'
+),
+
+policy_scope AS MATERIALIZED (
+    SELECT p.id
+    FROM policy p
+    JOIN lookup_data ld
+      ON ld.id = p.policy_type_lid
+     AND ld.deleted_at IS NULL
+    WHERE p.company_id = ###companyId###
+      AND (###policyType### = '' OR ld.lookup_key = ###policyType###)
+      AND (
+            p.is_installment_policy IS NULL
+            OR NOT EXISTS (
+                SELECT 1
+                FROM lookup_data inst_ld
+                WHERE inst_ld.id = p.is_installment_policy
+                  AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES'
+                  AND inst_ld.deleted_at IS NULL
+            )
+      )
+      AND (
+            ###externalHrUserId### IS NULL
+            OR EXISTS (
+                SELECT 1
+                FROM external_hr_policy_map ehp
+                WHERE ehp.policy_id = p.id
+                  AND ehp.hr_management_id = ###externalHrUserId###::INTEGER
+            )
+      )
+),
+
+employee_scope AS MATERIALIZED (
+    SELECT DISTINCT
+           pee.id,
+           pee.user_id
+    FROM policy_enrollment_employee pee
+    JOIN policy_enrollment_employee_policy_map peepm
+      ON peepm.employee_id = pee.id
+     AND peepm.deleted_at IS NULL
+    JOIN policy_scope ps
+      ON ps.id = peepm.policy_id
+    LEFT JOIN company_policy_configuration_location cpcl
+      ON cpcl.id = pee.policy_config_location_id
+    LEFT JOIN location_ids li
+      ON li.address_id = cpcl.address_id
+    CROSS JOIN location_filter lf
+    WHERE pee.company_id = ###companyId###
+      AND pee.deleted_at IS NULL
+      AND (
+            lf.location_string IS NULL
+            OR li.address_id IS NOT NULL
+      )
+),
+
+logged_users AS MATERIALIZED (
+    SELECT DISTINCT ual.user_id
+    FROM user_activity_log ual
+    JOIN employee_scope es
+      ON es.user_id = ual.user_id
+    WHERE ual.activity_key = 'LOGGED_IN'
+      AND ual.activity_category = 'AUTH'
+      AND ual.deleted_at IS NULL
+),
+
+latest_enrollment AS (
+    SELECT employee_id,
+           employee_enrollment_status_key
+    FROM (
+        SELECT
+            pee.employee_id,
+            pee.employee_enrollment_status_key,
+            ROW_NUMBER() OVER (
+                PARTITION BY pee.employee_id
+                ORDER BY pee.updated_at DESC, pee.id DESC
+            ) rn
+        FROM policy_employee_enrollment pee
+        JOIN policy_scope ps
+          ON ps.id = pee.policy_id
+        WHERE pee.deleted_at IS NULL
+    ) x
+    WHERE rn = 1
+)
+
+SELECT
+    COUNT(*)                                                                    AS ""totalEligible"",
+    COUNT(*) FILTER (WHERE lu.user_id IS NOT NULL)                             AS ""loggedIn"",
+    COUNT(*) FILTER (WHERE lu.user_id IS NULL)                                 AS ""notLoggedIn"",
+    COUNT(*) FILTER (
+        WHERE le.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED'
+    )                                                                           AS ""enrollmentConfirmed"",
+    ROUND(COUNT(*) FILTER (WHERE lu.user_id IS NOT NULL) * 100.0
+          / NULLIF(COUNT(*), 0), 1)                                            AS ""loggedInPercent"",
+    ROUND(COUNT(*) FILTER (WHERE lu.user_id IS NULL) * 100.0
+          / NULLIF(COUNT(*), 0), 1)                                            AS ""notLoggedInPercent"",
+    ROUND(COUNT(*) FILTER (
+        WHERE le.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED'
+    ) * 100.0 / NULLIF(COUNT(*), 0), 1)                                       AS ""enrollmentConfirmedPercent""
+
+FROM employee_scope es
+LEFT JOIN logged_users lu     ON lu.user_id    = es.user_id
+LEFT JOIN latest_enrollment le ON le.employee_id = es.id
+","2026-05-08 12:04:03.096693","2026-06-29 17:24:15.93638","","SYSTEM","SYSTEM","","24"
+"28","dashboard_top10_hospitals","Dashboard Top 10 Hospitals by Claims","dashboard_top10_hospitals","
+WITH policy_window AS (
+  SELECT id, policy_from, policy_to FROM policy WHERE id = ###policyId###
+),
+cur_year_base AS (
+  SELECT
+    COALESCE(h.id::text, 'ext-'||MD5(COALESCE(c.clm_hospital::text,'unknown'))) AS hospital_key,
+    COALESCE(h.name, c.clm_hospital::text, 'Unknown')                            AS hospital_name,
+    COALESCE(a_city.city_name, '—')                                               AS city,
+    COUNT(c.id)                      AS total_claims,
+    COALESCE(SUM(c.claim_amount), 0) AS total_amount
+  FROM policy_claim c
+  INNER JOIN policy_window p ON p.id = c.policy_id
+  LEFT JOIN mstr_hospital h         ON h.id = c.hospital_id AND h.deleted_at IS NULL
+  LEFT JOIN mstr_hospital_address a_city ON a_city.id = h.address_id AND a_city.deleted_at IS NULL
+  WHERE c.deleted_at IS NULL
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR c.employee_id IN (
+        SELECT pee_f.id FROM policy_enrollment_employee pee_f
+        WHERE pee_f.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        ) AND pee_f.deleted_at IS NULL
+      )
+    )
+  GROUP BY
+    COALESCE(h.id::text, 'ext-'||MD5(COALESCE(c.clm_hospital::text,'unknown'))),
+    COALESCE(h.name, c.clm_hospital::text, 'Unknown'),
+    COALESCE(a_city.city_name, '—')
+),
+cur_year AS (
+  SELECT hospital_key, hospital_name, city, total_claims, total_amount,
+         RANK() OVER (ORDER BY total_amount DESC) AS cur_rank
+  FROM cur_year_base
+),
+prev_year_ranked AS (
+  SELECT
+    COALESCE(c.hospital_id::text, 'ext-'||MD5(COALESCE(c.clm_hospital::text,'unknown'))) AS hospital_key,
+    COALESCE(SUM(c.claim_amount), 0)                                                       AS total_amount_py,
+    RANK() OVER (ORDER BY COALESCE(SUM(c.claim_amount),0) DESC)                           AS prev_rank
+  FROM policy_claim c
+  INNER JOIN policy_window p ON p.id = c.policy_id
+  WHERE c.deleted_at IS NULL
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR c.employee_id IN (
+        SELECT pee_f.id FROM policy_enrollment_employee pee_f
+        WHERE pee_f.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        ) AND pee_f.deleted_at IS NULL
+      )
+    )
+  GROUP BY COALESCE(c.hospital_id::text, 'ext-'||MD5(COALESCE(c.clm_hospital::text,'unknown')))
+)
+SELECT
+  cy.hospital_key                                                                                         AS ""hospitalId"",
+  cy.hospital_name                                                                                        AS ""hospitalName"",
+  cy.city                                                                                                 AS ""city"",
+  cy.total_claims                                                                                         AS ""totalClaims"",
+  cy.total_amount                                                                                         AS ""totalAmount"",
+  COALESCE(py.total_amount_py, 0)                                                                        AS ""totalAmountPrevYear"",
+  py.prev_rank                                                                                            AS ""rankPrevYear"",
+  CASE WHEN py.prev_rank IS NULL THEN NULL ELSE py.prev_rank - cy.cur_rank END                          AS ""rankChange"",
+  ROUND((cy.total_amount - COALESCE(py.total_amount_py,0)) * 100.0 / NULLIF(py.total_amount_py,0), 1) AS ""yoYChangePercent""
+FROM cur_year cy
+LEFT JOIN prev_year_ranked py ON py.hospital_key = cy.hospital_key
+ORDER BY cy.total_amount DESC
+","2026-05-08 12:05:08.299731","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","27"
+"26","dashboard_demographics","Dashboard Demographics","dashboard_demographics","
+WITH policy_scope AS (
+  SELECT p.id AS policy_id
+  FROM policy p
+  INNER JOIN lookup_data ld ON ld.id = p.policy_type_lid AND ld.deleted_at IS NULL
+  WHERE p.company_id = ###companyId###
+    AND (###policyType### = '' OR ld.lookup_key = ###policyType###)
+    AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+),
+employee_scope AS (
+  SELECT
+    emp.employee_id,
+    MAX(CASE WHEN emp.enrollment_addition_batch_id  IS NOT NULL THEN 1 ELSE 0 END) AS has_inception_add,
+    MAX(CASE WHEN emp.endorsement_addition_batch_id IS NOT NULL THEN 1 ELSE 0 END) AS has_endorse_add,
+    MAX(CASE WHEN emp.enrollment_deletion_batch_id  IS NOT NULL THEN 1 ELSE 0 END) AS has_deletion,
+    MAX(CASE WHEN emp.endorsement_addition_batch_id IS NOT NULL
+              AND emp.created_at BETWEEN ###policyPeriodStart###::date AND ###policyPeriodEnd###::date
+             THEN 1 ELSE 0 END) AS has_period_add,
+    MAX(CASE WHEN emp.enrollment_deletion_batch_id IS NOT NULL
+              AND emp.updated_at BETWEEN ###policyPeriodStart###::date AND ###policyPeriodEnd###::date
+             THEN 1 ELSE 0 END) AS has_period_del
+  FROM policy_enrollment_employee_policy_map emp
+  INNER JOIN policy_scope ps ON ps.policy_id = emp.policy_id
+  INNER JOIN policy_enrollment_employee pee_ds
+    ON pee_ds.id = emp.employee_id AND pee_ds.deleted_at IS NULL
+  WHERE emp.deleted_at IS NULL
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR pee_ds.policy_config_location_id = ANY(
+        SELECT val::INTEGER FROM regexp_split_to_table(
+          NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+        ) AS val WHERE val ~ '^\d+$'
+      )
+    )
+  GROUP BY emp.employee_id
+),
+dependent_scope AS (
+  SELECT
+    dep.id AS dependent_id,
+    MAX(CASE WHEN dep.enrollment_addition_batch_id  IS NOT NULL THEN 1 ELSE 0 END) AS has_inception_add,
+    MAX(CASE WHEN dep.endorsement_addition_batch_id IS NOT NULL THEN 1 ELSE 0 END) AS has_endorse_add,
+    MAX(CASE WHEN dep.enrollment_deletion_batch_id  IS NOT NULL THEN 1 ELSE 0 END) AS has_deletion,
+    MAX(CASE WHEN dep.endorsement_addition_batch_id IS NOT NULL
+              AND dep.created_at BETWEEN ###policyPeriodStart###::date AND ###policyPeriodEnd###::date
+             THEN 1 ELSE 0 END) AS has_period_add,
+    MAX(CASE WHEN dep.enrollment_deletion_batch_id IS NOT NULL
+              AND dep.updated_at BETWEEN ###policyPeriodStart###::date AND ###policyPeriodEnd###::date
+             THEN 1 ELSE 0 END) AS has_period_del
+  FROM policy_enrollment_dependent dep
+  INNER JOIN policy_scope ps ON ps.policy_id = dep.policy_id
+  WHERE dep.deleted_at IS NULL
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR EXISTS (
+        SELECT 1
+        FROM policy_enrollment_employee pee_dd
+        INNER JOIN policy_enrollment_employee_policy_map peepm_dd
+          ON peepm_dd.employee_id = pee_dd.id
+         AND peepm_dd.policy_id = dep.policy_id
+         AND peepm_dd.deleted_at IS NULL
+        WHERE pee_dd.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        )
+        AND pee_dd.deleted_at IS NULL
+      )
+    )
+  GROUP BY dep.id
+),
+emp_counts AS (
+  SELECT
+    COUNT(*) FILTER (WHERE has_inception_add=0 AND has_deletion=0) AS inception_emp,
+    COUNT(*) FILTER (WHERE has_period_add=1)                        AS addition_emp,
+    COUNT(*) FILTER (WHERE has_period_del=1)                        AS deletion_emp,
+    COUNT(*) FILTER (WHERE has_deletion=0)                          AS active_emp
+  FROM employee_scope
+),
+dep_counts AS (
+  SELECT
+    COUNT(*) FILTER (WHERE has_inception_add=0 AND has_deletion=0) AS inception_dep,
+    COUNT(*) FILTER (WHERE has_period_add=1)                        AS addition_dep,
+    COUNT(*) FILTER (WHERE has_period_del=1)                        AS deletion_dep,
+    COUNT(*) FILTER (WHERE has_deletion=0)                          AS active_dep
+  FROM dependent_scope
+)
+SELECT
+  ec.inception_emp + dc.inception_dep AS ""inceptionMembersTotal"",
+  ec.inception_emp                    AS ""inceptionEmployees"",
+  dc.inception_dep                    AS ""inceptionDependents"",
+  ec.addition_emp  + dc.addition_dep  AS ""newAdditionsTotal"",
+  ec.addition_emp                     AS ""newAdditionsEmployees"",
+  dc.addition_dep                     AS ""newAdditionsDependents"",
+  ec.deletion_emp  + dc.deletion_dep  AS ""deletionsTotal"",
+  ec.deletion_emp                     AS ""deletionsEmployees"",
+  dc.deletion_dep                     AS ""deletionsDependents"",
+  ec.active_emp    + dc.active_dep    AS ""totalActiveMembers"",
+  ec.active_emp                       AS ""totalActiveEmployees"",
+  dc.active_dep                       AS ""totalActiveDependents""
+FROM emp_counts ec
+CROSS JOIN dep_counts dc
+","2026-05-08 12:04:29.721841","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","25"
+"23","dashboard_claims_analysis_kpi","Dashboard Claims Analysis KPI","dashboard_claims_analysis_kpi","
+WITH cur_year AS (
+  SELECT
+    COUNT(c.id)                                                                                         AS total_count,
+    COALESCE(SUM(c.claim_amount), 0)                                                                    AS total_amount,
+    COALESCE(SUM(c.claim_amount) FILTER (WHERE LOWER(c.claim_status) IN ('settled','paid')), 0)         AS paid_amount,
+    COUNT(c.id)         FILTER (WHERE LOWER(c.claim_status) IN ('settled','paid'))                      AS paid_count,
+    COALESCE(SUM(c.claim_amount) FILTER (WHERE LOWER(c.claim_status) IN ('outstanding','pending')), 0)  AS pending_amount,
+    COUNT(c.id)         FILTER (WHERE LOWER(c.claim_status) IN ('outstanding','pending'))               AS pending_count
+  FROM policy_claim c
+  INNER JOIN policy p       ON p.id  = c.policy_id
+  INNER JOIN lookup_data ld ON ld.id = p.policy_type_lid AND ld.deleted_at IS NULL
+  WHERE c.company_id = ###companyId###
+    AND c.deleted_at IS NULL
+    AND (###policyType###  = '' OR ld.lookup_key = ###policyType###)
+    AND (###startDate###   = '' OR c.claim_dt >= ###startDate###::date)
+    AND (###endDate###     = '' OR c.claim_dt <= ###endDate###::date)
+    AND (###claimType###   = '' OR LOWER(COALESCE(c.clm_type,'')) LIKE '%'||LOWER(###claimType###)||'%')
+    AND (###claimStatus### = '' OR LOWER(c.claim_status) = LOWER(###claimStatus###))
+    AND (###memberType###  = ''
+         OR (LOWER(###memberType###)='employee'  AND c.dependent_id IS NULL)
+         OR (LOWER(###memberType###)='dependent' AND c.dependent_id IS NOT NULL))
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR c.employee_id IN (
+        SELECT pee_loc.id FROM policy_enrollment_employee pee_loc
+        WHERE pee_loc.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        ) AND pee_loc.deleted_at IS NULL
+      )
+    )
+),
+prev_year AS (
+  SELECT
+    COUNT(c.id)                                                                                         AS total_count,
+    COALESCE(SUM(c.claim_amount), 0)                                                                    AS total_amount,
+    COALESCE(SUM(c.claim_amount) FILTER (WHERE LOWER(c.claim_status) IN ('settled','paid')), 0)         AS paid_amount,
+    COUNT(c.id)         FILTER (WHERE LOWER(c.claim_status) IN ('settled','paid'))                      AS paid_count,
+    COALESCE(SUM(c.claim_amount) FILTER (WHERE LOWER(c.claim_status) IN ('outstanding','pending')), 0)  AS pending_amount,
+    COUNT(c.id)         FILTER (WHERE LOWER(c.claim_status) IN ('outstanding','pending'))               AS pending_count
+  FROM policy_claim c
+  INNER JOIN policy p       ON p.id  = c.policy_id
+  INNER JOIN lookup_data ld ON ld.id = p.policy_type_lid AND ld.deleted_at IS NULL
+  WHERE c.company_id = ###companyId###
+    AND c.deleted_at IS NULL
+    AND (###policyType###  = '' OR ld.lookup_key = ###policyType###)
+    AND (###startDate###   = '' OR c.claim_dt >= (###startDate###::date - INTERVAL '1 year'))
+    AND (###endDate###     = '' OR c.claim_dt <= (###endDate###::date   - INTERVAL '1 year'))
+    AND (###claimType###   = '' OR LOWER(COALESCE(c.clm_type,'')) LIKE '%'||LOWER(###claimType###)||'%')
+    AND (###claimStatus### = '' OR LOWER(c.claim_status) = LOWER(###claimStatus###))
+    AND (###memberType###  = ''
+         OR (LOWER(###memberType###)='employee'  AND c.dependent_id IS NULL)
+         OR (LOWER(###memberType###)='dependent' AND c.dependent_id IS NOT NULL))
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR c.employee_id IN (
+        SELECT pee_loc.id FROM policy_enrollment_employee pee_loc
+        WHERE pee_loc.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        ) AND pee_loc.deleted_at IS NULL
+      )
+    )
+),
+net_premium_agg AS (
+  SELECT COALESCE(SUM(p.net_premium), 0) AS total_net_premium
+  FROM policy p
+  INNER JOIN lookup_data ld ON ld.id = p.policy_type_lid AND ld.deleted_at IS NULL
+  WHERE p.company_id = ###companyId###
+    AND (###policyType### = '' OR ld.lookup_key = ###policyType###)
+    AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+)
+SELECT
+  cy.total_count                                                                         AS ""totalClaimsCount"",
+  cy.total_amount                                                                        AS ""totalClaimsAmount"",
+  cy.paid_amount                                                                         AS ""paidClaimsAmount"",
+  cy.paid_count                                                                          AS ""paidClaimsCount"",
+  cy.pending_amount                                                                      AS ""pendingClaimsAmount"",
+  cy.pending_count                                                                       AS ""pendingClaimsCount"",
+  ROUND(cy.paid_amount * 100.0 / NULLIF(np.total_net_premium, 0), 1)                   AS ""claimRatioPercent"",
+  py.total_count                                                                         AS ""totalClaimsCountPrevYear"",
+  py.total_amount                                                                        AS ""totalClaimsAmountPrevYear"",
+  py.paid_amount                                                                         AS ""paidClaimsAmountPrevYear"",
+  py.paid_count                                                                          AS ""paidClaimsCountPrevYear"",
+  py.pending_amount                                                                      AS ""pendingClaimsAmountPrevYear"",
+  py.pending_count                                                                       AS ""pendingClaimsCountPrevYear"",
+  ROUND(py.paid_amount * 100.0 / NULLIF(np.total_net_premium, 0), 1)                   AS ""claimRatioPercentPrevYear"",
+  ROUND((cy.total_amount   - py.total_amount)   * 100.0 / NULLIF(py.total_amount,  0), 1) AS ""totalClaimsAmountYoYChangePercent"",
+  ROUND((cy.paid_amount    - py.paid_amount)    * 100.0 / NULLIF(py.paid_amount,   0), 1) AS ""paidClaimsAmountYoYChangePercent"",
+  ROUND((cy.pending_amount - py.pending_amount) * 100.0 / NULLIF(py.pending_amount,0), 1) AS ""pendingClaimsAmountYoYChangePercent""
+FROM cur_year cy
+CROSS JOIN prev_year py
+CROSS JOIN net_premium_agg np
+","2026-05-08 12:03:17.876687","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","22"
+"33","linked_policies_of_cd_account","Linked Policies of CD Account","linked_policies_of_cd_account","
+WITH input_cd_accounts AS (
+  SELECT DISTINCT cdpm.caution_deposit_id
+  FROM caution_deposit_policy_mapping cdpm
+  INNER JOIN caution_deposit cd ON cd.id = cdpm.caution_deposit_id
+  WHERE cdpm.policy_id = ###policyId### AND cd.company_id = ###companyId###
+),
+linked_policy_ids AS (
+  SELECT DISTINCT cdpm.policy_id
+  FROM caution_deposit_policy_mapping cdpm
+  INNER JOIN input_cd_accounts ica ON ica.caution_deposit_id = cdpm.caution_deposit_id
+),
+employee_counts AS (
+  SELECT policy_id, COUNT(DISTINCT employee_id) AS employee_count
+  FROM policy_enrollment_employee_policy_map WHERE deleted_at IS NULL GROUP BY policy_id
+),
+dependent_counts AS (
+  SELECT policy_id, COUNT(id) AS dependent_count
+  FROM policy_enrollment_dependent WHERE deleted_at IS NULL GROUP BY policy_id
+)
+SELECT
+  p.id                                                                       AS ""policyId"",
+  p.policy_name                                                              AS ""policyName"",
+  ld.lookup_key                                                              AS ""policyTypeKey"",
+  COALESCE(p.insurer_policy_number, '')                                     AS ""policyNumber"",
+  TO_CHAR(p.policy_from, 'DD Mon YYYY')                                     AS ""periodStart"",
+  TO_CHAR(p.policy_to,   'DD Mon YYYY')                                     AS ""periodEnd"",
+  COALESCE(p.net_premium, 0)                                                AS ""netPremium"",
+  COALESCE(ec.employee_count,0) + COALESCE(dc.dependent_count,0)           AS ""totalLives""
+FROM linked_policy_ids lpi
+INNER JOIN policy      p  ON p.id  = lpi.policy_id AND p.company_id = ###companyId###
+INNER JOIN lookup_data ld ON ld.id = p.policy_type_lid AND ld.deleted_at IS NULL
+LEFT JOIN  employee_counts  ec ON ec.policy_id = p.id
+LEFT JOIN  dependent_counts dc ON dc.policy_id = p.id
+AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+ORDER BY p.policy_name
+    ","2026-05-08 12:06:45.937996","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","30"
+"45","cd_account_details","CD Account Details","cd_account_details","
+SELECT
+  cd.id                                                                               AS ""cdAccountId"",
+  cd.cd_account_number                                                                AS ""cdAccountNumber"",
+  cd.cd_account_name                                                                  AS ""cdAccountName"",
+  p.insurer_policy_number                                                             AS ""policyNumber"",
+  p.id                                                                                AS ""policyId"",
+  COALESCE(cd.balance_amount, 0)                                                      AS ""depositBalance"",
+  COALESCE(SUM(CASE WHEN cdt.transaction_type='DEBIT_TRANSACTION' THEN cdt.transaction_amount ELSE 0 END), 0) AS ""utilisedAmount"",
+  ROUND(COALESCE(SUM(CASE WHEN cdt.transaction_type='DEBIT_TRANSACTION' THEN cdt.transaction_amount ELSE 0 END), 0) * 100.0 / NULLIF(cd.balance_amount, 0), 1) AS ""utilisationPercent"",
+  TO_CHAR(cd.updated_at, 'DD/MM/YYYY')                                                AS ""lastUpdated""
+FROM caution_deposit cd
+INNER JOIN caution_deposit_policy_mapping cdpm ON cdpm.caution_deposit_id = cd.id
+INNER JOIN policy p ON p.id = cdpm.policy_id
+LEFT JOIN caution_deposit_transaction cdt ON cdt.caution_deposit_id = cd.id
+WHERE cd.company_id = ###companyId###
+  AND cd.status = 'ACTIVE'
+  AND (###search### = '' OR cd.cd_account_name ILIKE '%' || ###search### || '%' OR p.insurer_policy_number ILIKE '%' || ###search### || '%')
+  AND (
+    NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+    OR EXISTS (
+      SELECT 1
+      FROM policy_enrollment_employee_policy_map peepm_f
+      INNER JOIN policy_enrollment_employee pee_f
+        ON pee_f.id = peepm_f.employee_id AND pee_f.deleted_at IS NULL
+      WHERE peepm_f.policy_id = p.id
+        AND peepm_f.deleted_at IS NULL
+        AND pee_f.policy_config_location_id = ANY(
+          SELECT val::INTEGER FROM regexp_split_to_table(
+            NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+          ) AS val WHERE val ~ '^\d+$'
+        )
+    )
+  )
+  AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+  AND (###externalHrUserId### IS NULL
+       OR p.id IN (SELECT policy_id FROM external_hr_policy_map WHERE hr_management_id = ###externalHrUserId###::INTEGER))
+GROUP BY cd.id, cd.cd_account_number, cd.cd_account_name, cd.balance_amount, cd.updated_at, p.insurer_policy_number, p.id
+ORDER BY ""utilisationPercent"" DESC NULLS LAST
+","2026-05-08 12:10:03.360642","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","11"
+"27","dashboard_top10_employees","Dashboard Top 10 Employees by Claims","dashboard_top10_employees","
+WITH cur_year AS (
+  SELECT
+    pee.id                                                                    AS employee_id,
+    pee.company_employee_id                                                   AS employee_code,
+    COALESCE(pee.full_name, pee.employee_name, '—')                         AS employee_name,
+    COALESCE(pee.designation, '—')                                          AS department,
+    COUNT(c.id)                                                               AS total_claims,
+    COALESCE(SUM(c.claim_amount), 0)                                         AS total_amount,
+    RANK() OVER (ORDER BY COALESCE(SUM(c.claim_amount),0) DESC)              AS cur_rank
+  FROM policy_claim c
+  INNER JOIN policy_enrollment_employee pee ON pee.id = c.employee_id AND pee.deleted_at IS NULL
+  INNER JOIN policy p       ON p.id  = c.policy_id
+  INNER JOIN lookup_data ld ON ld.id = p.policy_type_lid AND ld.deleted_at IS NULL
+  WHERE c.company_id = ###companyId###
+    AND c.deleted_at IS NULL
+    AND (###policyType###  = '' OR ld.lookup_key = ###policyType###)
+    AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+    AND c.claim_dt BETWEEN ###policyPeriodStart###::date AND ###policyPeriodEnd###::date
+    AND (###claimType###   = '' OR LOWER(COALESCE(c.clm_type,'')) LIKE '%'||LOWER(###claimType###)||'%')
+    AND (###claimStatus### = '' OR LOWER(c.claim_status) = LOWER(###claimStatus###))
+    AND (###memberType###  = ''
+         OR (LOWER(###memberType###)='employee'  AND c.dependent_id IS NULL)
+         OR (LOWER(###memberType###)='dependent' AND c.dependent_id IS NOT NULL))
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR pee.policy_config_location_id = ANY(
+        SELECT val::INTEGER FROM regexp_split_to_table(
+          NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+        ) AS val WHERE val ~ '^\d+$'
+      )
+    )
+  GROUP BY pee.id, pee.company_employee_id, pee.full_name, pee.employee_name, pee.designation
+  ORDER BY total_amount DESC
+  LIMIT 10
+),
+prev_year_ranked AS (
+  SELECT
+    c.employee_id,
+    COALESCE(SUM(c.claim_amount), 0)                    AS total_amount_py,
+    RANK() OVER (ORDER BY COALESCE(SUM(c.claim_amount),0) DESC) AS prev_rank
+  FROM policy_claim c
+  INNER JOIN policy_enrollment_employee pee_py ON pee_py.id = c.employee_id AND pee_py.deleted_at IS NULL
+  INNER JOIN policy p       ON p.id  = c.policy_id
+  INNER JOIN lookup_data ld ON ld.id = p.policy_type_lid AND ld.deleted_at IS NULL
+  WHERE c.company_id = ###companyId###
+    AND c.deleted_at IS NULL
+    AND (###policyType### = '' OR ld.lookup_key = ###policyType###)
+    AND c.claim_dt BETWEEN (###policyPeriodStart###::date - INTERVAL '1 year')
+                       AND (###policyPeriodEnd###::date   - INTERVAL '1 year')
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR pee_py.policy_config_location_id = ANY(
+        SELECT val::INTEGER FROM regexp_split_to_table(
+          NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+        ) AS val WHERE val ~ '^\d+$'
+      )
+    )
+  GROUP BY c.employee_id
+)
+SELECT
+  cy.employee_id                                                                       AS ""employeeId"",
+  cy.employee_code                                                                     AS ""employeeCode"",
+  cy.employee_name                                                                     AS ""employeeName"",
+  cy.department                                                                        AS ""department"",
+  cy.total_claims                                                                      AS ""totalClaims"",
+  cy.total_amount                                                                      AS ""totalAmount"",
+  COALESCE(py.total_amount_py, 0)                                                     AS ""totalAmountPrevYear"",
+  py.prev_rank                                                                         AS ""rankPrevYear"",
+  CASE WHEN py.prev_rank IS NULL THEN NULL ELSE py.prev_rank - cy.cur_rank END        AS ""rankChange"",
+  ROUND((cy.total_amount - COALESCE(py.total_amount_py,0)) * 100.0 / NULLIF(py.total_amount_py,0), 1) AS ""yoYChangePercent""
+FROM cur_year cy
+LEFT JOIN prev_year_ranked py ON py.employee_id = cy.employee_id
+ORDER BY cy.total_amount DESC
+","2026-05-08 12:04:47.227841","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","26"
+"54","external_hr_company_policies","External HR – Company Policies","external_hr_company_policies","SELECT
+  ap.id,
+  ap.policy_name        AS name,
+  ap.insurer_policy_number AS ""policyNumber"",
+  TO_CHAR(ap.policy_from, 'DD Mon YYYY') AS ""policyFrom"",
+  TO_CHAR(ap.policy_to,   'DD Mon YYYY') AS ""policyTo"",
+  COALESCE(
+    (SELECT i.display_name
+     FROM policy_insurer_map pim
+     JOIN insurer i ON i.id = pim.insurer_id
+     WHERE pim.policy_id = ap.id
+     ORDER BY pim.share_percentage DESC NULLS LAST, pim.id
+     LIMIT 1),
+    '—'
+  ) AS ""insurerName""
+FROM policy ap
+WHERE ap.company_id = ###companyId###
+  AND (
+    ap.is_installment_policy IS NULL
+    OR NOT EXISTS (
+      SELECT 1 FROM lookup_data inst_ld
+      WHERE inst_ld.id = ap.is_installment_policy
+        AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES'
+        AND inst_ld.deleted_at IS NULL
+    )
+  )
+ORDER BY ap.policy_name ASC","2026-05-13 12:11:21.843585","2026-06-01 19:06:18.465929","","SYSTEM","SYSTEM","","100"
+"55","external_hr_company_locations","External HR – Company Locations","external_hr_company_locations","SELECT DISTINCT ON (a.addr_1) a.id, a.addr_1
+FROM company_policy_configuration_location cpcl
+JOIN address a ON a.id = cpcl.address_id
+WHERE cpcl.company_id = ###companyId###
+  AND a.deleted_at IS NULL
+ORDER BY a.addr_1 ASC, a.id ASC","2026-05-13 12:11:21.843585","2026-06-29 17:24:13.001891","","SYSTEM","SYSTEM","","101"
+"47","portfolio_kpi_summary","Portfolio KPI Summary","portfolio_kpi_summary","
+WITH lh_companies AS (
+  SELECT DISTINCT c.id
+  FROM company c
+  WHERE c.deleted_at IS NULL
+    AND (###crmUserId### = '' OR c.lead_crm::text = ###crmUserId###)
+    AND (
+      ###hrCompanyId### = ''
+      OR c.id::text = ###hrCompanyId###
+      OR c.id IN (
+        SELECT gcm3.group_company_id FROM group_company_map gcm3
+        WHERE gcm3.company_id::text = ###hrCompanyId###
+      )
+    )
+    AND EXISTS (
+      SELECT 1
+      FROM policy p2
+      JOIN policy_type_segregation pts ON pts.policy_type_lid = p2.policy_type_lid
+      JOIN lookup_data il ON il.id = pts.iirm_policy_type_lid AND il.deleted_at IS NULL
+      WHERE p2.company_id = c.id
+        AND (lower(il.value) LIKE '%life%' OR lower(il.value) LIKE '%health%')
+        AND lower(il.value) NOT LIKE '%non-life%'
+    )
+),
+policy_loc_ratios AS (
+  SELECT
+    peepm.policy_id,
+    COUNT(DISTINCT peepm.employee_id) FILTER (
+      WHERE pee_lp.policy_config_location_id = ANY(
+        SELECT val::INTEGER FROM regexp_split_to_table(
+          NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+        ) AS val WHERE val ~ '^\d+$'
+      )
+    )::numeric AS loc_emp_count,
+    COUNT(DISTINCT peepm.employee_id)::numeric AS total_emp_count
+  FROM policy_enrollment_employee_policy_map peepm
+  INNER JOIN policy_enrollment_employee pee_lp
+    ON pee_lp.id = peepm.employee_id AND pee_lp.deleted_at IS NULL
+  WHERE peepm.deleted_at IS NULL
+    AND NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NOT NULL
+  GROUP BY peepm.policy_id
+)
+SELECT
+  COUNT(DISTINCT lc.id)::int                                                           AS ""totalCompanies"",
+  COUNT(DISTINCT p.id)::int                                                            AS ""totalPolicies"",
+  COUNT(DISTINCT p.id) FILTER (WHERE p.policy_to >= CURRENT_DATE)::int                AS ""activePolicies"",
+  COUNT(DISTINCT p.id) FILTER (WHERE p.policy_to <  CURRENT_DATE)::int                AS ""inactivePolicies"",
+  COALESCE(SUM(
+    COALESCE((SELECT SUM(e.net_premium) FROM endorsement e WHERE e.policy_id = p.id AND e.net_premium IS NOT NULL), p.net_premium) * COALESCE(
+      plr.loc_emp_count / NULLIF(plr.total_emp_count, 0),
+      1.0
+    )
+  ), 0)::numeric                                                                        AS ""totalPremium""
+FROM lh_companies lc
+LEFT JOIN policy p ON p.company_id = lc.id
+  AND (
+    NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+    OR EXISTS (
+      SELECT 1
+      FROM policy_enrollment_employee pee_loc
+      INNER JOIN policy_enrollment_employee_policy_map peepm_loc
+        ON peepm_loc.employee_id = pee_loc.id
+       AND peepm_loc.policy_id = p.id
+       AND peepm_loc.deleted_at IS NULL
+      WHERE pee_loc.policy_config_location_id = ANY(
+        SELECT val::INTEGER FROM regexp_split_to_table(
+          NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ','
+        ) AS val WHERE val ~ '^\d+$'
+      )
+      AND pee_loc.deleted_at IS NULL
+    )
+  )
+  AND (p.is_installment_policy IS NULL OR NOT EXISTS (SELECT 1 FROM lookup_data inst_ld WHERE inst_ld.id = p.is_installment_policy AND inst_ld.lookup_key = 'TOGGLE_TYPE_YES' AND inst_ld.deleted_at IS NULL))
+  AND (###externalHrUserId### IS NULL
+       OR p.id IN (SELECT policy_id FROM external_hr_policy_map WHERE hr_management_id = ###externalHrUserId###::INTEGER))
+LEFT JOIN policy_loc_ratios plr ON plr.policy_id = p.id
+","2026-05-08 12:12:27.895499","2026-06-01 12:11:46.364755","","SYSTEM","SYSTEM","","20"
+"22","dashboard_policy_cards","Dashboard Policy Cards","dashboard_policy_cards","
+WITH
+
+loc_filter AS (
+  SELECT NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL AS is_all
+),
+loc_id_set AS (
+  SELECT val::INTEGER AS loc_id
+  FROM regexp_split_to_table(
+    COALESCE(NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''), ''),
+    ','
+  ) AS val
+  WHERE val ~ '^\d+$'
+),
+
+company_policies AS MATERIALIZED (
+  SELECT
+    p.id                   AS policy_id,
+    p.policy_from,
+    p.policy_to,
+    p.net_premium,
+    p.opportunity_id,
+    p.policy_name,
+    p.insurer_policy_number,
+    p.policy_type_lid,
+    ld.lookup_key          AS policy_type_key,
+    iirm_ld.lookup_key     AS iirm_type_key,
+    iirm_ld.value          AS iirm_type_value
+  FROM policy p
+  INNER JOIN lookup_data ld
+         ON  ld.id          = p.policy_type_lid
+         AND ld.deleted_at  IS NULL
+  LEFT  JOIN policy_type_segregation pts
+         ON  pts.policy_type_lid = p.policy_type_lid
+  LEFT  JOIN lookup_data iirm_ld
+         ON  iirm_ld.id         = pts.iirm_policy_type_lid
+         AND iirm_ld.deleted_at IS NULL
+  WHERE p.company_id = ###companyId###
+    AND (###policyId### = '' OR p.id::text = ###policyId###)
+    AND (
+      ###policyId### != ''
+      OR (COALESCE(###policyStatus###, '') IN ('', 'ACTIVE') AND p.policy_to >= CURRENT_DATE)
+      OR (###policyStatus### = 'INACTIVE'                    AND p.policy_to <  CURRENT_DATE)
+    )
+    AND (p.is_installment_policy IS NULL OR NOT EXISTS (
+      SELECT 1 FROM lookup_data inst_ld
+      WHERE inst_ld.id          = p.is_installment_policy
+        AND inst_ld.lookup_key  = 'TOGGLE_TYPE_YES'
+        AND inst_ld.deleted_at  IS NULL
+    ))
+    AND (###externalHrUserId### IS NULL
+         OR p.id IN (
+           SELECT policy_id FROM external_hr_policy_map
+           WHERE  hr_management_id = ###externalHrUserId###::INTEGER
+         ))
+    AND (
+      ###policyType### = ''
+      OR (###policyType### = 'LIFE'
+          AND (lower(iirm_ld.value) LIKE '%life%' OR lower(iirm_ld.value) LIKE '%health%')
+          AND  lower(iirm_ld.value) NOT LIKE '%non-life%')
+      OR (###policyType### = 'NON_LIFE'
+          AND lower(iirm_ld.value) NOT LIKE '%life%'
+          AND lower(iirm_ld.value) NOT LIKE '%health%')
+      OR (###policyType### NOT IN ('', 'LIFE', 'NON_LIFE')
+          AND ld.lookup_key = ###policyType###)
+    )
+),
+
+loc_employees AS MATERIALIZED (
+  SELECT pee.id AS employee_id
+  FROM policy_enrollment_employee pee
+  WHERE pee.deleted_at IS NULL
+    AND NOT (SELECT is_all FROM loc_filter)
+    AND pee.policy_config_location_id IN (
+      SELECT cpcl_loc.id
+      FROM company_policy_configuration_location cpcl_loc
+      WHERE cpcl_loc.address_id IN (SELECT loc_id FROM loc_id_set)
+    )
+),
+
+employee_policy_base AS MATERIALIZED (
+  SELECT
+    peepm.id,
+    peepm.policy_id,
+    peepm.employee_id,
+    peepm.endorsement_addition_batch_id,
+    peepm.enrollment_deletion_batch_id,
+    peepm.created_at,
+    peepm.updated_at,
+    cp.policy_from,
+    cp.policy_to
+  FROM policy_enrollment_employee_policy_map peepm
+  INNER JOIN company_policies cp ON cp.policy_id = peepm.policy_id
+  WHERE peepm.deleted_at IS NULL
+),
+
+loc_policies AS (
+  SELECT DISTINCT epb.policy_id
+  FROM employee_policy_base epb
+  INNER JOIN loc_employees le ON le.employee_id = epb.employee_id
+),
+
+loc_premium_ratios AS (
+  SELECT
+    epb.policy_id,
+    COUNT(DISTINCT le.employee_id)::numeric  AS loc_emp_count,
+    COUNT(DISTINCT epb.employee_id)::numeric AS total_emp_count
+  FROM employee_policy_base epb
+  LEFT JOIN loc_employees le ON le.employee_id = epb.employee_id
+  WHERE NOT (SELECT is_all FROM loc_filter)
+    AND epb.policy_id IN (SELECT policy_id FROM loc_policies)
+  GROUP BY epb.policy_id
+),
+
+company_logged_in_users AS MATERIALIZED (
+  -- EXISTS stops at the first matching login per employee (index early-exit).
+  -- Old JOIN pulled ALL login records then ran DISTINCT — far more rows for large policies.
+  SELECT emp.employee_id AS user_id
+  FROM (SELECT DISTINCT employee_id FROM employee_policy_base) emp
+  WHERE EXISTS (
+    SELECT 1 FROM user_activity_log ual
+    WHERE ual.user_id           = emp.employee_id
+      AND ual.activity_key      = 'LOGGED_IN'
+      AND ual.activity_category = 'AUTH'
+      AND ual.deleted_at        IS NULL
+  )
+),
+
+policy_people_stats AS MATERIALIZED (
+  SELECT
+    epb.policy_id,
+    COUNT(DISTINCT epb.employee_id) FILTER (
+      WHERE (SELECT is_all FROM loc_filter) OR le.employee_id IS NOT NULL
+    )                                                                         AS employee_count,
+    COUNT(DISTINCT epb.employee_id) FILTER (
+      WHERE ((SELECT is_all FROM loc_filter) OR le.employee_id IS NOT NULL)
+        AND clu.user_id IS NOT NULL
+    )                                                                         AS logged_in_count,
+    COUNT(DISTINCT epb.employee_id) FILTER (
+      WHERE ((SELECT is_all FROM loc_filter) OR le.employee_id IS NOT NULL)
+        AND clu.user_id IS NULL
+    )                                                                         AS not_logged_in_count,
+    COUNT(epb.id) FILTER (
+      WHERE ((SELECT is_all FROM loc_filter) OR le.employee_id IS NOT NULL)
+        AND epb.endorsement_addition_batch_id IS NOT NULL
+        AND epb.created_at BETWEEN epb.policy_from AND epb.policy_to
+    )                                                                         AS member_additions,
+    COUNT(epb.id) FILTER (
+      WHERE ((SELECT is_all FROM loc_filter) OR le.employee_id IS NOT NULL)
+        AND epb.enrollment_deletion_batch_id IS NOT NULL
+        AND epb.updated_at BETWEEN epb.policy_from AND epb.policy_to
+    )                                                                         AS member_deletions
+  FROM employee_policy_base epb
+  LEFT JOIN loc_employees           le  ON le.employee_id  = epb.employee_id
+  LEFT JOIN company_logged_in_users clu ON clu.user_id     = epb.employee_id
+  GROUP BY epb.policy_id
+),
+
+policy_dependent_counts AS (
+  SELECT
+    ped.policy_id,
+    COUNT(ped.id) AS dependent_count
+  FROM policy_enrollment_dependent ped
+  INNER JOIN company_policies cp ON cp.policy_id = ped.policy_id
+  JOIN  policy_enrollment_employee pee
+     ON pee.id = ped.employee_id AND pee.deleted_at IS NULL
+  LEFT JOIN loc_employees le ON le.employee_id = pee.id
+  WHERE ped.deleted_at IS NULL
+    AND ((SELECT is_all FROM loc_filter) OR le.employee_id IS NOT NULL)
+  GROUP BY ped.policy_id
+),
+
+policy_enrollment_counts AS (
+  SELECT
+    pee_enr.policy_id,
+    COUNT(pee_enr.id) FILTER (WHERE pee_enr.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED')    AS enrolled_count,
+    COUNT(pee_enr.id) FILTER (WHERE pee_enr.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_IN_PROGRESS') AS in_progress_count,
+    COUNT(pee_enr.id) FILTER (WHERE pee_enr.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_NOT_STARTED') AS not_started_count
+  FROM policy_employee_enrollment pee_enr
+  INNER JOIN company_policies cp ON cp.policy_id = pee_enr.policy_id
+  LEFT JOIN loc_employees le ON le.employee_id = pee_enr.employee_id
+  WHERE pee_enr.deleted_at IS NULL
+    AND ((SELECT is_all FROM loc_filter) OR le.employee_id IS NOT NULL)
+  GROUP BY pee_enr.policy_id
+),
+
+prev_policy AS (
+  SELECT
+    cp.policy_id                                           AS cur_policy_id,
+    prev_p.id                                              AS prev_policy_id,
+    prev_p.policy_from                                     AS prev_policy_from,
+    prev_p.policy_to                                       AS prev_policy_to,
+    COALESCE(prev_p.net_premium, 0)                        AS prev_net_premium,
+    (LEAST(CURRENT_DATE, cp.policy_to) - cp.policy_from)  AS elapsed_days
+  FROM company_policies cp
+  JOIN opportunity opp   ON opp.id      = cp.opportunity_id AND opp.ref_policy_id IS NOT NULL
+  JOIN policy prev_p     ON prev_p.id   = opp.ref_policy_id
+),
+
+claims_relevant AS MATERIALIZED (
+  SELECT
+    c.id,
+    c.policy_id,
+    c.claim_amount,
+    c.claim_dt,
+    c.employee_id
+  FROM policy_claim c
+  INNER JOIN (
+    SELECT policy_id AS pol_id FROM company_policies
+    UNION
+    SELECT prev_policy_id FROM prev_policy
+  ) scope ON scope.pol_id = c.policy_id
+  LEFT JOIN loc_employees le ON le.employee_id = c.employee_id
+  WHERE c.deleted_at IS NULL
+    AND ((SELECT is_all FROM loc_filter) OR le.employee_id IS NOT NULL)
+),
+
+policy_claims_cur AS (
+  SELECT
+    cr.policy_id,
+    COUNT(cr.id)                      AS total_claims,
+    COALESCE(SUM(cr.claim_amount), 0) AS total_claim_amount
+  FROM claims_relevant cr
+  INNER JOIN company_policies cp ON cp.policy_id = cr.policy_id
+  WHERE cr.claim_dt BETWEEN cp.policy_from AND LEAST(cp.policy_to, CURRENT_DATE)
+  GROUP BY cr.policy_id
+),
+
+policy_claims_ly AS (
+  SELECT
+    pp.cur_policy_id                                                         AS policy_id,
+    COUNT(cr.id) FILTER (
+      WHERE cr.claim_dt BETWEEN pp.prev_policy_from
+                            AND LEAST(pp.prev_policy_to, pp.prev_policy_from + pp.elapsed_days)
+    )                                                                         AS claim_count_sply,
+    COALESCE(SUM(cr.claim_amount) FILTER (
+      WHERE cr.claim_dt BETWEEN pp.prev_policy_from
+                            AND LEAST(pp.prev_policy_to, pp.prev_policy_from + pp.elapsed_days)
+    ), 0)                                                                     AS claim_amount_sply,
+    COALESCE(SUM(cr.claim_amount) FILTER (
+      WHERE cr.claim_dt BETWEEN pp.prev_policy_from AND pp.prev_policy_to
+    ), 0)                                                                     AS claim_amount_full_yr_ly,
+    pp.prev_net_premium
+  FROM prev_policy pp
+  LEFT JOIN claims_relevant cr
+         ON  cr.policy_id = pp.prev_policy_id
+         AND cr.claim_dt  BETWEEN pp.prev_policy_from AND pp.prev_policy_to
+  GROUP BY pp.cur_policy_id, pp.prev_net_premium
+),
+
+policy_cd AS (
+  SELECT
+    cdpm.policy_id,
+    COALESCE(SUM(cd.balance_amount), 0)                    AS available_amount,
+    COALESCE(SUM(cdt_agg.used_amount), 0)                  AS used_amount,
+    MAX(cd.cd_safe_limit)                                   AS cd_safe_limit,
+    (array_agg(cd.cd_account_number ORDER BY cd.id))[1]    AS cd_account_number
+  FROM caution_deposit cd
+  INNER JOIN caution_deposit_policy_mapping cdpm  ON cdpm.caution_deposit_id = cd.id
+  INNER JOIN company_policies cp                  ON cp.policy_id = cdpm.policy_id
+  LEFT JOIN (
+    SELECT caution_deposit_id, SUM(transaction_amount) AS used_amount
+    FROM caution_deposit_transaction
+    WHERE transaction_type = 'DEBIT_TRANSACTION'
+    GROUP BY caution_deposit_id
+  ) cdt_agg ON cdt_agg.caution_deposit_id = cd.id
+  WHERE cd.status IN ('CD_ACCOUNT_ACTIVE', 'ACTIVE')
+  GROUP BY cdpm.policy_id
+),
+
+policy_cd_running_balance AS (
+  SELECT DISTINCT ON (cdpm.policy_id)
+    cdpm.policy_id,
+    cdt.cd_balance_amount::numeric AS running_balance
+  FROM caution_deposit_transaction cdt
+  INNER JOIN caution_deposit cd                  ON cd.id = cdt.caution_deposit_id
+  INNER JOIN caution_deposit_policy_mapping cdpm ON cdpm.caution_deposit_id = cd.id
+  INNER JOIN company_policies cp                 ON cp.policy_id = cdpm.policy_id
+  WHERE cd.status IN ('CD_ACCOUNT_ACTIVE', 'ACTIVE')
+  ORDER BY cdpm.policy_id, cdt.transaction_date DESC NULLS LAST, cdt.id DESC
+),
+
+policy_insurer AS (
+  SELECT DISTINCT ON (pim.policy_id)
+    pim.policy_id,
+    i.display_name AS insurer_name
+  FROM policy_insurer_map pim
+  INNER JOIN insurer i           ON i.id = pim.insurer_id
+  INNER JOIN company_policies cp ON cp.policy_id = pim.policy_id
+  ORDER BY pim.policy_id, pim.share_percentage DESC NULLS LAST, pim.id
+),
+
+policy_tpa AS (
+  SELECT DISTINCT ON (ptm.policy_id)
+    ptm.policy_id,
+    t.name AS tpa_name
+  FROM policy_tpa_map ptm
+  INNER JOIN tpa t               ON t.id = ptm.tpa_id
+  INNER JOIN company_policies cp ON cp.policy_id = ptm.policy_id
+  ORDER BY ptm.policy_id, ptm.id
+),
+
+endorsement_premiums AS (
+  SELECT e.policy_id, SUM(e.net_premium) AS total_endorsement_premium
+  FROM endorsement e
+  INNER JOIN company_policies cp ON cp.policy_id = e.policy_id
+  WHERE e.net_premium IS NOT NULL
+  GROUP BY e.policy_id
+)
+
+SELECT
+  cp.policy_id                                                                                      AS ""policyId"",
+  cp.policy_name                                                                                    AS ""policyName"",
+  cp.policy_type_key                                                                                AS ""policyTypeKey"",
+  COALESCE(cp.iirm_type_key, '')                                                                   AS ""iiRmTypeKey"",
+  cp.insurer_policy_number                                                                          AS ""policyNumber"",
+  COALESCE(pi.insurer_name, '—')                                                                  AS ""insurer"",
+  COALESCE(pt.tpa_name,     '—')                                                                  AS ""tpaName"",
+  TO_CHAR(cp.policy_from, 'DD Mon YYYY')                                                           AS ""periodStart"",
+  TO_CHAR(cp.policy_to,   'DD Mon YYYY')                                                           AS ""periodEnd"",
+  COALESCE(pps.employee_count, 0) + COALESCE(pdc.dependent_count, 0)                              AS ""totalLives"",
+  COALESCE(pps.employee_count, 0)                                                                   AS ""employeeCount"",
+  COALESCE(pdc.dependent_count, 0)                                                                  AS ""dependentCount"",
+  xeff.eff_premium                                                                                  AS ""netPremium"",
+  xeff.eff_premium                                                                                  AS ""earnedPremium"",
+  COALESCE(pcd.available_amount, 0)                                                                 AS ""cdBalance"",
+  COALESCE(pcd.used_amount, 0)                                                                      AS ""cdUsedAmount"",
+  COALESCE(pcrb.running_balance, pcd.available_amount, 0)                                          AS ""cdRunningBalance"",
+  pcd.cd_account_number                                                                             AS ""cdAccountNumber"",
+  ROUND(xeff.eff_premium * COALESCE(pcd.cd_safe_limit, 10) / 100.0, 2)                           AS ""safeLimit"",
+  COALESCE(pc.total_claims, 0)                                                                      AS ""totalClaims"",
+  COALESCE(pc.total_claim_amount, 0)                                                                AS ""claimAmount"",
+  COALESCE(pen.enrolled_count, 0)                                                                   AS ""enrolledCount"",
+  ROUND(COALESCE(pen.enrolled_count, 0)    * 100.0 / NULLIF(pps.employee_count, 0), 1)            AS ""enrolledPercent"",
+  COALESCE(pen.in_progress_count, 0)                                                                AS ""inProgressCount"",
+  ROUND(COALESCE(pen.in_progress_count, 0) * 100.0 / NULLIF(pps.employee_count, 0), 1)            AS ""inProgressPercent"",
+  COALESCE(pps.not_logged_in_count, 0)                                                             AS ""notEnrolledCount"",
+  ROUND(COALESCE(pps.not_logged_in_count, 0) * 100.0 / NULLIF(pps.employee_count, 0), 1)         AS ""notEnrolledPercent"",
+  COALESCE(pps.not_logged_in_count, 0)                                                             AS ""notLoggedInCount"",
+  COALESCE(pps.logged_in_count, 0)                                                                  AS ""loggedInCount"",
+  ROUND(COALESCE(pc.total_claim_amount, 0) * 100.0
+        / NULLIF(xeff.eff_premium, 0), 1)                                                          AS ""icrPercent"",
+  COALESCE(pc.total_claims, 0)                                                                      AS ""icrClaimCount"",
+  ROUND(COALESCE(poly.claim_amount_sply, 0) * 100.0
+        / NULLIF(COALESCE(poly.prev_net_premium, cp.net_premium), 0), 1)                          AS ""icrSamePeriodLYPercent"",
+  COALESCE(poly.claim_amount_sply, 0)                                                               AS ""icrSamePeriodLYAmount"",
+  ROUND(COALESCE(poly.claim_amount_full_yr_ly, 0) * 100.0
+        / NULLIF(COALESCE(poly.prev_net_premium, cp.net_premium), 0), 1)                          AS ""icrFullYearAvgLY"",
+  ROUND(COALESCE(pc.total_claim_amount, 0) * 100.0 / NULLIF(xeff.eff_premium, 0)
+        - COALESCE(poly.claim_amount_sply, 0) * 100.0
+          / NULLIF(COALESCE(poly.prev_net_premium, cp.net_premium), 0), 1)                        AS ""icrYoYChangePercent"",
+  ROUND(COALESCE(pc.total_claim_amount, 0)
+        * (cp.policy_to - cp.policy_from + 1)::numeric
+        / NULLIF((LEAST(cp.policy_to, CURRENT_DATE) - cp.policy_from + 1), 0)
+        * 100.0 / NULLIF(xeff.eff_premium, 0), 1)                                                AS ""icrForecastPercent"",
+  COALESCE(poly.prev_net_premium, 0)                                                               AS ""lyNetPremium"",
+  COALESCE(poly.prev_net_premium, 0)                                                               AS ""lySamePeriodEarnedPremium"",
+  COALESCE(pps.member_additions, 0)                                                                AS ""memberAdditions"",
+  COALESCE(pps.member_deletions, 0)                                                                AS ""memberDeletions""
+
+FROM company_policies cp
+LEFT JOIN policy_people_stats      pps  ON pps.policy_id  = cp.policy_id
+LEFT JOIN policy_dependent_counts  pdc  ON pdc.policy_id  = cp.policy_id
+LEFT JOIN policy_enrollment_counts pen  ON pen.policy_id  = cp.policy_id
+LEFT JOIN policy_claims_cur        pc   ON pc.policy_id   = cp.policy_id
+LEFT JOIN policy_claims_ly        poly  ON poly.policy_id = cp.policy_id
+LEFT JOIN policy_cd               pcd   ON pcd.policy_id  = cp.policy_id
+LEFT JOIN policy_cd_running_balance pcrb ON pcrb.policy_id = cp.policy_id
+LEFT JOIN policy_insurer           pi   ON pi.policy_id   = cp.policy_id
+LEFT JOIN policy_tpa               pt   ON pt.policy_id   = cp.policy_id
+LEFT JOIN loc_premium_ratios      lpr   ON lpr.policy_id  = cp.policy_id
+LEFT JOIN endorsement_premiums     ep   ON ep.policy_id   = cp.policy_id
+
+CROSS JOIN LATERAL (
+  SELECT ROUND(
+    COALESCE(ep.total_endorsement_premium, cp.net_premium, 0)
+    * COALESCE(lpr.loc_emp_count / NULLIF(lpr.total_emp_count, 0), 1.0),
+    0
+  ) AS eff_premium
+) xeff
+
+-- policyId and policyStatus already applied inside company_policies above.
+-- Only location filter remains here.
+WHERE (
+  (SELECT is_all FROM loc_filter)
+  OR cp.policy_id IN (SELECT policy_id FROM loc_policies)
+)
+
+ORDER BY cp.policy_type_key, cp.policy_name
+","2026-05-08 12:02:49.480869","2026-06-30 13:31:18.420917","","SYSTEM","SYSTEM","","21"
+"41","endorsement_employee_metrics","Endorsement Employee & Lives Metrics","endorsement_employee_metrics","
+WITH inception_counts AS (
+  SELECT
+    COALESCE(e.endorsment_count,           0) AS employees_at_inception,
+    COALESCE(e.endorsment_dependent_count, 0) AS dependents_at_inception
+  FROM endorsement e
+  INNER JOIN policy p ON p.id = e.policy_id
+  WHERE p.company_id = ###companyId###
+    AND (###policyId### = '' OR e.policy_id::text = ###policyId###)
+    AND (
+      NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), '') IS NULL
+      OR EXISTS (
+        SELECT 1
+        FROM policy_configuration pcfg,
+             jsonb_array_elements_text(COALESCE(pcfg.policy_configuration->'selectedLocationIds', '[]'::jsonb)) loc_id
+        WHERE pcfg.policy_id = p.id
+          AND loc_id::INTEGER = ANY(
+            SELECT val::INTEGER
+            FROM regexp_split_to_table(
+              NULLIF(TRIM(REGEXP_REPLACE(###locationIds###, '[\[\]\s]', '', 'g')), ''),
+              ','
+            ) AS val
+            WHERE val ~ '^\d+$'
+          )
+      )
+    )
+    AND (###externalHrUserId### IS NULL
+           OR e.policy_id IN (SELECT policy_id FROM external_hr_policy_map WHERE hr_management_id = ###externalHrUserId###::INTEGER))
+    AND e.is_inception = true
+  ORDER BY e.id ASC
+  LIMIT 1
+),
+active_counts AS (
+  SELECT
+    (SELECT COUNT(DISTINCT peepm.employee_id)
+     FROM policy_enrollment_employee_policy_map peepm
+     INNER JOIN policy p ON p.id = peepm.policy_id
+     WHERE p.company_id = ###companyId###
+       AND (###policyId### = '' OR peepm.policy_id::text = ###policyId###)
+       AND peepm.deleted_at IS NULL
+       AND (###externalHrUserId### IS NULL
+              OR peepm.policy_id IN (SELECT policy_id FROM external_hr_policy_map WHERE hr_management_id = ###externalHrUserId###::INTEGER))
+    ) AS active_employees,
+    (SELECT COUNT(DISTINCT ped.id)
+     FROM policy_enrollment_dependent ped
+     INNER JOIN policy p ON p.id = ped.policy_id
+     WHERE p.company_id = ###companyId###
+       AND (###policyId### = '' OR ped.policy_id::text = ###policyId###)
+       AND ped.deleted_at IS NULL
+       AND (###externalHrUserId### IS NULL
+              OR ped.policy_id IN (SELECT policy_id FROM external_hr_policy_map WHERE hr_management_id = ###externalHrUserId###::INTEGER))
+    ) AS active_dependents
+),
+endorsement_activity AS (
+  SELECT
+    COALESCE(SUM(CASE WHEN e.net_premium > 0 THEN e.endorsment_count ELSE 0 END), 0)                                    AS emp_additions,
+    COALESCE(SUM(CASE WHEN e.net_premium < 0 THEN ABS(e.endorsment_count) ELSE 0 END), 0)                               AS emp_deletions,
+    COALESCE(SUM(CASE WHEN e.net_premium > 0 THEN GREATEST(COALESCE(e.endorsment_dependent_count, 0), 0) ELSE 0 END), 0) AS dep_additions,
+    COALESCE(SUM(CASE WHEN e.net_premium < 0 THEN ABS(COALESCE(e.endorsment_dependent_count, 0)) ELSE 0 END), 0)        AS dep_deletions
+  FROM endorsement e
+  INNER JOIN policy p ON p.id = e.policy_id
+  WHERE p.company_id = ###companyId###
+    AND (###policyId### = '' OR e.policy_id::text = ###policyId###)
+    AND e.is_inception IS NOT TRUE
+    AND e.net_premium IS NOT NULL
+    AND (###externalHrUserId### IS NULL
+           OR e.policy_id IN (SELECT policy_id FROM external_hr_policy_map WHERE hr_management_id = ###externalHrUserId###::INTEGER))
+)
+SELECT
+  ic.employees_at_inception                                                           AS ""employeesAtInception"",
+  ea.emp_additions                                                                    AS ""employeesInAddition"",
+  ea.emp_deletions                                                                    AS ""employeesInDeletion"",
+  ac.active_employees                                                                  AS ""activeEmployees"",
+  ic.employees_at_inception + ic.dependents_at_inception                             AS ""livesAtInception"",
+  ea.emp_additions + ea.dep_additions                                                 AS ""livesInAddition"",
+  ea.emp_deletions + ea.dep_deletions                                                 AS ""livesInDeletion"",
+  ac.active_employees + ac.active_dependents                                          AS ""activeLives""
+FROM inception_counts ic
+CROSS JOIN endorsement_activity ea
+CROSS JOIN active_counts ac
+","2026-05-08 12:08:57.415724","2026-06-03 07:36:37.486285","","SYSTEM","SYSTEM","","21"
+"32","policy_enrollment_summary","Policy Enrollment Summary","policy_enrollment_summary","
+WITH emp_scope AS (
+  SELECT COUNT(DISTINCT peepm.employee_id) AS total_employees
+  FROM policy_enrollment_employee_policy_map peepm
+  WHERE peepm.policy_id = ###policyId### AND peepm.deleted_at IS NULL
+),
+enroll_status AS (
+  SELECT
+    COUNT(pee.id) FILTER (WHERE pee.employee_enrollment_status_key='EMPLOYEE_ENROLLMENT_STATUS_ENROLLED')    AS enrolled_count,
+    COUNT(pee.id) FILTER (WHERE pee.employee_enrollment_status_key='EMPLOYEE_ENROLLMENT_STATUS_IN_PROGRESS') AS in_progress_count,
+    COUNT(pee.id) FILTER (WHERE pee.employee_enrollment_status_key='EMPLOYEE_ENROLLMENT_STATUS_NOT_STARTED') AS not_started_count
+  FROM policy_employee_enrollment pee
+  WHERE pee.policy_id = ###policyId### AND pee.deleted_at IS NULL
+),
+dep_scope AS (
+  SELECT COUNT(ped.id) AS total_dependents
+  FROM policy_enrollment_dependent ped
+  WHERE ped.policy_id = ###policyId### AND ped.deleted_at IS NULL
+)
+SELECT
+  es.total_employees                                                                       AS ""totalEmployees"",
+  COALESCE(ds.total_dependents, 0)                                                        AS ""totalDependents"",
+  COALESCE(en.enrolled_count, 0)                                                          AS ""enrolledCount"",
+  COALESCE(en.in_progress_count, 0)                                                       AS ""inProgressCount"",
+  COALESCE(en.not_started_count, 0)                                                       AS ""notStartedCount"",
+  GREATEST(es.total_employees - COALESCE(en.enrolled_count,0), 0)                        AS ""notEnrolledCount"",
+  ROUND(COALESCE(en.enrolled_count,    0)*100.0/NULLIF(es.total_employees,0),1)           AS ""enrolledPercent"",
+  ROUND(COALESCE(en.in_progress_count, 0)*100.0/NULLIF(es.total_employees,0),1)          AS ""inProgressPercent"",
+  ROUND(COALESCE(en.not_started_count, 0)*100.0/NULLIF(es.total_employees,0),1)          AS ""notStartedPercent""
+FROM emp_scope es
+CROSS JOIN enroll_status en
+CROSS JOIN dep_scope ds
+    ","2026-05-08 12:06:29.443626","2026-05-08 12:06:29.443626","","SYSTEM","SYSTEM","","31"
+"60","policy_list_for_company","Policy List For Company","policy_list_for_company","
+SELECT
+    p.id                       AS ""policyId"",
+    p.policy_name              AS ""policyName"",
+    p.insurer_policy_number    AS ""policyNumber""
+FROM policy p
+WHERE p.company_id = ###companyId###
+ORDER BY p.policy_name
+    ","2026-07-02 14:34:10.225256","2026-07-02 14:34:10.225256","","SYSTEM","SYSTEM","","31"
+"59","policy_enrollment_periods","Policy Enrollment Periods","policy_enrollment_periods","
+SELECT
+    dpf.id                                            AS ""periodId"",
+    e.is_inception                                    AS ""isInception"",
+    e.endorsement_type                                AS ""endorsementType"",
+    e.os_ticket_number                                AS ""osTicketNumber"",
+    TO_CHAR(dpf.enrollment_start_date, 'DD-MM-YYYY')  AS ""enrollmentStartDate"",
+    TO_CHAR(dpf.enrollment_end_date, 'DD-MM-YYYY')    AS ""enrollmentEndDate"",
+    (
+      CASE WHEN e.is_inception THEN 'Inception' ELSE COALESCE(e.endorsement_type, 'Endorsement') END
+      || ' — ' || TO_CHAR(dpf.enrollment_start_date, 'DD Mon YYYY')
+      || ' to ' || TO_CHAR(dpf.enrollment_end_date, 'DD Mon YYYY')
+      || COALESCE(' (' || e.os_ticket_number || ')', '')
+    )                                                  AS ""label""
+FROM document_processing_file dpf
+INNER JOIN endorsement e ON e.id = dpf.endorsement_id
+WHERE e.policy_id = ###policyId###
+ORDER BY dpf.enrollment_start_date DESC NULLS LAST, dpf.created_at DESC
+    ","2026-07-02 15:04:22.700103","2026-07-02 15:04:22.700103","","SYSTEM","SYSTEM","","30"
+"19","employee_login_activity","Employee Login Activity Report","employee_login_activity","
+SELECT
+    c.display_name                                         AS ""Company name"",
+    pee.company_employee_id                                AS ""Employee Id"",
+    pee.employee_name                                      AS ""Name"",
+    pee.email                                               AS ""Email"",
+    pee.phone_number                                        AS ""Phone number"",
+    u.login_name                                            AS ""login name"",
+    COUNT(DISTINCT ual.id)                                  AS ""Total login count"",
+    CASE WHEN COUNT(DISTINCT ual.id) > 0 THEN 'Yes' ELSE 'No' END AS ""Has logged in"",
+    TO_CHAR(MAX(ual.action_date), 'DD-MM-YYYY')             AS ""Last login""
+FROM policy_enrollment_employee_policy_map pepm
+INNER JOIN policy_enrollment_employee pee
+    ON pee.id = pepm.employee_id
+   AND pee.deleted_at IS NULL
+LEFT JOIN document_processing_file dpf
+    ON dpf.document_id = pepm.enrollment_addition_batch_id
+LEFT JOIN users u
+    ON u.id = pee.user_id
+   AND u.deleted_at IS NULL
+LEFT JOIN user_activity_log ual
+    ON ual.user_id = pee.user_id
+   AND ual.activity_key = 'LOGGED_IN'
+LEFT JOIN company c
+    ON c.id = pee.company_id
+WHERE pepm.deleted_at IS NULL
+  AND pee.company_id = ###companyId###
+  AND pepm.policy_id = ###policyId###
+  AND (
+    NULLIF(###enrollmentPeriodId###, '')::int IS NULL
+    OR dpf.id = NULLIF(###enrollmentPeriodId###, '')::int
+  )
+GROUP BY
+    pee.id, pee.company_employee_id, pee.employee_name,
+    pee.email, pee.phone_number,
+    u.login_name, c.display_name
+ORDER BY COUNT(DISTINCT ual.id) DESC, pee.employee_name
+    ","2026-06-30 13:32:03.99336","2026-07-02 17:41:44.400407","","SYSTEM","SYSTEM","","10"
+"63","ibp_hr_employee_listing_bkp_20260715","IBP HR Employee Listing Backup 2026-07-15","ibp_hr_employee_listing_bkp","
+WITH base_employees AS (
+  SELECT
+    pee.id                          AS employee_id,
+    pee.company_id                  AS company_id,
+    pee.company_employee_id         AS company_employee_id,
+    pee.employee_name               AS employee_name,
+    pee.date_of_birth               AS date_of_birth,
+    pee.gender                      AS gender,
+    pee.phone_number                AS phone_number,
+    pee.email                       AS email,
+    pee.user_status_key             AS user_status_key,
+    pee.created_at                  AS portal_entry_date
+  FROM policy_enrollment_employee pee
+  WHERE pee.company_id = ###companyId###
+    AND pee.deleted_at IS NULL
+),
+employee_policies AS MATERIALIZED (
+  SELECT DISTINCT
+    pepm.employee_id,
+    pepm.policy_id,
+    pepm.effective_date             AS date_of_joining
+  FROM policy_enrollment_employee_policy_map pepm
+  INNER JOIN base_employees be ON be.employee_id = pepm.employee_id
+  LEFT JOIN document_processing_file dpf ON dpf.document_id = pepm.enrollment_addition_batch_id
+  WHERE pepm.deleted_at IS NULL
+    AND (NULLIF(###policyId###, '')::int IS NULL OR pepm.policy_id = NULLIF(###policyId###, '')::int)
+    AND (
+      NULLIF(###enrollmentPeriodId###, '')::int IS NULL
+      OR dpf.id = NULLIF(###enrollmentPeriodId###, '')::int
+    )
+),
+enrollment AS MATERIALIZED (
+  SELECT
+    pe.id                            AS enrollment_id,
+    pe.employee_id,
+    pe.policy_id,
+    pe.employee_enrollment_status_key,
+    pe.is_auto_submitted,
+    pe.created_at                    AS enrollment_created_at
+  FROM policy_employee_enrollment pe
+  INNER JOIN employee_policies ep ON ep.employee_id = pe.employee_id AND ep.policy_id = pe.policy_id
+  WHERE pe.deleted_at IS NULL
+),
+choices AS MATERIALIZED (
+  SELECT
+    pec.id                            AS choice_id,
+    pec.employee_enrollment_id,
+    en.employee_id,
+    en.policy_id,
+    pec.policy_component_action_label,
+    pec.sum_insured                   AS choice_sum_insured,
+    pec.company_pay,
+    pec.employee_pay
+  FROM policy_employee_enrollment_choice pec
+  INNER JOIN enrollment en ON en.enrollment_id = pec.employee_enrollment_id
+),
+choice_people AS MATERIALIZED (
+  SELECT
+    ch.choice_id,
+    'Employee'                        AS relationship,
+    be.employee_name                  AS covered_person_name,
+    be.date_of_birth                  AS covered_person_dob,
+    be.gender                         AS covered_person_gender,
+    ch.choice_sum_insured,
+    ch.company_pay,
+    ch.employee_pay,
+    0                                  AS sort_order
+  FROM choices ch
+  INNER JOIN base_employees be ON be.employee_id = ch.employee_id
+
+  UNION ALL
+
+  SELECT
+    ch.choice_id,
+    ped.relation                      AS relationship,
+    ped.name                          AS covered_person_name,
+    ped.date_of_birth                 AS covered_person_dob,
+    ped.gender                        AS covered_person_gender,
+    0                                  AS choice_sum_insured,
+    0                                  AS company_pay,
+    0                                  AS employee_pay,
+    1                                  AS sort_order
+  FROM choices ch
+  INNER JOIN policy_employee_enrollment_choice_dependent pecd
+    ON pecd.employee_enrollment_choice_id = ch.choice_id
+   AND pecd.deleted_at IS NULL
+  INNER JOIN policy_enrollment_dependent ped
+    ON ped.id = pecd.dependent_id
+   AND ped.deleted_at IS NULL
+
+  UNION ALL
+
+  SELECT
+    ch.choice_id,
+    ped.relation                      AS relationship,
+    ped.name                          AS covered_person_name,
+    ped.date_of_birth                 AS covered_person_dob,
+    ped.gender                        AS covered_person_gender,
+    0                                  AS choice_sum_insured,
+    0                                  AS company_pay,
+    0                                  AS employee_pay,
+    1                                  AS sort_order
+  FROM choices ch
+  INNER JOIN policy_enrollment_dependent ped
+    ON ped.employee_id = ch.employee_id
+   AND (ped.policy_id = ch.policy_id OR ped.policy_id IS NULL)
+   AND ped.deleted_at IS NULL
+  WHERE NOT EXISTS (
+    SELECT 1
+    FROM policy_employee_enrollment_choice_dependent pecd2
+    WHERE pecd2.employee_enrollment_choice_id = ch.choice_id
+      AND pecd2.deleted_at IS NULL
+  )
+),
+choice_dependent_summary AS (
+  SELECT
+    choice_id,
+    STRING_AGG(
+      DISTINCT covered_person_name || ' (' || relationship || ')',
+      ', ' ORDER BY covered_person_name || ' (' || relationship || ')'
+    ) AS dependent_details
+  FROM choice_people
+  WHERE sort_order = 1
+  GROUP BY choice_id
+),
+submission AS (
+  SELECT DISTINCT ON (es.employee_id, ep2.policy_id)
+    es.employee_id,
+    ep2.policy_id,
+    es.reference_number,
+    es.submitted_at
+  FROM employee_enrollment_submission es
+  CROSS JOIN LATERAL jsonb_array_elements_text(es.policy_ids) AS pid_text
+  INNER JOIN employee_policies ep2
+    ON pid_text ~ '^\d+$'
+   AND ep2.policy_id = pid_text::int
+   AND ep2.employee_id = es.employee_id
+  ORDER BY es.employee_id, ep2.policy_id, es.submitted_at DESC
+)
+SELECT
+  TO_CHAR(NOW(), 'DD-MM-YYYY')                                                AS ""REPORT_DATE"",
+  c.display_name                                                              AS ""ENTITY"",
+  p.insurer_policy_number                                                    AS ""POLICY_NUMBER"",
+  p.id                                                                       AS ""IIRM_POLICY_ID"",
+  p.policy_name                                                               AS ""POLICY_NAME"",
+  be.company_employee_id                                                     AS ""EIN"",
+  COALESCE(cp.covered_person_name, be.employee_name)                         AS ""INSUREDNAME"",
+  TO_CHAR(COALESCE(cp.covered_person_dob, be.date_of_birth), 'DD-MM-YYYY')   AS ""DOB"",
+  COALESCE(cp.covered_person_gender, be.gender)                              AS ""GENDER"",
+  COALESCE(cp.relationship, 'Employee')                                      AS ""RELATION"",
+  be.phone_number                                                            AS ""EMPMOBILE"",
+  be.email                                                                   AS ""EMPEMAIL"",
+  TO_CHAR(ep.date_of_joining, 'DD-MM-YYYY')                                  AS ""DOJ"",
+  ch.policy_component_action_label                                          AS ""PLANOPTED"",
+  COALESCE(cp.choice_sum_insured, 0)                                        AS ""BASESI"",
+  COALESCE(cp.company_pay, 0) + COALESCE(cp.employee_pay, 0)                AS ""TOTAL_AMOUNT"",
+  cds.dependent_details                                                     AS ""DEPENDENT_DETAILS"",
+  TO_CHAR(p.policy_from, 'DD-MM-YYYY')                                      AS ""POLICYFROM"",
+  TO_CHAR(p.policy_to, 'DD-MM-YYYY')                                        AS ""POLICYTO"",
+  TO_CHAR(be.portal_entry_date, 'DD-MM-YYYY')                               AS ""INDIAINSURE_PORTAL_ENTRY_DATE"",
+  TO_CHAR(sub.submitted_at, 'DD-MM-YYYY HH24:MI')                           AS ""INDIAINSURE_PORTAL_SUBMIT_DATE"",
+  CASE WHEN be.user_status_key = 'USER_STATUS_ACTIVE' THEN 'Active' ELSE 'Inactive' END AS ""STATUS"",
+  TO_CHAR(en.enrollment_created_at, 'DD-MM-YYYY')                           AS ""ENTEREDON"",
+  NULL                                                                      AS ""CORRECTION_REMARKS"",
+  TO_CHAR(NOW(), 'DD-MM-YYYY HH12-MI-SS AM')                                AS ""REPORT_LAST_RUN_DATE"",
+  CASE COALESCE(en.employee_enrollment_status_key, 'EMPLOYEE_ENROLLMENT_STATUS_NOT_STARTED')
+    WHEN 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED'          THEN 'Enrolled'
+    WHEN 'EMPLOYEE_ENROLLMENT_STATUS_IN_PROGRESS'       THEN 'In Progress'
+    WHEN 'EMPLOYEE_ENROLLMENT_STATUS_ENDORSEMENT_SENT'  THEN 'Endorsement Sent'
+    ELSE 'Not Started'
+  END                                                                        AS ""ENROLLMENT_COMPLETE"",
+  be.employee_id                                                            AS ""AUTO_ENROLLED_FLAG"",
+   CASE WHEN en.is_auto_submitted = TRUE THEN 'Auto Enrolled' WHEN en.is_auto_submitted = FALSE AND en.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED' THEN 'User Enrolled' ELSE NULL END AS ""ENROLLED_BY"",
+   be.employee_id AS ""EID""
+FROM base_employees be
+INNER JOIN employee_policies ep  ON ep.employee_id = be.employee_id
+INNER JOIN policy p              ON p.id = ep.policy_id
+LEFT JOIN company c              ON c.id = be.company_id
+LEFT JOIN enrollment en          ON en.employee_id = ep.employee_id AND en.policy_id = ep.policy_id
+LEFT JOIN choices ch             ON ch.employee_enrollment_id = en.enrollment_id
+LEFT JOIN choice_people cp       ON cp.choice_id = ch.choice_id
+LEFT JOIN choice_dependent_summary cds ON cds.choice_id = ch.choice_id
+LEFT JOIN submission sub         ON sub.employee_id = be.employee_id AND sub.policy_id = ep.policy_id
+WHERE (
+    NULLIF(###policyId###, '')::int IS NULL
+    OR p.id = NULLIF(###policyId###, '')::int
+  )
+  AND (
+    NULLIF(###enrollStatus###, '') IS NULL
+    OR (
+      ###enrollStatus### = 'AUTO_ENROLLED'
+      AND en.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED'
+      AND en.is_auto_submitted = TRUE
+    )
+    OR (
+      ###enrollStatus### = 'USER_ENROLLED'
+      AND en.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED'
+      AND en.is_auto_submitted = FALSE
+    )
+    OR (
+      ###enrollStatus### NOT IN ('AUTO_ENROLLED', 'USER_ENROLLED')
+      AND COALESCE(en.employee_enrollment_status_key, 'EMPLOYEE_ENROLLMENT_STATUS_NOT_STARTED') = ###enrollStatus###
+    )
+  )
+ORDER BY be.employee_name, p.insurer_policy_number, ch.choice_id, cp.sort_order, cp.covered_person_name
+        ","2026-07-15 04:43:11.820471","2026-07-15 04:43:11.820471","","SYSTEM","SYSTEM","","9998"
+"53","ibp_hr_employee_listing","IBP HR Employee Listing","ibp_hr_employee_listing","
+WITH filtered_employees AS MATERIALIZED (
+  -- Identify matching employee IDs cheaply before expanding choices/dependents.
+  -- Starts from policy_employee_enrollment using the status index (idx_pee_status_employee)
+  -- then joins back to get the company filter — 44ms vs 6s for the forward scan approach.
+  -- For no filter (enrollStatus='') falls back to all employees in the company.
+
+  -- Branch 1: specific enrollment status — use status index (fast path)
+  SELECT DISTINCT pe.employee_id
+  FROM policy_employee_enrollment pe
+  INNER JOIN policy_enrollment_employee pee
+    ON pee.id = pe.employee_id AND pee.company_id = ###companyId### AND pee.deleted_at IS NULL
+  INNER JOIN policy_enrollment_employee_policy_map pepm
+    ON pepm.employee_id = pe.employee_id AND pepm.policy_id = pe.policy_id AND pepm.deleted_at IS NULL
+    AND (NULLIF(###policyIds###, '') IS NULL OR pepm.policy_id::text = ANY(string_to_array(###policyIds###, ',')))
+  LEFT JOIN document_processing_file dpf ON dpf.document_id = pepm.enrollment_addition_batch_id
+  WHERE pe.deleted_at IS NULL
+    AND (
+      NULLIF(###enrollmentPeriodIds###, '') IS NULL
+      OR EXISTS (SELECT 1 FROM document_processing_file ref WHERE ref.id = ANY(string_to_array(###enrollmentPeriodIds###, ',')::int[]) AND ref.enrollment_start_date = dpf.enrollment_start_date AND ref.enrollment_end_date = dpf.enrollment_end_date)
+    )
+    AND NULLIF(###enrollStatus###, '') IS NOT NULL
+    AND ###enrollStatus### != 'EMPLOYEE_ENROLLMENT_STATUS_NOT_STARTED'
+    AND (
+      (###enrollStatus### = 'AUTO_ENROLLED'  AND pe.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED' AND pe.is_auto_submitted = TRUE)
+      OR (###enrollStatus### = 'USER_ENROLLED' AND pe.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED' AND pe.is_auto_submitted = FALSE)
+      OR (###enrollStatus### NOT IN ('AUTO_ENROLLED','USER_ENROLLED') AND pe.employee_enrollment_status_key = ###enrollStatus###)
+    )
+
+  UNION
+
+  -- Branch 2: no filter OR NOT_STARTED — fall back to all company employees
+  -- NOT_STARTED = employees who have no enrollment record at all
+  SELECT DISTINCT pee.id AS employee_id
+  FROM policy_enrollment_employee pee
+  INNER JOIN policy_enrollment_employee_policy_map pepm
+    ON pepm.employee_id = pee.id AND pepm.deleted_at IS NULL
+    AND (NULLIF(###policyIds###, '') IS NULL OR pepm.policy_id::text = ANY(string_to_array(###policyIds###, ',')))
+  LEFT JOIN document_processing_file dpf ON dpf.document_id = pepm.enrollment_addition_batch_id
+  LEFT JOIN policy_employee_enrollment pe
+    ON pe.employee_id = pee.id AND pe.policy_id = pepm.policy_id AND pe.deleted_at IS NULL
+  WHERE pee.company_id = ###companyId###
+    AND pee.deleted_at IS NULL
+    AND (
+      NULLIF(###enrollmentPeriodIds###, '') IS NULL
+      OR EXISTS (SELECT 1 FROM document_processing_file ref WHERE ref.id = ANY(string_to_array(###enrollmentPeriodIds###, ',')::int[]) AND ref.enrollment_start_date = dpf.enrollment_start_date AND ref.enrollment_end_date = dpf.enrollment_end_date)
+    )
+    AND (
+      NULLIF(###enrollStatus###, '') IS NULL
+      OR (###enrollStatus### = 'EMPLOYEE_ENROLLMENT_STATUS_NOT_STARTED' AND pe.employee_id IS NULL)
+    )
+),
+base_employees AS (
+  SELECT
+    pee.id                          AS employee_id,
+    pee.company_id                  AS company_id,
+    pee.company_employee_id         AS company_employee_id,
+    pee.employee_name               AS employee_name,
+    pee.date_of_birth               AS date_of_birth,
+    pee.gender                      AS gender,
+    pee.phone_number                AS phone_number,
+    pee.email                       AS email,
+    pee.user_status_key             AS user_status_key,
+    pee.created_at                  AS portal_entry_date
+  FROM policy_enrollment_employee pee
+  INNER JOIN filtered_employees fe ON fe.employee_id = pee.id
+  WHERE pee.deleted_at IS NULL
+),
+employee_policies AS MATERIALIZED (
+  SELECT DISTINCT
+    pepm.employee_id,
+    pepm.policy_id,
+    pepm.effective_date             AS date_of_joining
+  FROM policy_enrollment_employee_policy_map pepm
+  INNER JOIN base_employees be ON be.employee_id = pepm.employee_id
+  LEFT JOIN document_processing_file dpf ON dpf.document_id = pepm.enrollment_addition_batch_id
+  WHERE pepm.deleted_at IS NULL
+    AND (NULLIF(###policyIds###, '') IS NULL OR pepm.policy_id::text = ANY(string_to_array(###policyIds###, ',')))
+    AND (
+      NULLIF(###enrollmentPeriodIds###, '') IS NULL
+      OR EXISTS (SELECT 1 FROM document_processing_file ref WHERE ref.id = ANY(string_to_array(###enrollmentPeriodIds###, ',')::int[]) AND ref.enrollment_start_date = dpf.enrollment_start_date AND ref.enrollment_end_date = dpf.enrollment_end_date)
+    )
+),
+enrollment AS MATERIALIZED (
+  SELECT
+    pe.id                            AS enrollment_id,
+    pe.employee_id,
+    pe.policy_id,
+    pe.employee_enrollment_status_key,
+    pe.is_auto_submitted,
+    pe.created_at                    AS enrollment_created_at
+  FROM policy_employee_enrollment pe
+  INNER JOIN employee_policies ep ON ep.employee_id = pe.employee_id AND ep.policy_id = pe.policy_id
+  WHERE pe.deleted_at IS NULL
+),
+choices AS MATERIALIZED (
+  SELECT
+    pec.id                           AS choice_id,
+    pec.employee_enrollment_id,
+    en.employee_id,
+    en.policy_id,
+    pec.policy_component_action_label,
+    pec.sum_insured                  AS choice_sum_insured,
+    pec.company_pay,
+    pec.employee_pay
+  FROM policy_employee_enrollment_choice pec
+  INNER JOIN enrollment en ON en.enrollment_id = pec.employee_enrollment_id
+),
+choice_people AS MATERIALIZED (
+  SELECT
+    ch.choice_id,
+    'Employee'                        AS relationship,
+    be.employee_name                  AS covered_person_name,
+    be.date_of_birth                  AS covered_person_dob,
+    be.gender                         AS covered_person_gender,
+    ch.choice_sum_insured,
+    ch.company_pay,
+    ch.employee_pay,
+    0                                  AS sort_order
+  FROM choices ch
+  INNER JOIN base_employees be ON be.employee_id = ch.employee_id
+
+  UNION ALL
+
+  SELECT
+    ch.choice_id,
+    ped.relation                      AS relationship,
+    ped.name                          AS covered_person_name,
+    ped.date_of_birth                 AS covered_person_dob,
+    ped.gender                        AS covered_person_gender,
+    0                                  AS choice_sum_insured,
+    0                                  AS company_pay,
+    0                                  AS employee_pay,
+    1                                  AS sort_order
+  FROM choices ch
+  INNER JOIN policy_employee_enrollment_choice_dependent pecd
+    ON pecd.employee_enrollment_choice_id = ch.choice_id
+   AND pecd.deleted_at IS NULL
+  INNER JOIN policy_enrollment_dependent ped
+    ON ped.id = pecd.dependent_id
+   AND ped.deleted_at IS NULL
+
+  UNION ALL
+
+  SELECT
+    ch.choice_id,
+    ped.relation                      AS relationship,
+    ped.name                          AS covered_person_name,
+    ped.date_of_birth                 AS covered_person_dob,
+    ped.gender                        AS covered_person_gender,
+    0                                  AS choice_sum_insured,
+    0                                  AS company_pay,
+    0                                  AS employee_pay,
+    1                                  AS sort_order
+  FROM choices ch
+  INNER JOIN policy_enrollment_dependent ped
+    ON ped.employee_id = ch.employee_id
+   AND (ped.policy_id = ch.policy_id OR ped.policy_id IS NULL)
+   AND ped.deleted_at IS NULL
+  WHERE NOT EXISTS (
+    SELECT 1 FROM policy_employee_enrollment_choice_dependent pecd2
+    WHERE pecd2.employee_enrollment_choice_id = ch.choice_id
+      AND pecd2.deleted_at IS NULL
+  )
+),
+choice_dependent_summary AS (
+  SELECT
+    choice_id,
+    STRING_AGG(
+      DISTINCT covered_person_name || ' (' || relationship || ')',
+      ', ' ORDER BY covered_person_name || ' (' || relationship || ')'
+    ) AS dependent_details
+  FROM choice_people
+  WHERE sort_order = 1
+  GROUP BY choice_id
+),
+submission AS (
+  SELECT DISTINCT ON (es.employee_id, ep2.policy_id)
+    es.employee_id,
+    ep2.policy_id,
+    es.reference_number,
+    es.submitted_at
+  FROM employee_enrollment_submission es
+  CROSS JOIN LATERAL jsonb_array_elements_text(es.policy_ids) AS pid_text
+  INNER JOIN employee_policies ep2
+    ON pid_text ~ '^\d+$'
+   AND ep2.policy_id = pid_text::int
+   AND ep2.employee_id = es.employee_id
+  ORDER BY es.employee_id, ep2.policy_id, es.submitted_at DESC
+)
+SELECT
+  TO_CHAR(NOW(), 'DD-MM-YYYY')                                                AS ""REPORT_DATE"",
+  c.display_name                                                              AS ""ENTITY"",
+  p.insurer_policy_number                                                    AS ""POLICY_NUMBER"",
+  p.id                                                                       AS ""IIRM_POLICY_ID"",
+  p.policy_name                                                               AS ""POLICY_NAME"",
+  be.company_employee_id                                                     AS ""EIN"",
+  COALESCE(cp.covered_person_name, be.employee_name)                         AS ""INSUREDNAME"",
+  TO_CHAR(COALESCE(cp.covered_person_dob, be.date_of_birth), 'DD-MM-YYYY')   AS ""DOB"",
+  COALESCE(cp.covered_person_gender, be.gender)                              AS ""GENDER"",
+  COALESCE(cp.relationship, 'Employee')                                      AS ""RELATION"",
+  be.phone_number                                                            AS ""EMPMOBILE"",
+  be.email                                                                   AS ""EMPEMAIL"",
+  TO_CHAR(ep.date_of_joining, 'DD-MM-YYYY')                                  AS ""DOJ"",
+  ch.policy_component_action_label                                          AS ""PLANOPTED"",
+  COALESCE(cp.choice_sum_insured, 0)                                        AS ""BASESI"",
+  COALESCE(cp.company_pay, 0) + COALESCE(cp.employee_pay, 0)                AS ""TOTAL_AMOUNT"",
+  cds.dependent_details                                                     AS ""DEPENDENT_DETAILS"",
+  TO_CHAR(p.policy_from, 'DD-MM-YYYY')                                      AS ""POLICYFROM"",
+  TO_CHAR(p.policy_to, 'DD-MM-YYYY')                                        AS ""POLICYTO"",
+  TO_CHAR(be.portal_entry_date, 'DD-MM-YYYY')                               AS ""INDIAINSURE_PORTAL_ENTRY_DATE"",
+  TO_CHAR(sub.submitted_at AT TIME ZONE 'Asia/Kolkata', 'DD-MM-YYYY HH24:MI')                           AS ""INDIAINSURE_PORTAL_SUBMIT_DATE"",
+  CASE WHEN be.user_status_key = 'USER_STATUS_ACTIVE' THEN 'Active' ELSE 'Inactive' END AS ""STATUS"",
+  TO_CHAR(en.enrollment_created_at, 'DD-MM-YYYY')                           AS ""ENTEREDON"",
+  NULL                                                                      AS ""CORRECTION_REMARKS"",
+  TO_CHAR(NOW(), 'DD-MM-YYYY HH12-MI-SS AM')                                AS ""REPORT_LAST_RUN_DATE"",
+  CASE COALESCE(en.employee_enrollment_status_key, 'EMPLOYEE_ENROLLMENT_STATUS_NOT_STARTED')
+    WHEN 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED'          THEN 'Enrolled'
+    WHEN 'EMPLOYEE_ENROLLMENT_STATUS_IN_PROGRESS'       THEN 'In Progress'
+    WHEN 'EMPLOYEE_ENROLLMENT_STATUS_ENDORSEMENT_SENT'  THEN 'Endorsement Sent'
+    ELSE 'Not Started'
+  END                                                                        AS ""ENROLLMENT_COMPLETE"",
+  be.employee_id                                                            AS ""AUTO_ENROLLED_FLAG"",
+  CASE
+    WHEN en.is_auto_submitted = TRUE THEN 'Auto Enrolled'
+    WHEN en.is_auto_submitted = FALSE AND en.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED' THEN 'User Enrolled'
+    ELSE NULL
+  END                                                                        AS ""ENROLLED_BY"",
+  be.employee_id                                                            AS ""EID""
+FROM base_employees be
+INNER JOIN employee_policies ep  ON ep.employee_id = be.employee_id
+INNER JOIN policy p              ON p.id = ep.policy_id
+LEFT JOIN company c              ON c.id = be.company_id
+LEFT JOIN enrollment en          ON en.employee_id = ep.employee_id AND en.policy_id = ep.policy_id
+LEFT JOIN choices ch             ON ch.employee_enrollment_id = en.enrollment_id
+LEFT JOIN choice_people cp       ON cp.choice_id = ch.choice_id
+LEFT JOIN choice_dependent_summary cds ON cds.choice_id = ch.choice_id
+LEFT JOIN submission sub         ON sub.employee_id = be.employee_id AND sub.policy_id = ep.policy_id
+WHERE (
+  NULLIF(###policyIds###, '') IS NULL
+  OR p.id::text = ANY(string_to_array(###policyIds###, ','))
+)
+  AND (
+    NULLIF(###enrollStatus###, '') IS NULL
+    OR (
+      ###enrollStatus### = 'AUTO_ENROLLED'
+      AND en.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED'
+      AND en.is_auto_submitted = TRUE
+    )
+    OR (
+      ###enrollStatus### = 'USER_ENROLLED'
+      AND en.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED'
+      AND en.is_auto_submitted = FALSE
+    )
+    OR (
+      ###enrollStatus### NOT IN ('AUTO_ENROLLED', 'USER_ENROLLED')
+      AND COALESCE(en.employee_enrollment_status_key, 'EMPLOYEE_ENROLLMENT_STATUS_NOT_STARTED') = ###enrollStatus###
+    )
+  )
+ORDER BY be.employee_name, p.insurer_policy_number, ch.choice_id, cp.sort_order, cp.covered_person_name
+  ","2026-05-12 12:21:56.188796","2026-07-23 06:58:05.996124","","SYSTEM","SYSTEM","","7"
+"62","policy_enrollment_period_status_summary","Policy Enrollment Period Status Summary","policy_enrollment_period_status_summary","
+WITH period_scope AS (
+  -- One row per (enrollment_start_date, enrollment_end_date, policy) — merges
+  -- every document_processing_file batch that shares the same policy and the
+  -- same dates, since re-uploads/multiple batches for one policy's window are
+  -- the same enrollment period, not separate ones.
+  SELECT
+    MIN(dpf.id)                          AS period_id,
+    ARRAY_AGG(DISTINCT dpf.id)            AS period_ids,
+    ARRAY_AGG(DISTINCT dpf.document_id)   AS batch_document_ids,
+    dpf.enrollment_start_date,
+    dpf.enrollment_end_date,
+    e.policy_id,
+    e.company_id
+  FROM document_processing_file dpf
+  INNER JOIN endorsement e ON e.id = dpf.endorsement_id
+  WHERE e.company_id = ###companyId###
+    AND dpf.enrollment_start_date IS NOT NULL
+    AND dpf.enrollment_end_date IS NOT NULL
+    -- Currently-running drives only: must have already started (start_date
+    -- <= today) AND not yet closed (end_date >= today). A period whose end
+    -- date has already passed is excluded (nothing left to enroll/remind
+    -- for), and a period that hasn't started yet is excluded too — this
+    -- report is ""what's active right now"", not ""what's upcoming"".
+    AND dpf.enrollment_start_date <= CURRENT_DATE
+    AND dpf.enrollment_end_date >= CURRENT_DATE
+  GROUP BY dpf.enrollment_start_date, dpf.enrollment_end_date, e.policy_id, e.company_id
+),
+period_employees AS (
+  SELECT
+    ps.period_id,
+    ps.policy_id,
+    pee.id                             AS employee_id,
+    pe.employee_enrollment_status_key
+  FROM period_scope ps
+  INNER JOIN policy_enrollment_employee_policy_map pepm
+    ON pepm.policy_id = ps.policy_id
+   AND pepm.enrollment_addition_batch_id = ANY(ps.batch_document_ids)
+   AND pepm.deleted_at IS NULL
+  INNER JOIN policy_enrollment_employee pee
+    ON pee.id = pepm.employee_id
+   AND pee.deleted_at IS NULL
+   AND pee.user_status_key = 'USER_STATUS_ACTIVE'
+  LEFT JOIN policy_employee_enrollment pe
+    ON pe.employee_id = pee.id
+   AND pe.policy_id = ps.policy_id
+   AND pe.deleted_at IS NULL
+)
+SELECT
+  ps.period_id                                                                             AS ""periodId"",
+  ps.period_ids                                                                             AS ""periodIds"",
+  TO_CHAR(ps.enrollment_start_date, 'YYYY-MM-DD')                                          AS ""periodStart"",
+  TO_CHAR(ps.enrollment_end_date, 'YYYY-MM-DD')                                             AS ""periodEnd"",
+  p.id                                                                                      AS ""policyId"",
+  p.policy_name                                                                             AS ""policyName"",
+  p.insurer_policy_number                                                                   AS ""policyNumber"",
+  COUNT(DISTINCT pe2.employee_id)::int                                                      AS ""total"",
+  COUNT(DISTINCT pe2.employee_id) FILTER (
+    WHERE pe2.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED'
+  )::int                                                                                     AS ""enrolled"",
+  COUNT(DISTINCT pe2.employee_id) FILTER (
+    WHERE pe2.employee_enrollment_status_key IN (
+      'EMPLOYEE_ENROLLMENT_STATUS_IN_PROGRESS', 'EMPLOYEE_ENROLLMENT_STATUS_ENDORSEMENT_SENT'
+    )
+  )::int                                                                                     AS ""inProgress"",
+  COUNT(DISTINCT pe2.employee_id) FILTER (
+    WHERE COALESCE(pe2.employee_enrollment_status_key, 'EMPLOYEE_ENROLLMENT_STATUS_NOT_STARTED')
+        = 'EMPLOYEE_ENROLLMENT_STATUS_NOT_STARTED'
+  )::int                                                                                     AS ""notEnrolled""
+FROM period_employees pe2
+INNER JOIN period_scope ps ON ps.period_id = pe2.period_id AND ps.policy_id = pe2.policy_id
+LEFT JOIN policy p ON p.id = pe2.policy_id
+GROUP BY ps.period_id, ps.period_ids, ps.enrollment_start_date, ps.enrollment_end_date, p.id, p.policy_name, p.insurer_policy_number
+ORDER BY ps.enrollment_start_date ASC, p.policy_name
+            ","2026-07-13 12:33:36.282489","2026-07-13 12:33:36.282489","","SYSTEM","SYSTEM","","33"
+"64","policy_enrollment_periods_by_company","Policy Enrollment Periods By Company","policy_enrollment_periods_by_company","
+SELECT DISTINCT ON (dpf.enrollment_start_date, dpf.enrollment_end_date)
+  dpf.id                                                                      AS ""periodId"",
+  TO_CHAR(dpf.enrollment_start_date, 'DD Mon YYYY') || ' – ' ||
+    TO_CHAR(dpf.enrollment_end_date, 'DD Mon YYYY')                          AS ""label"",
+  dpf.enrollment_start_date                                                  AS ""enrollmentStartDate"",
+  dpf.enrollment_end_date                                                    AS ""enrollmentEndDate""
+FROM document_processing_file dpf
+INNER JOIN policy_enrollment_employee_policy_map pepm
+  ON pepm.enrollment_addition_batch_id = dpf.document_id
+  AND pepm.deleted_at IS NULL
+INNER JOIN policy_enrollment_employee pee
+  ON pee.id = pepm.employee_id
+  AND pee.company_id = ###companyId###
+  AND pee.deleted_at IS NULL
+WHERE dpf.enrollment_start_date IS NOT NULL
+  AND dpf.enrollment_end_date IS NOT NULL
+ORDER BY dpf.enrollment_start_date DESC, dpf.enrollment_end_date DESC, dpf.id ASC
+  ","2026-07-15 04:43:11.834736","2026-07-15 04:43:11.834736","","SYSTEM","SYSTEM","","9990"
+"65","policy_list_for_enrollment_period","Policy List For Enrollment Period","policy_list_for_enrollment_period","
+SELECT DISTINCT
+  p.id                                                    AS ""policyId"",
+  p.policy_name                                           AS ""policyName"",
+  p.insurer_policy_number                                 AS ""policyNumber"",
+  TO_CHAR(p.policy_from, 'DD Mon YYYY')                  AS ""policyFrom"",
+  TO_CHAR(p.policy_to,   'DD Mon YYYY')                  AS ""policyTo""
+FROM policy p
+INNER JOIN policy_enrollment_employee_policy_map pepm
+  ON pepm.policy_id = p.id
+  AND pepm.deleted_at IS NULL
+INNER JOIN policy_enrollment_employee pee
+  ON pee.id = pepm.employee_id
+  AND pee.company_id = ###companyId###
+  AND pee.deleted_at IS NULL
+LEFT JOIN document_processing_file dpf
+  ON dpf.document_id = pepm.enrollment_addition_batch_id
+WHERE (
+    NULLIF(###enrollmentPeriodIds###, '') IS NULL
+    OR EXISTS (
+      SELECT 1 FROM document_processing_file ref
+      WHERE ref.id = ANY(string_to_array(###enrollmentPeriodIds###, ',')::int[])
+        AND ref.enrollment_start_date = dpf.enrollment_start_date
+        AND ref.enrollment_end_date   = dpf.enrollment_end_date
+    )
+  )
+ORDER BY p.policy_name
+  ","2026-07-15 04:43:11.868927","2026-07-15 04:43:11.868927","","SYSTEM","SYSTEM","","9991"
+"66","ibp_hr_employee_listing_count","IBP HR Employee Listing Count","ibp_hr_employee_listing_count","
+WITH base_employees AS (
+  SELECT
+    pee.id   AS employee_id,
+    pee.company_id
+  FROM policy_enrollment_employee pee
+  WHERE pee.company_id = ###companyId###
+    AND pee.deleted_at IS NULL
+),
+employee_policies AS MATERIALIZED (
+  SELECT DISTINCT
+    pepm.employee_id,
+    pepm.policy_id
+  FROM policy_enrollment_employee_policy_map pepm
+  INNER JOIN base_employees be ON be.employee_id = pepm.employee_id
+  LEFT JOIN document_processing_file dpf ON dpf.document_id = pepm.enrollment_addition_batch_id
+  WHERE pepm.deleted_at IS NULL
+    AND (NULLIF(###policyIds###, '') IS NULL OR pepm.policy_id::text = ANY(string_to_array(###policyIds###, ',')))
+    AND (
+      NULLIF(###enrollmentPeriodIds###, '') IS NULL
+      OR EXISTS (SELECT 1 FROM document_processing_file ref WHERE ref.id = ANY(string_to_array(###enrollmentPeriodIds###, ',')::int[]) AND ref.enrollment_start_date = dpf.enrollment_start_date AND ref.enrollment_end_date = dpf.enrollment_end_date)
+    )
+),
+enrollment AS MATERIALIZED (
+  SELECT
+    pe.id                              AS enrollment_id,
+    pe.employee_id,
+    pe.policy_id,
+    pe.employee_enrollment_status_key,
+    pe.is_auto_submitted
+  FROM policy_employee_enrollment pe
+  INNER JOIN employee_policies ep ON ep.employee_id = pe.employee_id AND ep.policy_id = pe.policy_id
+  WHERE pe.deleted_at IS NULL
+),
+choices AS MATERIALIZED (
+  SELECT
+    pec.id                  AS choice_id,
+    pec.employee_enrollment_id,
+    en.employee_id,
+    en.policy_id
+  FROM policy_employee_enrollment_choice pec
+  INNER JOIN enrollment en ON en.enrollment_id = pec.employee_enrollment_id
+),
+choice_people AS (
+  SELECT ch.choice_id FROM choices ch
+  INNER JOIN base_employees be ON be.employee_id = ch.employee_id
+
+  UNION ALL
+
+  SELECT ch.choice_id FROM choices ch
+  INNER JOIN policy_employee_enrollment_choice_dependent pecd
+    ON pecd.employee_enrollment_choice_id = ch.choice_id AND pecd.deleted_at IS NULL
+  INNER JOIN policy_enrollment_dependent ped
+    ON ped.id = pecd.dependent_id AND ped.deleted_at IS NULL
+
+  UNION ALL
+
+  SELECT ch.choice_id FROM choices ch
+  INNER JOIN policy_enrollment_dependent ped
+    ON ped.employee_id = ch.employee_id
+    AND (ped.policy_id = ch.policy_id OR ped.policy_id IS NULL)
+    AND ped.deleted_at IS NULL
+  WHERE NOT EXISTS (
+    SELECT 1 FROM policy_employee_enrollment_choice_dependent pecd2
+    WHERE pecd2.employee_enrollment_choice_id = ch.choice_id AND pecd2.deleted_at IS NULL
+  )
+)
+SELECT COUNT(*) AS count
+FROM base_employees be
+INNER JOIN employee_policies ep  ON ep.employee_id = be.employee_id
+LEFT JOIN enrollment en          ON en.employee_id = ep.employee_id AND en.policy_id = ep.policy_id
+LEFT JOIN choices ch             ON ch.employee_enrollment_id = en.enrollment_id
+LEFT JOIN choice_people cp       ON cp.choice_id = ch.choice_id
+WHERE (
+  NULLIF(###enrollStatus###, '') IS NULL
+  OR (
+    ###enrollStatus### = 'AUTO_ENROLLED'
+    AND en.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED'
+    AND en.is_auto_submitted = TRUE
+  )
+  OR (
+    ###enrollStatus### = 'USER_ENROLLED'
+    AND en.employee_enrollment_status_key = 'EMPLOYEE_ENROLLMENT_STATUS_ENROLLED'
+    AND en.is_auto_submitted = FALSE
+  )
+  OR (
+    ###enrollStatus### NOT IN ('AUTO_ENROLLED', 'USER_ENROLLED')
+    AND COALESCE(en.employee_enrollment_status_key, 'EMPLOYEE_ENROLLMENT_STATUS_NOT_STARTED') = ###enrollStatus###
+  )
+)
+  ","2026-07-15 04:43:11.872222","2026-07-15 04:43:11.872222","","SYSTEM","SYSTEM","","9999"

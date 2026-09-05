@@ -1,0 +1,58 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_sessions",
+  "info": {
+    "singularName": "user-session",
+    "pluralName": "user-sessions", 
+    "displayName": "Current User Status",
+    "description": "Track current active user status - ONE RECORD PER USER ONLY (no historical data)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user_id": {
+      "type": "string", 
+      "required": true,
+      "unique": true
+    },
+    "user_email": {
+      "type": "email",
+      "required": true
+    },
+    "session_id": {
+      "type": "string",
+      "required": true
+    },
+    "token_hash": {
+      "type": "string",
+      "required": true
+    },
+    "start_time": {
+      "type": "datetime",
+      "required": true
+    },
+    "end_time": {
+      "type": "datetime"
+    },
+    "last_activity": {
+      "type": "datetime",
+      "required": true
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    },
+    "ip_address": {
+      "type": "string"
+    },
+    "user_agent": {
+      "type": "text"
+    },
+    "session_metadata": {
+      "type": "json"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "policy_templates",
+  "info": {
+    "singularName": "policy-template",
+    "pluralName": "policy-templates",
+    "displayName": "Policy Template"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "companyId": {
+      "type": "string",
+      "required": true
+    },
+    "policyId": {
+      "type": "string",
+      "required": true
+    },
+    "config": {
+      "type": "component",
+      "repeatable": false,
+      "component": "policy-template.policy-template-config"
+    }
+  }
+}

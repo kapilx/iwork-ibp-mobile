@@ -1,0 +1,2 @@
+order = ["MIR-Phase-1-PRD.md", "MIR-Phase-1-TRD.md", "MIR-Phase-2-PRD.md"]
+sort  = "name_asc"
