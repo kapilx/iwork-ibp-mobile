@@ -2,7 +2,14 @@ import { REGEX_PATTERNS } from "../constants/regex";
 import { CurrencyDisplayMode } from "../constants/currencyDisplayMode";
 import { RcTreeNode } from "../commonComponents/FormComponent/Fields/TreeSelect";
 import type { MasterUserResponse } from "./masterUserDataUtility";
-import { setToastMessage, store } from "../redux";
+// Import the concrete modules directly, not the "../redux" barrel (redux/index.ts).
+// That barrel re-exports redux/slice.ts and redux/store.ts, and both of those
+// import axiosInstance from this very file (utils/index.tsx / utils/axiosInterceptors.ts)
+// — going through the barrel here closes that into a circular module graph
+// that throws "Cannot access X before initialization" at runtime in a real
+// (non-dev-server) build. Same values either way, just without the barrel hop.
+import { setToastMessage } from "../redux/slice";
+import store from "../redux/store";
 import { GENERIC_ERROR, UNAUTHORIZED_ERROR } from "../constants";
 export * from "./procesaApiFormConfig";
 export * from "./DateFormat";

@@ -1,6 +1,12 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { endPoints } from "../constants";
-import { axiosInstance } from "../utils";
+// Import the concrete module directly, not the "../utils" barrel — that
+// barrel imports `store`/`setToastMessage` back from "../redux" (this
+// directory), and redux/index.ts re-exports this slice, forming a circular
+// module graph. axiosInterceptors.ts itself has no such cycle, so importing
+// it directly here is a pure behavior-preserving fix, not a workaround —
+// same export, same object, just without routing through the barrel.
+import { axiosInstance } from "../utils/axiosInterceptors";
 
 const initialState: any = {
   policiesData: [],

@@ -128,10 +128,24 @@ export default defineConfig({
           ],
         },
         workbox: {
-          // App-shell precaching only (Phase 1). Runtime caching of API data
-          // for offline reads, and excluding the HR-Portal chunk from precache
-          // once it is route-split, are addressed in later phases.
-          globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
+          // App-shell precaching only (Phase 1): JS/CSS/HTML plus the small
+          // manifest icons. Deliberately NOT "**/*.png"/"**/*.svg" — this repo
+          // ships many multi-hundred-KB-to-multi-MB marketing/illustration
+          // images (Life Events cards, wellness banners, login backgrounds,
+          // etc.) that are page content, not app shell; precaching all of them
+          // on install would be slow on mobile and isn't what "installable
+          // app shell" is meant to cover. Runtime caching of API data and of
+          // these content images for offline reads is addressed in a later
+          // phase (see §2.10 of the PWA plan).
+          globPatterns: ["**/*.{js,css,html}", "icons/*.png", "favicon.ico"],
+          // globPatterns above already excludes it, but be explicit: the PDF.js
+          // worker (~1.2MB) is only needed when a document is actually opened.
+          globIgnores: ["**/pdf.worker*"],
+          // No manualChunks (see rollupOptions.output comment above) means
+          // everything lands in one main chunk — minification brings that
+          // from ~19.4MB down to ~9MB, comfortably under this with headroom
+          // for growth before this needs revisiting.
+          maximumFileSizeToCacheInBytes: 12 * 1024 * 1024,
           navigateFallback: "/index.html",
           cleanupOutdatedCaches: true,
         },
@@ -143,6 +157,22 @@ export default defineConfig({
   ],
 
   build: {
+    // The Nx build executor overrides this via its own `outputPath` option
+    // (apps/ui/ibp/package.json), so `nx build ibp` already wrote here
+    // correctly. This explicit value matters for anything that invokes Vite
+    // directly rather than through that executor — `vite preview` (used by
+    // the `preview` Nx target, itself a plain `vite preview` run-commands
+    // wrapper, not the Nx vite executor) otherwise falls back to Vite's
+    // default "dist" relative to this app's own folder, which is never where
+    // the real output goes, and fails with "directory dist does not exist".
+    outDir: "../../../dist/apps/ui/ibp",
+    // outDir sits outside this project's root, so Vite normally refuses to
+    // empty it first (a safety default) — which is exactly how stale chunks
+    // from a previous build were still sitting in dist and getting picked up
+    // by Workbox's precache glob alongside the new ones. Force a clean output
+    // on every build instead of relying on the caller to clear dist first.
+    emptyOutDir: true,
+    sourcemap: true, // TEMP: debugging, will revert
     target: "esnext",
     rollupOptions: {
       onwarn(warning, warn) {
@@ -153,9 +183,40 @@ export default defineConfig({
         console.log("📋 Rollup [%s]:", level, JSON.stringify(log).substring(0, 200));
         handler(level, log);
       },
+      output: {
+        // No manualChunks here — deliberately. apps/ui/ui-lib's redux and
+        // utils modules have a genuine circular import between each other
+        // (redux/slice.ts imports axiosInstance from utils/index.tsx, which
+        // imports `store` back from redux/index.ts) that has always existed
+        // in this codebase. It "worked" only because Rollup's single-chunk
+        // output hoists/restructures around exactly this kind of cycle;
+        // native ES module loading across separate chunk files does not get
+        // that same treatment, so ANY manualChunks split — tried both a
+        // grouped-by-library version and a version limited to four libraries
+        // nowhere near the cycle — reproduced a real "Cannot access
+        // userReducer before initialization" runtime error (verified with a
+        // headless-browser repro, not just theorized). Fixing that properly
+        // means breaking the redux/utils cycle at the source level, which is
+        // a separate, deliberate change or should be flagged as a follow-up,
+        // not something to do as a side effect of a build-config fix.
+        // Minification alone (build.minify above) already took the bundle
+        // from ~19.4MB to ~9MB single chunk — see the raised
+        // workbox.maximumFileSizeToCacheInBytes below for the corresponding
+        // safety-net size.
+      },
     },
     reportCompressedSize: false,
-    minify: false,
+    // Was unconditionally `false` — the single biggest contributor to the
+    // ~19MB chunk that broke the Workbox precache step (see
+    // workbox.maximumFileSizeToCacheInBytes above). Scoped to leave the
+    // Module Federation remote build's existing (unminified) behavior alone,
+    // since that path isn't part of the PWA build and wasn't broken.
+    // Was unconditionally `false` — a large contributor to the ~19MB chunk
+    // that broke the Workbox precache step (see maximumFileSizeToCacheInBytes
+    // above). Scoped to leave the Module Federation remote build's existing
+    // (unminified) behavior alone, since that path isn't part of the PWA
+    // build and wasn't broken.
+    minify: isMF ? false : true,
     chunkSizeWarningLimit: 5000,
   },
 });
