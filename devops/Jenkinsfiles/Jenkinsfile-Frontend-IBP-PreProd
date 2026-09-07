@@ -66,14 +66,27 @@ pipeline {
             steps {
                 script {
                     nodejs('IIRM') {
-                        sh 'nx sync && nx run @insurance-wellness-hub/ibp:build --configuration=production'
+                        sh 'VITE_PWA=true nx sync && VITE_PWA=true nx run @insurance-wellness-hub/ibp:build --configuration=production'
                     }
                 }
             }
         }
         stage('Upload to S3') {
             steps {
+                // Hashed build assets (JS/CSS/images) are safe to cache long-term.
                 sh 'aws s3 cp ./dist/apps/ui/ibp/ s3://ibp-preprod-frontend/ --recursive'
+                // PWA control files must never be served stale, or installed clients
+                // never learn about a new service worker / app version.
+                sh '''
+                    for f in sw.js manifest.webmanifest; do
+                      if [ -f "./dist/apps/ui/ibp/$f" ]; then
+                        aws s3 cp "./dist/apps/ui/ibp/$f" "s3://ibp-preprod-frontend/$f" --cache-control "no-cache, must-revalidate"
+                      fi
+                    done
+                    if ls ./dist/apps/ui/ibp/workbox-*.js >/dev/null 2>&1; then
+                      aws s3 cp ./dist/apps/ui/ibp/ s3://ibp-preprod-frontend/ --recursive --exclude "*" --include "workbox-*.js" --cache-control "no-cache, must-revalidate"
+                    fi
+                '''
             }
         }
         stage('Invalidate CloudFront Cache') {

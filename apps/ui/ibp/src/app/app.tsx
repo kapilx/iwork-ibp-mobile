@@ -28,6 +28,7 @@ import UnifiedSummary from "./pages/UnifiedSummary";
 import ClaimsCornerPage from "./pages/ClaimsCorner";
 import store from "./redux/store";
 import RootToast from "./RootToast";
+import PwaInstallPrompt from "./components/PwaInstallPrompt";
 import { styled } from "@mui/material";
 import HospitalNetworkV1 from "./pages/HospitalNetworkV1";
 import MyDocuments from "./pages/MyDocuments";
@@ -306,6 +307,7 @@ export function App() {
             {!hideHeader && !hideFooter && <Footer />}
           </AppShell>
           <RootToast />
+          <PwaInstallPrompt />
           {/* {!hideHeader && <AskEcho />} */}
         </ThemeProvider>
       </QueryClientProvider>

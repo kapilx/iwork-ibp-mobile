@@ -149,3 +149,14 @@ Access: `http://localhost:4200` or `http://ibp.com`
 
 - All `VITE_` prefixed variables are exposed to client-side code
 - Never put sensitive data in client-side env variables!
+
+## 📲 PWA build flag
+
+`VITE_PWA=true` enables the service worker + web app manifest (`vite-plugin-pwa`) — it only applies to standalone builds, never to the Module Federation remote build (`VITE_MF=true`). To test installability locally:
+
+```bash
+VITE_PWA=true nx build ibp
+npx serve dist/apps/ui/ibp   # or: VITE_PWA=true nx run @insurance-wellness-hub/ibp:preview
+```
+
+`VITE_PWA=true nx serve ibp` also works for local dev (a dev-mode service worker is registered via `devOptions.enabled` in `vite.config.ts`).

@@ -8,6 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="stylesheet" href="/src/styles.scss" />
+
+    <!-- PWA: manifest.webmanifest + service worker are injected by vite-plugin-pwa
+         at build time in standalone builds (VITE_PWA=true) only. -->
+    <meta name="theme-color" content="#0A73E9" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="IBP" />
   </head>
   <body>
     <div id="root"></div>
