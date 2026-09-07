@@ -14,6 +14,7 @@ import ProtectedRoute from "./Auth/ProtectedRoute";
 import LifeEventsRoute from "./Auth/LifeEventsRoute";
 import PublicRoute from "./Auth/PublicRoute";
 import Header from "./components/Header";
+import BottomNav from "./components/BottomNav";
 import PasswordReset from "./components/PasswordReset";
 import SignIn from "./components/SignIn";
 import OAuthCallback from "./components/OAuthCallback";
@@ -80,10 +81,17 @@ export const AppShell = styled("div")`
   flex-direction: column;
 `;
 
-export const MainContent = styled("main")`
+export const MainContent = styled("main")<{ $reserveBottomNavSpace?: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
+  ${({ $reserveBottomNavSpace }) =>
+    $reserveBottomNavSpace &&
+    `
+    @media (max-width: 768px) {
+      padding-bottom: 60px;
+    }
+  `}
 `;
 
 // Wrapper to show modal for /login?step=reset
@@ -176,7 +184,7 @@ export function App() {
           <style>{`body { overflow-x: hidden; }`}</style>
           <AppShell>
             {!hideHeader && <Header />}
-            <MainContent>
+            <MainContent $reserveBottomNavSpace={!hideHeader}>
               <ScrollToTop />
               <Routes>
                 <Route path="/landing" element={<Landing />} />
@@ -305,6 +313,7 @@ export function App() {
               </Routes>
             </MainContent>
             {!hideHeader && !hideFooter && <Footer />}
+            {!hideHeader && <BottomNav />}
           </AppShell>
           <RootToast />
           <PwaInstallPrompt />

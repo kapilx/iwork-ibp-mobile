@@ -87,8 +87,8 @@ function logoutUser(options?: { reason?: "expired" | "logout" }): void {
   if (options?.reason === "expired") {
     localStorage.setItem(SESSION_EXPIRED_MESSAGE_KEY, SESSION_EXPIRED_MESSAGE);
   }
-  sessionStorage.clear();
-  localStorage.removeItem(STORAGE_KEY);
+  sessionStorage.clear(); // also clears the localStorage mirror, see the patched clear() below
+  localStorage.removeItem(STORAGE_KEY); // belt-and-suspenders in case the mirror patch isn't installed
   window.location.href = "/landing";
 }
 
@@ -383,6 +383,67 @@ if (typeof window !== "undefined") {
       handleSessionRevoked(undefined, false);
     }
   });
+}
+
+// --- Installed-PWA relaunch persistence (IBP / HR_PORTAL sessions only) ---
+//
+// The rest of this app (~90 call sites across ~55 files) reads/writes the
+// auth payload via `sessionStorage.getItem/setItem/removeItem("user")`
+// directly, not through this module's helpers — rewriting every one of those
+// call sites to use a different storage location would be a large, hard-to-
+// verify change for very little benefit. Instead, sessionStorage stays the
+// single source every existing call site already uses unchanged, and this
+// block transparently mirrors the "user" key to localStorage so the session
+// survives an installed PWA being closed and relaunched (a fresh top-level
+// browsing context normally starts with empty sessionStorage).
+//
+// Only IBP/HR_PORTAL sessions are ever mirrored — iWork and any other app
+// sharing this file keep their original sessionStorage-only behavior with
+// zero change, since isKnownPortalSession() gates every mirror/rehydrate.
+if (typeof window !== "undefined" && !(window.sessionStorage as any).__ibpAuthMirrorInstalled) {
+  (window.sessionStorage as any).__ibpAuthMirrorInstalled = true;
+
+  const nativeSessionSetItem = window.sessionStorage.setItem.bind(window.sessionStorage);
+  const nativeSessionRemoveItem = window.sessionStorage.removeItem.bind(window.sessionStorage);
+  const nativeSessionClear = window.sessionStorage.clear.bind(window.sessionStorage);
+
+  // Rehydrate once, before any other code on this page has a chance to read
+  // sessionStorage (this runs as an ordinary module-level side effect, same as
+  // the storage-event listener below, so it executes before React ever mounts).
+  try {
+    if (!window.sessionStorage.getItem(STORAGE_KEY)) {
+      const mirrored = window.localStorage.getItem(STORAGE_KEY);
+      if (mirrored && isKnownPortalSession(JSON.parse(mirrored))) {
+        nativeSessionSetItem(STORAGE_KEY, mirrored);
+      }
+    }
+  } catch {
+    // Corrupt mirrored value — ignore; the user will simply need to log in again.
+  }
+
+  window.sessionStorage.setItem = (key: string, value: string) => {
+    nativeSessionSetItem(key, value);
+    if (key !== STORAGE_KEY) return;
+    try {
+      if (isKnownPortalSession(JSON.parse(value))) {
+        window.localStorage.setItem(STORAGE_KEY, value);
+      }
+    } catch {
+      // Not JSON — nothing to mirror.
+    }
+  };
+
+  window.sessionStorage.removeItem = (key: string) => {
+    nativeSessionRemoveItem(key);
+    if (key === STORAGE_KEY) {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
+  };
+
+  window.sessionStorage.clear = () => {
+    nativeSessionClear();
+    window.localStorage.removeItem(STORAGE_KEY);
+  };
 }
 
 export default axiosInstance;

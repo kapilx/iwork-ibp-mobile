@@ -126,4 +126,91 @@ describe("axiosInterceptors", () => {
     );
     expect(window.location.href).toBe("/login");
   });
+
+  describe("installed-PWA relaunch persistence (localStorage mirror)", () => {
+    // jsdom keeps one `window` (and its sessionStorage/localStorage instances)
+    // alive for the whole test file even across jest.resetModules(), unlike a
+    // real browser where a fresh page load recreates everything. Restoring the
+    // true native Storage methods here (they were never touched — the mirror
+    // patch only ever shadows them as instance-level own-properties) before
+    // resetting modules accurately simulates a genuinely fresh page load/app
+    // relaunch instead of double-wrapping an already-patched instance.
+    function simulateFreshPageLoad() {
+      const proto = Object.getPrototypeOf(window.sessionStorage);
+      window.sessionStorage.setItem = proto.setItem.bind(window.sessionStorage);
+      window.sessionStorage.removeItem = proto.removeItem.bind(window.sessionStorage);
+      window.sessionStorage.clear = proto.clear.bind(window.sessionStorage);
+      delete (window.sessionStorage as any).__ibpAuthMirrorInstalled;
+      jest.resetModules();
+    }
+
+    it("mirrors an IBP session written to sessionStorage into localStorage", async () => {
+      await setupAxiosInstance();
+      const ibpUser = JSON.stringify({ portal: "IBP", userId: 1 });
+
+      sessionStorage.setItem("user", ibpUser);
+
+      expect(localStorage.getItem("user")).toBe(ibpUser);
+    });
+
+    it("mirrors an HR_PORTAL session too", async () => {
+      await setupAxiosInstance();
+      const hrUser = JSON.stringify({ portal: "HR_PORTAL", userId: 2 });
+
+      sessionStorage.setItem("user", hrUser);
+
+      expect(localStorage.getItem("user")).toBe(hrUser);
+    });
+
+    it("does not mirror sessions without a recognized portal marker (e.g. iWork)", async () => {
+      await setupAxiosInstance();
+      const iworkUser = JSON.stringify({ userId: 3 });
+
+      sessionStorage.setItem("user", iworkUser);
+
+      expect(localStorage.getItem("user")).toBeNull();
+    });
+
+    it("clears the localStorage mirror when sessionStorage's user key is removed", async () => {
+      await setupAxiosInstance();
+      sessionStorage.setItem("user", JSON.stringify({ portal: "IBP", userId: 1 }));
+      expect(localStorage.getItem("user")).not.toBeNull();
+
+      sessionStorage.removeItem("user");
+
+      expect(localStorage.getItem("user")).toBeNull();
+    });
+
+    it("clears the localStorage mirror on sessionStorage.clear()", async () => {
+      await setupAxiosInstance();
+      sessionStorage.setItem("user", JSON.stringify({ portal: "IBP", userId: 1 }));
+      expect(localStorage.getItem("user")).not.toBeNull();
+
+      sessionStorage.clear();
+
+      expect(localStorage.getItem("user")).toBeNull();
+    });
+
+    it("rehydrates sessionStorage from a mirrored IBP session on a fresh module load", async () => {
+      const ibpUser = JSON.stringify({ portal: "IBP", userId: 42 });
+      // Simulate an installed PWA relaunch: sessionStorage is empty (fresh top-level
+      // browsing context) but the localStorage mirror from the previous session remains.
+      localStorage.setItem("user", ibpUser);
+      expect(sessionStorage.getItem("user")).toBeNull();
+
+      simulateFreshPageLoad();
+      await setupAxiosInstance();
+
+      expect(sessionStorage.getItem("user")).toBe(ibpUser);
+    });
+
+    it("does not rehydrate a mirrored session that lacks a recognized portal marker", async () => {
+      localStorage.setItem("user", JSON.stringify({ userId: 99 }));
+
+      simulateFreshPageLoad();
+      await setupAxiosInstance();
+
+      expect(sessionStorage.getItem("user")).toBeNull();
+    });
+  });
 });

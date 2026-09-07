@@ -468,6 +468,12 @@ export const ListTableWrapper = styled(Box)(({ theme }) => ({
   borderRadius: theme.spacing(2),
   border: `1px solid ${theme.palette.divider}`,
   overflow: "hidden",
+  // The 7-column row below doesn't reflow at phone/tablet widths — contain the
+  // overflow to a horizontal scroll within this card instead of letting it
+  // widen the page (which the columns' fixed fr-ratios would otherwise do).
+  "@media (max-width: 768px)": {
+    overflowX: "auto",
+  },
 }));
 
 export const ListTableRow = styled(Box, {
@@ -481,6 +487,9 @@ export const ListTableRow = styled(Box, {
   backgroundColor: isHeader ? theme.palette.grey[50] : theme.palette.background.paper,
   "&:last-child": { borderBottom: "none" },
   gap: theme.spacing(1),
+  "@media (max-width: 768px)": {
+    minWidth: 640,
+  },
 }));
 
 export const ListCellText = styled(Typography, {

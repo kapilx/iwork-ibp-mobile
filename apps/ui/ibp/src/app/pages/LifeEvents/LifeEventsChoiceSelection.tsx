@@ -1464,7 +1464,9 @@ const LifeEventsChoiceSelection: React.FC<LifeEventsChoiceSelectionProps> = ({
                                     </Typography>
                                   </Box>
 
-                                  <Box sx={{ px: 2.5, py: 1 }}>
+                                  {/* Horizontal scroll contains the 5-col grid on small screens
+                                      instead of crushing columns unreadably or overflowing the page. */}
+                                  <Box sx={{ px: 2.5, py: 1, overflowX: "auto" }}>
                                     <Box
                                       sx={{
                                         display: "grid",
@@ -1473,6 +1475,7 @@ const LifeEventsChoiceSelection: React.FC<LifeEventsChoiceSelectionProps> = ({
                                         gap: 1,
                                         py: 1,
                                         px: 1,
+                                        "@media (max-width: 768px)": { minWidth: 480 },
                                         color: "#6B7280",
                                         fontSize: 14,
                                         borderBottom: "1px solid #ECEFF4",
@@ -1505,6 +1508,7 @@ const LifeEventsChoiceSelection: React.FC<LifeEventsChoiceSelectionProps> = ({
                                               alignItems: "center",
                                               py: 1.5,
                                               px: 1,
+                                              "@media (max-width: 768px)": { minWidth: 480 },
                                               borderBottom: "1px solid #F3F4F6",
                                             }}
                                           >

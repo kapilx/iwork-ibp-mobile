@@ -286,6 +286,11 @@ export const FiltersContainerForm = styled(Box)(({ theme }) => ({
   gap: theme.spacing(5),
   // width: "80%",
   alignItems: "flex-end",
+  "@media (max-width: 768px)": {
+    flexWrap: "wrap",
+    gap: theme.spacing(2),
+    alignItems: "stretch",
+  },
   "& .MuiGrid-root": {
     columnGap: "30px !important",
     alignItems: "flex-end",

@@ -577,6 +577,11 @@ export const Header = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
+  "@media (max-width: 768px)": {
+    flexWrap: "wrap",
+    rowGap: theme.spacing(2),
+    alignItems: "flex-start",
+  },
 }));
 
 export const Title = styled(Typography)(({ theme }) => ({
@@ -727,6 +732,18 @@ export const ActionButtonsContainer = styled(Box)<{
   width: "100%",
   marginTop: theme.spacing(4),
   marginRight: theme.spacing(5),
+  "@media (max-width: 768px)": {
+    marginRight: 0,
+    gap: theme.spacing(2),
+    justifyContent: "space-between",
+  },
+  "@media (max-width: 420px)": {
+    flexDirection: "column",
+    gap: theme.spacing(1.5),
+    "& > *": {
+      width: "100%",
+    },
+  },
 }));
 
 export const FormWrapper = styled(Box)(({ theme }) => ({
@@ -736,6 +753,24 @@ export const FormWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   paddingTop: theme.spacing(7.5),
   borderTop: `0.5px solid ${theme.palette.border.main}`,
+  "& form > .MuiBox-root > .MuiGrid-root.MuiGrid-container": {
+    columnGap: `${theme.spacing(3)} !important`,
+    marginLeft: 0,
+    alignItems: "flex-start",
+    width: "100%",
+  },
+  "@media (max-width: 768px)": {
+    gap: theme.spacing(4),
+    paddingTop: theme.spacing(4),
+    "& form > .MuiBox-root > .MuiGrid-root.MuiGrid-container": {
+      columnGap: `${theme.spacing(2)} !important`,
+      marginLeft: `${theme.spacing(0)} !important`,
+    },
+  },
+  "@media (max-width: 480px)": {
+    gap: theme.spacing(3),
+    paddingTop: theme.spacing(3),
+  },
 }));
 
 export const AccordionActionStyles = styled(Box)(({ theme }) => ({

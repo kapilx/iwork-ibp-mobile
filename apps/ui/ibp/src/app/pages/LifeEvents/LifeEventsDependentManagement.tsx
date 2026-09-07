@@ -2053,6 +2053,9 @@ const LifeEventsDependentManagement: React.FC<LifeEventsDependentManagementProps
                     columnGap: '16px !important',
                     rowGap: '16px !important',
                     margin: '0 !important',
+                    '@media (max-width: 600px)': {
+                      gridTemplateColumns: '1fr !important',
+                    },
                   },
                   '& .MuiGrid-item': {
                     padding: '0 !important',
