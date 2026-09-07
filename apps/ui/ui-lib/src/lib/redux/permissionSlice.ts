@@ -2,7 +2,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { apiRequest } from "@ui/ui-lib/utils/apiRequest";
 import { endPoints } from "@ui/ui-lib/constants/endPoints";
 import { FeatureKey, featurePermissionMap } from "../rbac/permissionMap";
-import { RootState } from "./store";
+// `import type` guarantees this is elided at build time (it's used only as a
+// type annotation below) rather than relying on the bundler to infer that —
+// a real runtime import here would close a direct cycle with store.ts, which
+// imports this file for permissionsReducer.
+import type { RootState } from "./store";
 
 export interface PermissionsState {
   roleId: number | null;

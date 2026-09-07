@@ -1,5 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { axiosInstance } from '../utils';
+// See the identical comment in policiesSlice.ts — importing the concrete
+// module directly (not the "../utils" barrel) breaks a circular module graph
+// with "../redux" that otherwise throws "Cannot access X before
+// initialization" at runtime in a real (non-dev-server) build.
+import { axiosInstance } from '../utils/axiosInterceptors';
 import { endPoints } from '../constants';
 
 /**

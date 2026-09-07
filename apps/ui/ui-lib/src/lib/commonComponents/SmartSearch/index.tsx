@@ -28,35 +28,11 @@ import { SmartSearchProps } from "./types";
 import { theme } from "@ui/ui-lib/styles/Theme";
 import { formatDate } from "@ui/ui-lib/utils";
 
-// 🔧 Utility to parse "3 Months" / "2 Years" etc.
-export const addPeriodToDate = (startDate: Date, periodLabel: string): Date => {
-  const result = new Date(startDate);
-  const lower = periodLabel.toLowerCase();
-  const regex = /(\d+)\s*(month|year|day)/i;
-  const match = lower.match(regex);
-
-  if (!match) return result;
-
-  const number = parseInt(match[1], 10);
-  const unit = match[2];
-
-  switch (unit) {
-    case "month":
-      result.setMonth(result.getMonth() + number);
-      break;
-    case "year":
-      result.setFullYear(result.getFullYear() + number);
-      break;
-    case "day":
-      result.setDate(result.getDate() + number);
-      break;
-    default:
-      break;
-  }
-  result.setDate(result.getDate() - 1);
-
-  return result;
-};
+// Moved to ../../utils/smartSearchUtils.ts — that file needed only this one
+// pure function from here, and importing a component file from a utility
+// module closed a large circular dependency back into redux/store.ts.
+// Re-exported here for backward compatibility with any other consumer.
+export { addPeriodToDate } from "../../utils/smartSearchUtils";
 
 // Display every applied filter, wrapping onto as many lines as needed
 const SelectedValuesDisplay: React.FC<{

@@ -1,5 +1,40 @@
-import { addPeriodToDate } from "../commonComponents/SmartSearch";
 import { getCurrentFinancialYearDefault } from "../constants";
+
+// Moved here from ../commonComponents/SmartSearch (a UI component file) — that
+// import pulled the entire SmartSearch component tree (and everything it in
+// turn imports: FormComponent, FormFieldRenderer, CurrencyInput,
+// useLocalization, useApiQuery, and transitively the root ui-lib barrel) into
+// what should be a small pure-utility module, closing a large circular
+// dependency back into redux/store.ts. This is a pure, dependency-free
+// function, safe to own here directly instead of importing it.
+export const addPeriodToDate = (startDate: Date, periodLabel: string): Date => {
+  const result = new Date(startDate);
+  const lower = periodLabel.toLowerCase();
+  const regex = /(\d+)\s*(month|year|day)/i;
+  const match = lower.match(regex);
+
+  if (!match) return result;
+
+  const number = parseInt(match[1], 10);
+  const unit = match[2];
+
+  switch (unit) {
+    case "month":
+      result.setMonth(result.getMonth() + number);
+      break;
+    case "year":
+      result.setFullYear(result.getFullYear() + number);
+      break;
+    case "day":
+      result.setDate(result.getDate() + number);
+      break;
+    default:
+      break;
+  }
+  result.setDate(result.getDate() - 1);
+
+  return result;
+};
 
 const monthMap: Record<string, number> = {
   ALL: 0,

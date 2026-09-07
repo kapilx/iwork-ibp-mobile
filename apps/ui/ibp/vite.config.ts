@@ -172,7 +172,6 @@ export default defineConfig({
     // by Workbox's precache glob alongside the new ones. Force a clean output
     // on every build instead of relying on the caller to clear dist first.
     emptyOutDir: true,
-    sourcemap: true, // TEMP: debugging, will revert
     target: "esnext",
     rollupOptions: {
       onwarn(warning, warn) {
