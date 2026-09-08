@@ -3484,9 +3484,9 @@ const FamilyMembersManagement: React.FC<FamilyMembersManagementProps> = ({
                   employeeDetails.fullName ||
                   "Employee"}
               </TableDataCell>
-              <TableDataCell>Self</TableDataCell>
-              <TableDataCell>{employeeGenderDisplay}</TableDataCell>
-              <TableDataCell>
+              <TableDataCell data-label="Relation">Self</TableDataCell>
+              <TableDataCell data-label="Gender">{employeeGenderDisplay}</TableDataCell>
+              <TableDataCell data-label="Date of Birth">
                 <EmployeeDetailsValueRow>
                   {employeeDetails.dateOfBirth
                     ? dobVisibility["employee"]
@@ -3547,9 +3547,9 @@ const FamilyMembersManagement: React.FC<FamilyMembersManagementProps> = ({
                   </Box>
                   {dependent.name || "Unnamed"}
                 </TableDataCell>
-                <TableDataCell>{capitalizeFirst(dependent.relationship)}</TableDataCell>
-                <TableDataCell>{formatGenderDisplay(dependent.gender)}</TableDataCell>
-                <TableDataCell>
+                <TableDataCell data-label="Relation">{capitalizeFirst(dependent.relationship)}</TableDataCell>
+                <TableDataCell data-label="Gender">{formatGenderDisplay(dependent.gender)}</TableDataCell>
+                <TableDataCell data-label="Date of Birth">
                   <EmployeeDetailsValueRow>
                     {dependent.dateOfBirth
                       ? isDobVisible
@@ -3638,13 +3638,13 @@ const FamilyMembersManagement: React.FC<FamilyMembersManagementProps> = ({
                       </span>
                     )}
                   </TableDataCell>
-                  <TableDataCell  data-testid="dependent-relationship" >
+                  <TableDataCell data-label="Relation" data-testid="dependent-relationship" >
                     {capitalizeFirst(dependent.relationship)}
                   </TableDataCell>
-                  <TableDataCell  data-testid="dependent-gender">
+                  <TableDataCell data-label="Gender" data-testid="dependent-gender">
                     {formatGenderDisplay(dependent.gender)}
                   </TableDataCell>
-                  <TableDataCell data-testid="dependent-dateOfBirth">
+                  <TableDataCell data-label="Date of Birth" data-testid="dependent-dateOfBirth">
                     <EmployeeDetailsValueRow>
                       {dependent.dateOfBirth
                         ? isDobVisible

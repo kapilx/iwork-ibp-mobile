@@ -299,12 +299,22 @@ export const EnrollmentSection = styled("div")(({ theme }) => ({
   maxWidth: "1200px",
   margin: "0 auto",
   padding: theme.spacing(0, 2),
+  // The Back/Save & Exit/Continue bar (FooterBannerWrapper, pages/MultiEnrollment/styles.ts)
+  // is position:sticky with no reserved space of its own, so content was
+  // scrolling behind it. This padding clears its rendered height — taller on
+  // mobile, where the bar switches to a stacked column of 3 buttons.
+  paddingBottom: 130,
   [theme.breakpoints.down("lg")]: {
     maxWidth: "100%",
     padding: theme.spacing(0, 1.5),
+    paddingBottom: 130,
   },
   [theme.breakpoints.down("md")]: {
     padding: theme.spacing(0, 1),
+    paddingBottom: 130,
+  },
+  "@media (max-width: 768px)": {
+    paddingBottom: 210,
   },
 }));
 
@@ -1059,6 +1069,20 @@ export const SectionSubtitle = styled(Typography)(({ theme }) => ({
   "@media (min-width: 769px) and (max-width: 1024px)": {
     fontSize: 12,
   },
+  "@media (max-width: 768px)": {
+    fontSize: 11,
+  },
+}));
+
+// Shown only while the section is collapsed — makes the tap-to-expand
+// affordance explicit instead of relying on the chevron icon alone.
+export const SectionExpandHint = styled(Typography)(({ theme }) => ({
+  fontSize: 12,
+  fontWeight: 500,
+  fontStyle: "italic",
+  color: "#7B8794",
+  fontFamily: theme.typography.fontFamily,
+  marginTop: theme.spacing(0.5),
   "@media (max-width: 768px)": {
     fontSize: 11,
   },

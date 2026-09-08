@@ -1611,6 +1611,16 @@ function MultiEnrollment() {
   const [verificationStep, setVerificationStep] = useState<VerificationStep>(
     VerificationStep.SelectMethod
   );
+
+  // Same in-place-state-transition issue as single Enrollment: reaching the
+  // final ConfirmationPage (step=success + verificationStep=Success) never
+  // triggers a route change, so <ScrollToTop/> never fires and the page can
+  // land mid-scroll or at the bottom instead of the top.
+  useEffect(() => {
+    if (step === EnrollmentStep.success && verificationStep === VerificationStep.Success) {
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }
+  }, [step, verificationStep]);
   const [selectedOtpMethod, setSelectedOtpMethod] = useState<
     "mobile" | "email" | null
   >(null);

@@ -14,11 +14,14 @@ const SW_URL = "/sw.js";
 export function usePwaServiceWorker() {
   const [offlineReady, setOfflineReady] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
   const registrationRef = useRef<ServiceWorkerRegistration | null>(null);
 
+  const pwaEnabled =
+    import.meta.env.VITE_PWA === "true" && "serviceWorker" in navigator;
+
   useEffect(() => {
-    const pwaEnabled = import.meta.env.VITE_PWA === "true";
-    if (!pwaEnabled || !("serviceWorker" in navigator)) return;
+    if (!pwaEnabled) return;
 
     let refreshing = false;
     const onControllerChange = () => {
@@ -32,6 +35,7 @@ export function usePwaServiceWorker() {
       .register(SW_URL)
       .then((registration) => {
         registrationRef.current = registration;
+        setIsRegistered(true);
 
         if (registration.waiting && navigator.serviceWorker.controller) {
           setUpdateAvailable(true);
@@ -65,7 +69,30 @@ export function usePwaServiceWorker() {
 
   const dismissOfflineReady = useCallback(() => setOfflineReady(false), []);
 
-  return { offlineReady, updateAvailable, reloadForUpdate, dismissOfflineReady };
+  // Lets the UI offer an explicit "check for updates" action for users who
+  // are already installed and just want to confirm they're current, rather
+  // than waiting for the browser's own periodic update check. Resolves once
+  // the check completes; whether it actually found an update surfaces via
+  // the existing updateAvailable state a moment later (registration.update()
+  // doesn't report that directly).
+  const checkForUpdate = useCallback(async () => {
+    if (!registrationRef.current) return;
+    try {
+      await registrationRef.current.update();
+    } catch (error) {
+      console.error("Service worker update check failed:", error);
+    }
+  }, []);
+
+  return {
+    isSupported: pwaEnabled,
+    isRegistered,
+    offlineReady,
+    updateAvailable,
+    reloadForUpdate,
+    dismissOfflineReady,
+    checkForUpdate,
+  };
 }
 
 export default usePwaServiceWorker;

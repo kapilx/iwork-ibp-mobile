@@ -167,6 +167,17 @@ function Enrollment() {
   const [step, setStep] = useState<EnrollmentStep>(
     EnrollmentStep.Configuration
   );
+
+  // The Configuration -> Summary -> success transition is an in-place state
+  // change on the same route, so <ScrollToTop/> (which only listens for
+  // pathname changes) never fires here — leaving the confirmation screen
+  // wherever the user had scrolled to on the previous step. Scroll to top
+  // explicitly whenever the confirmation step becomes active.
+  useEffect(() => {
+    if (step === EnrollmentStep.success) {
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }
+  }, [step]);
   const [policyConfigurationData, setPolicyConfigurationData] = useState<any[]>(
     []
   );

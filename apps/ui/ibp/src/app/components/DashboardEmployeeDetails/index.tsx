@@ -12,7 +12,6 @@ import {
   EmployeeDetailsContent,
   EmployeeDetailsLeft,
   EmployeeDetailsRight,
-  EmployeeIllustration,
   EmployeeInfoCard,
   EmployeeInfoText,
   InProgressInfoText,
@@ -27,7 +26,6 @@ import {
   SlotWrapperSpan,
   EmployeeIllustrationWrapper,
   CounterBox,
-  HorizontalDivider,
   CounterBoxSection,
   StepperContainer,
   StepWrapper,
@@ -38,7 +36,6 @@ import {
   InProgressActionButton,
   EnrolledContent,
   EnrolledTextGroup,
-  EnrolledIllustrationWrapper,
   EmployeeNoteDivider,
   EmployeeOptionalMetaRow,
   EmployeeOptionalNote,
@@ -507,31 +504,10 @@ const DashboardEmployeeDetails: React.FC<EmployeeDetailsProps> = ({
                       </EnrolledWellnessButton>
                     )}
                   </EnrolledTextGroup>
-                  <EnrolledIllustrationWrapper>
-                    <EmployeeIllustration
-                      src={enrolmentImg}
-                      alt="Employee details illustration"
-                      inProgress
-                      isEnrolled={isEnrolled}
-                    />
-                  </EnrolledIllustrationWrapper>
                 </EnrolledContent>
               ) : isInProgress ? (
                 <>
                   <EmployeeIllustrationWrapper inProgress>
-                    <InProgressInfoText>
-                      {infoLines.map((line, index) => (
-                        <React.Fragment key={`${line}-${index}`}>
-                          {line}
-                          {index < infoLines.length - 1 && <br />}
-                        </React.Fragment>
-                      ))}
-                    </InProgressInfoText>
-                    <EmployeeIllustration
-                      src={enrolmentImg}
-                      alt="Employee details illustration"
-                      inProgress
-                    />
                     <EnrollmentTextContainer
                       overAllEnrollmentStatus={overAllEnrollmentStatus}
                       inProgress
@@ -541,6 +517,14 @@ const DashboardEmployeeDetails: React.FC<EmployeeDetailsProps> = ({
                       </EnrollmentText>
                       <SlotWrapperSpan>Days left</SlotWrapperSpan>
                     </EnrollmentTextContainer>
+                    <InProgressInfoText>
+                      {infoLines.map((line, index) => (
+                        <React.Fragment key={`${line}-${index}`}>
+                          {line}
+                          {index < infoLines.length - 1 && <br />}
+                        </React.Fragment>
+                      ))}
+                    </InProgressInfoText>
                   </EmployeeIllustrationWrapper>
                   <InProgressActionButton
                     compactWidth={isStartEnrollmentButton}
@@ -554,10 +538,6 @@ const DashboardEmployeeDetails: React.FC<EmployeeDetailsProps> = ({
               ) : (
                 <>
                   <EmployeeIllustrationWrapper>
-                    <EmployeeIllustration
-                      src={enrolmentImg}
-                      alt="Employee details illustration"
-                    />
                     <CounterBoxSection>
                       <CounterBox>
                         <EmployeeInfoText>
@@ -587,7 +567,6 @@ const DashboardEmployeeDetails: React.FC<EmployeeDetailsProps> = ({
                     </EmployeeActionButton>
                   </CounterBoxSection>
                 </EmployeeIllustrationWrapper>
-                <HorizontalDivider />
               </>
             )}
           </EmployeeInfoCard>

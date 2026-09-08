@@ -27,6 +27,10 @@ export const EnrollmentText = styled(Typography)(({ theme }) => ({
   color: theme.palette.common.white,
   letterSpacing: "0px",
   height: "60px",
+  [theme.breakpoints.down(768)]: {
+    fontSize: theme.typography.fontSizes.xxxl,
+    height: "48px",
+  },
 }));
 
 export const EnrollmentTextContainer = styled(Box, {
@@ -35,7 +39,7 @@ export const EnrollmentTextContainer = styled(Box, {
 })<{
   overAllEnrollmentStatus?: string;
   inProgress?: boolean;
-}>(({ theme, overAllEnrollmentStatus, inProgress }) => ({
+}>(({ overAllEnrollmentStatus }) => ({
   display:
     overAllEnrollmentStatus === "EMPLOYEE_ENROLLMENT_STATUS_ENROLLED"
       ? "none"
@@ -43,17 +47,6 @@ export const EnrollmentTextContainer = styled(Box, {
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  flex: 1,
-  ...(inProgress && {
-    position: "absolute",
-    right: theme.spacing(26.25),
-    bottom: theme.spacing(2),
-    flex: "none",
-    minWidth: "90px",
-    "@media (min-width: 360px) and (max-width: 450px)": {
-      right: "73px",
-    },
-  }),
 }));
 
 export const EmployeeDetailsContent = styled(Box)(({ theme }) => ({
@@ -62,7 +55,11 @@ export const EmployeeDetailsContent = styled(Box)(({ theme }) => ({
   margin: "0 auto",
   padding: theme.spacing(10, 12.5, 3.2, 10),
   display: "flex",
-  alignItems: "stretch",
+  // Was "stretch" — with the illustration removed, EmployeeInfoCard is now a
+  // compact self-contained card rather than something meant to fill the same
+  // height as the (taller) stepper column; flex-start keeps it from being
+  // artificially stretched with empty internal space.
+  alignItems: "flex-start",
   justifyContent: "space-between",
   gap: theme.spacing(4),
   "@media (min-width: 1200px) and (max-width: 1360px)": {
@@ -250,28 +247,37 @@ export const EmployeeDetailsRight = styled(Box, {
   }),
 );
 
+// Was transparent/no-background — fine when a large illustration filled this
+// space, but with the illustration removed a plain card here reads as an
+// intentional, self-contained status panel instead of empty space next to
+// the (taller) stepper column.
 export const EmployeeInfoCard = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  backgroundColor: "transparent",
-  borderRadius: 0,
-  padding: 0,
+  backgroundColor: "rgba(255, 255, 255, 0.08)",
+  borderRadius: theme.shape.borderRadii.large,
+  padding: theme.spacing(4, 5),
   position: "relative",
-  border: "none",
+  border: "1px solid rgba(255, 255, 255, 0.16)",
   boxShadow: "none",
-  gap: theme.spacing(2),
+  gap: theme.spacing(2.5),
   maxWidth: "100%",
+  [theme.breakpoints.down(768)]: {
+    padding: theme.spacing(3, 3),
+    width: "100%",
+  },
 }));
 
+// Previously flanked the (now-removed) illustration in a flex row; repurposed
+// as a simple centered column wrapper for the counter/info-text content.
 export const EmployeeIllustrationWrapper = styled(Box, {
   shouldForwardProp: (prop) => prop !== "inProgress",
-})<{ inProgress?: boolean }>(({ theme, inProgress }) => ({
+})<{ inProgress?: boolean }>(({ theme }) => ({
   display: "flex",
-  alignItems: inProgress ? "flex-end" : "flex-start",
-  position: "relative",
-  gap: inProgress ? theme.spacing(3) : "6px",
-  marginTop: inProgress ? theme.spacing(0) : theme.spacing(4),
+  flexDirection: "column",
+  alignItems: "center",
+  gap: theme.spacing(2),
 }));
 
 export const CounterBox = styled(Box)(({ theme }) => ({
@@ -310,18 +316,8 @@ export const EmployeeInfoText = styled(Typography)(({ theme }) => ({
 }));
 
 export const InProgressInfoText = styled(EmployeeInfoText)(() => ({
-  textAlign: "left",
-  maxWidth: "175px",
-  position: "absolute",
-  left: "15%",
-  bottom: "10%",
-  "@media (min-width: 360px) and (max-width: 450px)": {
-    left: "25%",
-  },
-  "@media (max-width: 399px)": {
-    left: "35%",
-    maxWidth: "28%",
-  },
+  textAlign: "center",
+  maxWidth: "260px",
 }));
 
 export const EnrolledInfoText = styled(EmployeeInfoText)(({ theme }) => ({

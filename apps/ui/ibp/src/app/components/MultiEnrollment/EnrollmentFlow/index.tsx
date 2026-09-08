@@ -57,6 +57,7 @@ import {
   SectionHeaderRow,
   SectionsContainer,
   SectionSubtitle,
+  SectionExpandHint,
   SectionSheidlTitle,
   ShieldIconWrapper,
   SheildWrapper,
@@ -583,8 +584,10 @@ const EnrollmentFlow: React.FC<EnrollmentFlowProps> = ({
   const [committedFamilyMembers, setCommittedFamilyMembers] = useState<
     Record<string, any>
   >({});
+  // Collapsed by default — information-heavy benefit sections shouldn't
+  // auto-expand; the section header's chevron + hint text is the affordance.
   const [sectionExpanded, setSectionExpanded] = useState({
-    compulsory: true,
+    compulsory: false,
     optional: false,
     flex: false,
   });
@@ -3178,6 +3181,9 @@ const EnrollmentFlow: React.FC<EnrollmentFlowProps> = ({
                 <AccordionHeaderContent>
                   <SectionSheidlTitle>Compulsory</SectionSheidlTitle>
                   <SectionSubtitle>Automatically provided to all employees</SectionSubtitle>
+                  {!sectionExpanded.compulsory && (
+                    <SectionExpandHint>Tap to expand and view details</SectionExpandHint>
+                  )}
                 </AccordionHeaderContent>
                 </SheildWrapper>
                 <AccordionCollapsedIconStyles
@@ -3216,6 +3222,9 @@ const EnrollmentFlow: React.FC<EnrollmentFlowProps> = ({
                 <AccordionHeaderContent>
                   <SectionSheidlTitle>Optional</SectionSheidlTitle>
                   <SectionSubtitle>Choose and add optional benefits for extra protection</SectionSubtitle>
+                  {!sectionExpanded.optional && (
+                    <SectionExpandHint>Tap to expand and view details</SectionExpandHint>
+                  )}
                 </AccordionHeaderContent>
                 </SheildWrapper>
                 <AccordionCollapsedIconStyles
@@ -3254,6 +3263,9 @@ const EnrollmentFlow: React.FC<EnrollmentFlowProps> = ({
                   <AccordionHeaderContent>
                     <SectionSheidlTitle>Flex Benefits</SectionSheidlTitle>
                     <SectionSubtitle>Flexible benefits you can customise to your needs</SectionSubtitle>
+                    {!sectionExpanded.flex && (
+                      <SectionExpandHint>Tap to expand and view details</SectionExpandHint>
+                    )}
                   </AccordionHeaderContent>
                 </SheildWrapper>
                 <AccordionCollapsedIconStyles

@@ -382,11 +382,9 @@ const EnrollmentFlow: React.FC<EnrollmentFlowProps> = ({
     }, []);
   }, [policyOptions]);
 
-  useEffect(() => {
-    if (validIndexes.length > 0) {
-      setAccordionIndex(validIndexes[0]);
-    }
-  }, [validIndexes]);
+  // Collapsed by default — policy accordions no longer auto-open the first
+  // valid one; the chevron + hint text on each header is the affordance
+  // instead of the page deciding what to show the user.
 
   // Reset carousel page when accordion is closed
   useEffect(() => {
@@ -733,7 +731,7 @@ const EnrollmentFlow: React.FC<EnrollmentFlowProps> = ({
                     alt="Expand"
                     expanded={isExpanded}
                   />
-                  {isExpanded ? "Close" : "Expand"}
+                  {isExpanded ? "Close" : "Tap to view details"}
                 </AccordionAction>
               </AccordionContainer>
               {isExpanded && (

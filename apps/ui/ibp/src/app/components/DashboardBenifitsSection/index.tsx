@@ -1765,31 +1765,10 @@ const DashboardBenefitsSection = ({
       lastAccordionGroupKeyRef.current = groupKey;
     }
 
-    // Auto-expand first accordion on initial mount
+    // Collapsed by default — no auto-expansion on initial mount. Benefit
+    // sections/nested compulsory-optional-flex accordions all start closed;
+    // the chevron + hint text on each header is the affordance.
     if (isInitialMountRef.current && activeSectionIds.length > 0) {
-      const firstSectionId = activeSectionIds[0];
-      setExpandedPanelIds(new Set([firstSectionId]));
-      
-      // Find the first section and determine which nested accordion to expand
-      const firstSection = [...enrolledPoliciesData, ...benefitsData].find(
-        (section) => section.id === firstSectionId
-      );
-      
-      if (firstSection) {
-        const flatItems = firstSection.periods?.flatMap((period: any) => period.items) || [];
-        const hasCompulsory = flatItems.some((item: any) => !isOptionalItem(item) && item.componentType !== "flex");
-        const hasOptional = flatItems.some((item: any) => isOptionalItem(item));
-        const hasFlex = flatItems.some((item: any) => item.componentType === "flex");
-
-        // Expand first available nested accordion (compulsory first, then optional, then flex)
-        if (hasCompulsory || hasOptional || hasFlex) {
-          const firstNestedKey: "compulsory" | "optional" | "flex" = hasCompulsory ? "compulsory" : hasOptional ? "optional" : "flex";
-          setNestedAccordionState({
-            [firstSectionId]: new Set([firstNestedKey]),
-          });
-        }
-      }
-      
       isInitialMountRef.current = false;
       return;
     }
@@ -2627,7 +2606,13 @@ const DashboardBenefitsSection = ({
                                 style={{ width: 50, height: 50 }}
                               />
                               <Box>
-                                <Typography sx={{ fontWeight: 600, fontSize: "24px" }}>
+                                <Typography
+                                  sx={{
+                                    fontWeight: 600,
+                                    fontSize: "24px",
+                                    "@media (max-width: 768px)": { fontSize: "18px" },
+                                  }}
+                                >
                                   {group.title} ({group.items.length})
                                 </Typography>
                                 <Typography
@@ -2639,6 +2624,19 @@ const DashboardBenefitsSection = ({
                                 >
                                   {group.subtitle}
                                 </Typography>
+                                {!isNestedExpanded && (
+                                  <Typography
+                                    sx={{
+                                      fontSize: "12px",
+                                      fontStyle: "italic",
+                                      fontWeight: 500,
+                                      color: "#7B8794",
+                                      mt: 0.5,
+                                    }}
+                                  >
+                                    Tap to expand and view details
+                                  </Typography>
+                                )}
                               </Box>
                             </Box>
                           </AccordionSummary>

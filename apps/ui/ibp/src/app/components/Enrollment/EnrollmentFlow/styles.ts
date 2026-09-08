@@ -804,11 +804,10 @@ export const TableHeaderRow = styled(Box)(({ theme }) => ({
       "minmax(0, 1.5fr) minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 1.2fr) minmax(0, 1fr)",
     columnGap: theme.spacing(1),
   },
-  // ≤768px: fixed pixel columns so table scrolls horizontally
+  // Below 768px each dependent renders as its own card (see TableDataRow) —
+  // column headers don't apply to a card/list layout.
   "@media (max-width: 768px)": {
-    gridTemplateColumns: "140px 80px 70px 150px 64px",
-    minWidth: "520px",
-    columnGap: theme.spacing(1),
+    display: "none",
   },
 }));
 
@@ -819,9 +818,6 @@ export const TableHeaderCell = styled(Typography)(({ theme }) => ({
   opacity: 0.7,
   minWidth: 0,
   overflow: "hidden",
-  "@media (max-width: 768px)": {
-    fontSize: theme.typography.fontSizes.xs,
-  },
 }));
 
 export const TableDataRow = styled(Box)(({ theme }) => ({
@@ -851,12 +847,19 @@ export const TableDataRow = styled(Box)(({ theme }) => ({
       "minmax(0, 1.5fr) minmax(0, 0.9fr) minmax(0, 0.9fr) minmax(0, 1.2fr) minmax(0, 1fr)",
     columnGap: theme.spacing(1),
   },
-  // ≤768px: fixed pixel columns matching header
+  // Below 768px: each dependent becomes a standalone card instead of a grid
+  // row — no horizontal scrolling, no shrunken columns. TableDataCell (below)
+  // turns each cell into a labelled row inside that card.
   "@media (max-width: 768px)": {
-    gridTemplateColumns: "140px 80px 70px 150px 64px",
-    minWidth: "520px",
-    columnGap: theme.spacing(1),
-    padding: theme.spacing(2, 0),
+    display: "block",
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: theme.shape.borderRadii.medium,
+    padding: theme.spacing(2),
+    marginBottom: theme.spacing(1.5),
+    "&:last-child": {
+      borderBottom: `1px solid ${theme.palette.divider}`,
+      marginBottom: 0,
+    },
   },
 }));
 
@@ -872,10 +875,38 @@ export const TableDataCell = styled(Box)(({ theme, addMarginLeft }: { theme: any
   "@media (max-width: 1550px)": {
     marginLeft: addMarginLeft ? theme.spacing(2) : 0,
   },
+  // Card layout: the name cell (1st) is the card's title row; relation/gender/
+  // DOB (2nd-4th, given a data-label in FamilyMembersManagement.tsx) render as
+  // "Label   Value" rows; the actions cell (last) becomes a right-aligned
+  // icon row. `data-label` renders via ::before instead of a translated
+  // string so no new copy/i18n plumbing is needed for this layout-only change.
   "@media (max-width: 768px)": {
     fontSize: theme.typography.fontSizes.sm,
     gap: theme.spacing(0.5),
     marginLeft: 0,
+    width: "100%",
+    justifyContent: "space-between",
+    padding: theme.spacing(1, 0),
+    borderBottom: `1px solid ${theme.palette.neutral.tableBorder}`,
+    "&::before": {
+      content: "attr(data-label)",
+      fontWeight: theme.typography.fontWeights.medium,
+      color: theme.palette.text.mediumGrey,
+      flexShrink: 0,
+    },
+    "&:first-of-type": {
+      fontWeight: theme.typography.fontWeights.semiBold,
+      fontSize: theme.typography.fontSizes.md,
+      justifyContent: "flex-start",
+      paddingBottom: theme.spacing(1.5),
+      "&::before": { content: "none" },
+    },
+    "&:last-of-type": {
+      border: "none",
+      justifyContent: "flex-end",
+      paddingTop: theme.spacing(1.5),
+      "&::before": { content: "none" },
+    },
   },
 }));
 
